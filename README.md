@@ -12,6 +12,10 @@
   <b>面向高校创作者、商业创作者（OPC 一人公司）及企业发包方的“产-学-研-创-商-服”六位一体商业赋能高保真前端交互原型</b>
 </p>
 
+<p align="center">
+  <img src="assets/preview.png" alt="AI 创作者社区高保真原型界面预览" width="95%" />
+</p>
+
 </div>
 
 ---
@@ -164,6 +168,7 @@ ai-creator-community-web/
 │   └── icons.js                 # 3D 图标库与矢量 SVG 映射管理器
 │
 ├── assets/                      # 静态视觉资产库（250+ 文件）
+│   ├── preview.png              # 平台首页与核心工作台高保真预览截图
 │   ├── avatars/                 # 用户身份头像、角色标识
 │   ├── banners/                 # 运营 Banner、活动展示图
 │   ├── covers/                  # 作品展厅成片封面、任务配图
