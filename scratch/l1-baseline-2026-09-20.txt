@@ -1,0 +1,85 @@
+========================================================================
+ L1 契约基线报告（首次运行）
+ 时间：2026-09-20
+ 命令：node tools/doc-contract-check.js
+ 目的：为「设计驱动开发」流程建立可对比的零点基线
+========================================================================
+
+【各文档契约声明量】
+  文档                       id   fn   字段   素材   类名   ERROR
+  任务广场设计.md               0    3     0     0     0       0
+  创作工具设计.md               0    7     0     0     0       1
+  发现页设计.md                0    0     0     0     0       0
+  成长学院设计.md               0    0     0     0     0       0
+  我的资产设计.md               0    3     1     0     0       0
+  数据中心设计.md               0    1     0     1     0       0
+  整体设计.md                19   23     0     0     3       7
+  用户管理设计.md               9    8     0     1     2       2
+  社区中心设计.md               0    1     1     0     0       0
+
+------------------------------------------------------------------------
+ L1 未通过：36 个 ERROR
+------------------------------------------------------------------------
+
+▸ 存量问题 A：文档声明了、但代码里不存在的 App 函数（8 个唯一名，共 10 处声明）
+  属于「文档与代码命名漂移」，括号里是代码中的真实名字。
+
+  design/整体设计.md
+    ✗ App.showAcademyCoursesPage()      （文档声明，代码中不存在）
+    ✗ App.openMyCerts()                 （代码里叫 openMyCertsModal）
+    ✗ App.openStudioModal()             （文档声明，代码中不存在）
+    ✗ App.showTaskPublishPage()         （文档声明，代码中不存在）
+    ✗ App.openTaskDetail()              （代码里叫 openTaskDetailPage）
+    ✗ App.openWithdrawModal()           （代码里是 openModal('modal-withdraw')）
+    ✗ App.openConfirmModal()            （代码里叫 openCustomConfirmModal）
+
+  design/用户管理设计.md
+    ✗ App.openMyCerts()                 （同上）
+    ✗ App.openConfirmModal()            （同上）
+
+  design/创作工具设计.md
+    ✗ App.applyTemplateToWorkspace()    （文档声明，代码中不存在）
+
+▸ 存量问题 B：app.js 中 App 对象的方法被重复定义（26 处）
+  同一个对象字面量里同名 key 出现两次 → 后者覆盖前者，前者是死代码。
+  行号格式：先定义的行 / 后定义的行（实际生效）。
+
+  toggleGalleryWorkLike        2363 / 6779
+  openRejectTaskModal          3296 / 5986
+  submitTaskRejection          3319 / 6009
+  openSubmitDeliveryModal      3356 / 6046
+  doSubmitDelivery             3362 / 6052
+  remindTaskAcceptance         3399 / 6089
+  simulateAutoAccept           3403 / 6093
+  openTaskEvaluateModal        3409 / 6099
+  setEvalStar                  3477 / 6167
+  submitTaskEvaluation         3488 / 6178
+  openDisputeModal             3520 / 6210
+  submitTaskDispute            3528 / 6218
+  openMyGalleryManageModal     3563 / 6253
+  setCreatorSchedule           3616 / 6306
+  simulateApproveGalleryListing 3633 / 6323
+  openCustomConfirmModal       3677 / 6367
+  confirmCustomOrder           3700 / 6390
+  declineCustomOrder           3711 / 6401
+  republishTask                3722 / 6412
+  openTasksLeaderboardModal    4072 / 5881
+  simulateGenerate             4979 / 6534
+  publishFromStudio            5009 / 6630
+  handleUpgradePro             5029 / 6770
+  openMyCertsModal             5734 / 7100
+  openSystemAdminModal         6653 / 7086
+  switchSystemAdminTab         6659 / 7090
+
+------------------------------------------------------------------------
+ WARN：0 条（类名检查暂无未识别项）
+ ERROR：36 条 ｜ 文档：9 份
+------------------------------------------------------------------------
+
+【结论与后续动作】
+1. 问题 B（26 处重复定义）风险最高：修 A 时若改在"死代码"上会完全不生效。
+   建议顺序：先清 B 的重复块，确认保留哪一份语义，再处理 A 的命名漂移。
+2. 问题 A 的修法有两种，需按设计驱动原则决策：
+   - 以代码为准 → 改 design/*.md 里的函数名为代码真实名字（改动小，推荐先做）；
+   - 以设计为准 → 在 app.js 中补别名函数，保持文档 API 稳定（适合对外演示文档优先的场景）。
+3. 处理完后重跑，以此为基线比对 ERROR 数是否归零。

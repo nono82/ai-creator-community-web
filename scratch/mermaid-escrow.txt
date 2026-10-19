@@ -1,0 +1,40 @@
+
+------------------------------------------------------------------------
+ Mermaid 图结构校验 · 离线门禁
+ 扫描范围：design/*.md（含 _ 开头元文档）
+------------------------------------------------------------------------
+
+  文档                        块                  类型     行数  状态
+  _模块设计文档模板.md            1     sequenceDiagram     12  ✓
+  _模块设计文档模板.md            2     stateDiagram-v2     11  ✓
+  _设计驱动开发规范.md            1           flowchart      9  ✓
+  任务广场设计.md               1     sequenceDiagram     75  ✓
+  任务广场设计.md               2     stateDiagram-v2     38  ✓
+  创作工具设计.md               1     sequenceDiagram     61  ✓
+  创作工具设计.md               2     stateDiagram-v2     29  ✓
+  发现页设计.md                1     sequenceDiagram     70  ✓
+  发现页设计.md                2     stateDiagram-v2     41  ✓
+  成长学院设计.md               1     sequenceDiagram     87  ✓
+  成长学院设计.md               2     stateDiagram-v2     44  ✓
+  我的资产设计.md               1     sequenceDiagram     74  ✓
+  我的资产设计.md               2     sequenceDiagram     53  ✓
+  我的资产设计.md               3     sequenceDiagram     44  ✓
+  我的资产设计.md               4     sequenceDiagram     42  ✓
+  我的资产设计.md               5     sequenceDiagram     35  ✓
+  我的资产设计.md               6     sequenceDiagram     78  ✓
+  我的资产设计.md               7     sequenceDiagram     50  ✓
+  我的资产设计.md               8     stateDiagram-v2     97  ✓
+  数据中心设计.md               1     sequenceDiagram     70  ✓
+  数据中心设计.md               2     stateDiagram-v2     48  ✓
+  整体设计.md                 1     sequenceDiagram     58  ✓
+  整体设计.md                 2     stateDiagram-v2     95  ✓
+  用户管理设计.md               1     sequenceDiagram     82  ✓
+  用户管理设计.md               2     stateDiagram-v2     58  ✓
+  社区中心设计.md               1     sequenceDiagram     74  ✓
+  社区中心设计.md               2     stateDiagram-v2     34  ✓
+
+------------------------------------------------------------------------
+ 问题 0 ｜ 图块 27 ｜ 文档 12 份
+ 结论：所有 Mermaid 图块结构合法，可正常渲染。
+------------------------------------------------------------------------
+

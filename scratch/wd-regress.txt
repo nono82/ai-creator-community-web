@@ -1,0 +1,11 @@
+== A. 数据层：提现规则与收款卡台账 ==
+== B. getWithdrawRules() 口径 ==
+== C. isIdVerified() ==
+== D. validateWithdrawAccount() 四道闸 ==
+== E. renderWithdrawAccounts() 下拉渲染 ==
+== F. onWithdrawAmountInput() 金额实时校验 ==
+== G. submitWithdraw() 拦截与放行 ==
+== H. 静态契约 ==
+== I. 回归：既有能力未被破坏 ==
+
+✓ 全部通过：145 项断言

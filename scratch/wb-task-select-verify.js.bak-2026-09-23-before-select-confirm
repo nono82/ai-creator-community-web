@@ -1,0 +1,343 @@
+#!/usr/bin/env node
+/**
+ * 任务广场 ·「招募中 → 选定创作者」自检脚本
+ * ---------------------------------------------------------------------------
+ * 零依赖、离线。用最小 DOM 桩加载 js/mock_data.js + js/app.js，断言：
+ *   ① 发布方身份判定唯一口径 App.isPublisherOfTask()：以「我的任务」台账为真源，
+ *      **不得再用 publisherRole 关键词白名单猜**（用户自己发布的任务署名为
+ *      「我发布的任务（小宇同学 / 星芒视觉工作室）」，会被旧实现误判为非发布方）；
+ *   ② 我的任务 · 发布任务 · 招募中（manual）→ 详情页必须渲染出【选定此人】按钮，
+ *      候选人数 = 待审候选人数，顶栏为发布方视角（不得出现「提交报名」）；
+ *   ③ auto（报名即接）模式不提供选人入口，顶栏为「查看名额」；
+ *   ④ 选定闭环 App.selectTaskApplicant()：中标者 accepted / 其余 rejected、
+ *      任务转「进行中」、台账**就地转化不新增重复条目**、Toast 正确；
+ *   ⑤ 闸门：非发布方调用被拦截且零变动；未知任务 / 候选人被拦截；
+ *   ⑥ 大厅投稿人视角不受影响（第三方任务仍可「去报名」）；
+ *   ⑦ 静态契约：跳转锚点 #task-detail-applicants 真实存在、方法唯一、旧白名单已下线。
+ *
+ * 用法： node temp/wb-task-select-verify.js
+ * 退出码 0 = 全过，1 = 有失败
+ */
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+const HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const APP_SRC = fs.readFileSync(path.join(ROOT, 'js', 'app.js'), 'utf8');
+const MOCK_SRC = fs.readFileSync(path.join(ROOT, 'js', 'mock_data.js'), 'utf8');
+
+// ------------------------- 最小 DOM 桩 -------------------------
+class ClassList {
+  constructor() { this.set = new Set(); }
+  add(...c) { c.forEach(x => this.set.add(x)); }
+  remove(...c) { c.forEach(x => this.set.delete(x)); }
+  toggle(c, force) {
+    const on = (force === undefined) ? !this.set.has(c) : !!force;
+    if (on) this.set.add(c); else this.set.delete(c);
+    return on;
+  }
+  contains(c) { return this.set.has(c); }
+}
+
+class El {
+  constructor(id, attrs) {
+    this.id = id;
+    this._attrs = attrs || {};
+    this.innerText = '';
+    this.textContent = '';
+    this.innerHTML = '';
+    this.value = '';
+    this.hidden = false;
+    this.disabled = false;
+    this.style = {};
+    this.classList = new ClassList();
+  }
+  get className() { return Array.from(this.classList.set).join(' '); }
+  set className(v) { this.classList.set = new Set(String(v == null ? '' : v).split(/\s+/).filter(Boolean)); }
+  getAttribute(n) { return this._attrs[n] === undefined ? null : this._attrs[n]; }
+  setAttribute(n, v) { this._attrs[n] = v; }
+  appendChild(c) { return c; }
+  addEventListener() {}
+  querySelectorAll() { return []; }
+  querySelector() { return null; }
+  getContext() { return null; }
+  scrollIntoView() {}
+}
+
+const registry = new Map();
+function el(id) { if (!registry.has(id)) registry.set(id, new El(id)); return registry.get(id); }
+
+const documentStub = {
+  getElementById: (id) => el(id),
+  querySelector: () => null,
+  querySelectorAll: () => [],
+  addEventListener: () => {},
+  body: new El('body')
+};
+
+[
+  'tasks-detail-body', 'task-detail-top-actions', 'tasks-main-shell',
+  'tasks-publish-page', 'tasks-detail-page', 'tasks-mine-list-container',
+  'tasks-plaza-list-container'
+].forEach(id => el(id));
+
+const windowStub = {
+  location: { hash: '' },
+  scrollTo: () => {},
+  addEventListener: () => {},
+  setTimeout, clearTimeout, setInterval, clearInterval,
+  document: documentStub
+};
+
+const sandbox = {
+  window: windowStub,
+  document: documentStub,
+  console,
+  setTimeout, clearTimeout, setInterval, clearInterval,
+  Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Error,
+  isNaN, parseInt, parseFloat, encodeURIComponent
+};
+sandbox.globalThis = sandbox;
+vm.createContext(sandbox);
+vm.runInContext(MOCK_SRC + '\nglobalThis.__MockData = MockData;', sandbox, { filename: 'mock_data.js' });
+vm.runInContext(APP_SRC + '\nglobalThis.__App = App;', sandbox, { filename: 'app.js' });
+
+const MockData = sandbox.__MockData;
+const App = sandbox.__App;
+
+// ------------------------- 断言工具 -------------------------
+let pass = 0;
+const fails = [];
+function ok(cond, label, extra) {
+  if (cond) { pass += 1; } else { fails.push(label + (extra ? '  → ' + extra : '')); }
+}
+function eq(actual, expected, label) {
+  ok(actual === expected, label, `实际 ${JSON.stringify(actual)}，期望 ${JSON.stringify(expected)}`);
+}
+function has(str, sub, label) {
+  ok(String(str).indexOf(sub) !== -1, label, `未找到「${sub}」`);
+}
+function notHas(str, sub, label) {
+  ok(String(str).indexOf(sub) === -1, label, `不应出现「${sub}」`);
+}
+
+// 副作用抑制
+const toasts = [];
+App.showToast = function (msg) { toasts.push(String(msg)); };
+function lastToast() { return toasts.length ? toasts[toasts.length - 1] : ''; }
+function resetToast() { toasts.length = 0; }
+App.navigateTo = function (view) { this.currentView = view; };
+App.renderTasksPlaza = function () {};
+App.renderMyTasks = function () {};
+App.renderTasksCharts = function () {};
+App.currentView = 'tasks';
+
+// ------------------------- 工具 -------------------------
+const TASKS = () => MockData.tasks.list || [];
+const ORDERS = () => MockData.tasks.myOrders || [];
+const taskOf = (id) => TASKS().find(t => t.id === id) || null;
+const pubOrdersOf = (taskId) => ORDERS().filter(o => (o.role === 'publisher' || o.role === 'buyer') && o.sourceId === taskId);
+function taskSnapshot(taskId) { return JSON.stringify(taskOf(taskId)); }
+function ordersSnapshot() { return JSON.stringify(ORDERS()); }
+
+function openDetail(taskId, mode, focus) {
+  App.activeTasksMode = mode;
+  App.openTaskDetailPage(taskId, focus);
+  return {
+    body: el('tasks-detail-body').innerHTML,
+    top: el('task-detail-top-actions').innerHTML
+  };
+}
+function topButtonTexts(html) {
+  return (html.match(/>([^<>]+)<\/button>/g) || []).map(s => s.replace(/[<>/button]/g, ''));
+}
+
+const OWN_DRAFT = 'MO-P0';       // 我发布 · 草稿 → TK12
+const OWN_RECRUITING = 'MO-P1';  // 我发布 · 招募中 · manual → TK05（4 位待审候选）
+const OWN_AUTO = 'MO-P1B';       // 我发布 · 招募中 · auto → TK03
+const THEIR_RECRUITING = 'TK01'; // 第三方（品牌方）· 招募中 · manual
+
+// =========================================================================
+// A 组 · 发布方身份判定（唯一口径）
+// =========================================================================
+App.activeTasksMode = 'mine';
+
+eq(App.isPublisherOfTask(taskOf('TK05')), true, 'A01 自己发布的招募中任务（TK05）→ 是发布方');
+eq(App.isPublisherOfTask(taskOf('TK12')), true, 'A02 自己发布的草稿任务（TK12）→ 是发布方');
+eq(App.isPublisherOfTask(taskOf('TK08')), true, 'A03 自己发布的待验收任务（TK08）→ 是发布方');
+eq(App.isPublisherOfTask(taskOf('TK09')), true, 'A04 自己发布的仲裁中任务（TK09）→ 是发布方');
+eq(App.isPublisherOfTask(taskOf('TK11')), true, 'A05 自己发布的已完成任务（TK11）→ 是发布方');
+
+eq(App.isPublisherOfTask(taskOf('TK01')), false, 'A06 第三方品牌方任务（TK01）→ 不是发布方');
+eq(App.isPublisherOfTask(taskOf('TK13')), false, 'A07 第三方企业任务（TK13）→ 不是发布方');
+eq(App.isPublisherOfTask(taskOf('TK06')), false, 'A08 第三方科研机构任务（TK06）→ 不是发布方');
+eq(App.isPublisherOfTask({ id: 'TK999', publisherRole: '某品牌方' }), false, 'A09 台账无记录的未知任务 → 不是发布方');
+eq(App.isPublisherOfTask(null), false, 'A10 null 入参 → 不是发布方');
+
+// 兜底：署名包含当前用户昵称
+const meName = MockData.currentUser.name;
+eq(App.isPublisherOfTask({ id: 'TK998', publisherRole: '企业雇主 / ' + meName }), true,
+  'A11 兜底：署名为「企业雇主 / 当前用户昵称」→ 是发布方');
+eq(App.isPublisherOfTask({ id: 'TK997', publisherRole: '我发布的任务（' + meName + ' / 星芒视觉工作室）' }), true,
+  'A12 兜底：署名为「我发布的任务（当前用户昵称 …）」→ 是发布方');
+
+// 回归护栏：台账未被破坏
+ok(pubOrdersOf('TK05').length >= 1, 'A13 TK05 在发布方台账中有订单条目');
+
+// =========================================================================
+// B 组 · 我的任务 · 招募中（manual）→ 详情页出现【选定此人】
+// =========================================================================
+const tk05 = taskOf('TK05');
+const pending05 = (tk05.applicants || []).filter(a => a.status === 'pending').length;
+const b = openDetail('TK05', 'mine', 'applicants');
+
+eq(App._taskDetailManageMode, true, 'B01 从我的任务进入 → manage 模式');
+has(b.body, 'selectTaskApplicant', 'B02 详情页渲染出【选定此人】按钮（本轮修复的核心）');
+eq((b.body.match(/App\.selectTaskApplicant\('/g) || []).length, pending05,
+  'B03【选定此人】按钮数 = 待审候选人数');
+has(b.body, "App.selectTaskApplicant('TK05'", 'B04 按钮绑定到 selectTaskApplicant 并带上任务 id');
+has(b.body, '选定此人', 'B05 按钮文案为「选定此人」');
+has(b.body, 'id="task-detail-applicants"', 'B06 候选人列表带跳转锚点 id');
+has(b.body, '竞标方案待审', 'B07 待审状态标签与选定按钮并存（标签未被吞掉）');
+
+has(b.top, '选定创作者', 'B08 顶栏为发布方视角「选定创作者」');
+notHas(b.top, '提交报名', 'B09 顶栏不得再对自己的任务显示「提交报名」');
+notHas(b.top, '去报名', 'B10 顶栏不得出现「去报名」');
+has(b.top, 'scrollIntoView', 'B11 顶栏按钮接到锚点跳转');
+has(b.top, 'task-detail-applicants', 'B12 顶栏跳转目标 = 候选人列表锚点');
+
+has(b.body, '请从上方候选人中选定一位合作创作者', 'B13 底部 CTA 提示发布方从候选人中选定');
+has(b.body, '参与竞标创作者与方案池', 'B14 参与人员卡片标题正确');
+
+// 候选人卡片逐个都应是发布方视角
+ok((b.body.match(/selectTaskApplicant/g) || []).length === pending05,
+  'B15 每位待审候选人都恰有一个选定入口');
+
+// =========================================================================
+// C 组 · auto（报名即接）模式不提供选人入口
+// =========================================================================
+const c = openDetail('TK03', 'mine', 'applicants');
+notHas(c.body, 'selectTaskApplicant', 'C01 auto 模式详情页无【选定此人】');
+has(c.top, '查看名额', 'C02 auto 模式顶栏为「查看名额」');
+notHas(c.top, '选定创作者', 'C02b auto 模式顶栏不出现「选定创作者」');
+notHas(c.body, '请从上方候选人中选定一位合作创作者', 'C03 auto 模式不提示选人');
+has(c.body, '参与竞标创作者与方案池', 'C04 auto 模式仍展示候选人池（只读）');
+
+// =========================================================================
+// D 组 · 选定闭环 selectTaskApplicant()
+// =========================================================================
+openDetail('TK05', 'mine', 'applicants');
+const targetId = (tk05.applicants || []).find(a => a.status === 'pending').id;
+const targetName = (tk05.applicants || []).find(a => a.id === targetId).name;
+const beforeOrderCount = pubOrdersOf('TK05').length;
+resetToast();
+
+App.selectTaskApplicant('TK05', targetId);
+
+eq(taskOf('TK05').status, '进行中', 'D01 任务流转为「进行中」');
+eq(taskOf('TK05').selectedCreatorId, targetId, 'D02 记录 selectedCreatorId');
+eq((taskOf('TK05').applicants || []).find(a => a.id === targetId).status, 'accepted',
+  'D03 中标候选人状态转为 accepted');
+eq((taskOf('TK05').applicants || []).filter(a => a.status === 'rejected').length, pending05 - 1,
+  'D04 同批其余候选人全部转为 rejected');
+has(lastToast(), '已选定', 'D05 Toast 提示已选定');
+has(lastToast(), targetName, 'D06 Toast 带上创作者名称');
+
+eq(pubOrdersOf('TK05').length, beforeOrderCount, 'D07 台账**不新增重复条目**（就地转化）');
+const conv = pubOrdersOf('TK05')[0];
+eq(conv.status, '进行中', 'D08 原「招募中」发布订单就地转为「进行中」');
+has(conv.counterpart, targetName, 'D09 订单 counterpart 更新为中标创作者');
+has(conv.coreInfo, targetName, 'D10 订单 coreInfo 更新为已定选人');
+notHas(JSON.stringify(conv), '"招募中"', 'D11 转化后的订单不含残留「招募中」状态');
+
+// 转化后详情页应切到履约视图，不再出现选人入口
+const after = { body: el('tasks-detail-body').innerHTML, top: el('task-detail-top-actions').innerHTML };
+notHas(after.body, 'selectTaskApplicant', 'D12 选定后详情页撤下【选定此人】');
+notHas(after.top, '选定创作者', 'D13 选定后顶栏不再显示「选定创作者」');
+
+// 闸门：非发布方调用被拦截，零变动
+const tk01Before = taskSnapshot('TK01');
+const ordersBefore = ordersSnapshot();
+resetToast();
+App.selectTaskApplicant('TK01', 'AP02');
+eq(taskSnapshot('TK01'), tk01Before, 'D14 非发布方调用 → 任务零变动');
+eq(ordersSnapshot(), ordersBefore, 'D15 非发布方调用 → 台账零变动');
+has(lastToast(), '仅该任务的发布方', 'D16 非发布方调用被拦截并给出原因');
+
+// 闸门：未知任务 / 未知候选人
+resetToast();
+App.selectTaskApplicant('TK999', 'AP01');
+has(lastToast(), '未找到该任务', 'D17 未知任务被拦截');
+resetToast();
+App.selectTaskApplicant('TK13', 'AP_NOT_EXIST');
+has(lastToast(), '未找到该应聘者', 'D18 未知候选人被拦截');
+
+// =========================================================================
+// E 组 · 大厅投稿人视角不受影响
+// =========================================================================
+// TK13（大疆 · manual · 招募中）是「用户既未发布、也未承接」的干净第三方样本
+const e1 = openDetail('TK13', 'hall');
+has(e1.top, '去报名', 'E01 大厅打开第三方招募中任务 → 仍可「去报名」');
+notHas(e1.body, 'selectTaskApplicant', 'E02 大厅打开第三方任务 → 无【选定此人】');
+eq(App.isPublisherOfTask(taskOf('TK13')), false, 'E02b 第三方任务发布方判定为否');
+
+// 已承接的第三方任务 → 维持「已报名」（投稿人视角不被发布方判定污染）
+const e1b = openDetail('TK01', 'hall');
+has(e1b.top, '已报名', 'E02c 已承接的任务在大厅显示「已报名」');
+
+const e2 = openDetail('TK05', 'hall');
+notHas(e2.top, '去报名', 'E03 大厅打开自己发布的任务 → 不得出现「去报名」');
+notHas(e2.top, '提交报名', 'E04 大厅打开自己发布的任务 → 不得出现「提交报名」');
+has(e2.top, 'disabled', 'E04b 自己发布的任务不可报名（按钮置灰）');
+
+const e3 = openDetail('TK03', 'hall');
+notHas(e3.top, '立即接单', 'E05 大厅打开自己发布的 auto 任务 → 不得出现「立即接单」');
+has(e3.top, 'disabled', 'E06 自己发布的 auto 任务不可抢单（按钮置灰）');
+
+// =========================================================================
+// F 组 · 静态契约
+// =========================================================================
+const reIsPub = /^ {2}isPublisherOfTask\s*:\s*function/gm;
+eq((APP_SRC.match(reIsPub) || []).length, 1, 'F01 isPublisherOfTask 定义唯一');
+eq((APP_SRC.match(/^ {2}selectTaskApplicant\s*:\s*function/gm) || []).length, 1, 'F02 selectTaskApplicant 定义唯一');
+
+const pubBlock = APP_SRC.slice(
+  APP_SRC.indexOf('isPublisherOfTask: function'),
+  APP_SRC.indexOf('isMyTakenOrder: function')
+);
+has(pubBlock, 'MockData.tasks.myOrders', 'F03 发布方判定读取「我的任务」台账');
+has(pubBlock, "o.role === 'publisher'", 'F04 台账匹配 role 为 publisher');
+notHas(pubBlock, ".includes('企业')", 'F05 旧关键词白名单（企业）已下线');
+notHas(pubBlock, ".includes('品牌')", 'F06 旧关键词白名单（品牌）已下线');
+notHas(pubBlock, ".includes('发布方')", 'F07 旧关键词白名单（发布方）已下线');
+
+has(APP_SRC, `id="task-detail-applicants"`, 'F08 候选人列表渲染锚点 id');
+has(APP_SRC, "getElementById('task-detail-applicants')", 'F09 顶栏按钮按 id 定位锚点');
+has(APP_SRC, "'仅该任务的发布方可选定合作创作者'", 'F10 selectTaskApplicant 内含发布方闸门');
+
+// 选定入口的渲染条件：manual + 招募中 + 是发布方
+const canSelectLine = APP_SRC.split(/\r?\n/).find(l => /const canSelect =/.test(l)) || '';
+has(canSelectLine, "mode === 'manual'", 'F11 选定入口限 manual 模式');
+has(canSelectLine, "status === '招募中'", 'F12 选定入口限「招募中」状态');
+has(canSelectLine, 'isPublisher', 'F13 选定入口以发布方身份为前提');
+notHas(canSelectLine, 'manage', 'F14 选定入口不再受「从哪个视图进入」限制');
+
+// index.html 未被动过（详情页锚点是 JS 动态渲染的容器）
+has(HTML, 'id="tasks-detail-body"', 'F15 详情页容器节点仍在');
+has(HTML, 'id="task-detail-top-actions"', 'F16 详情页顶栏节点仍在');
+
+// ------------------------- 汇总 -------------------------
+console.log('');
+if (fails.length === 0) {
+  console.log('  通过 ' + pass + ' 项 ｜ 失败 0 项');
+  console.log(' 结论：招募中 → 选定创作者闭环自检通过。\n');
+  process.exit(0);
+} else {
+  console.log('  通过 ' + pass + ' 项 ｜ 失败 ' + fails.length + ' 项');
+  fails.forEach((f, i) => console.log('   ✗ ' + (i + 1) + '. ' + f));
+  console.log('');
+  process.exit(1);
+}

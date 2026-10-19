@@ -1,0 +1,514 @@
+#!/usr/bin/env node
+/**
+ * 任务广场 ·「发布任务」环节草稿任务删除 自检脚本
+ * ---------------------------------------------------------------------------
+ * 零依赖、离线。用最小 DOM 桩加载 js/mock_data.js + js/app.js，断言：
+ *   ① 草稿判定口径唯一（status === '草稿' 或 isDraft === true）；
+ *   ② 草稿卡片渲染出【编辑】+【删除】两个操作，非草稿卡片不得出现【删除】；
+ *   ③ 状态闸门：仅「草稿」可删，已发布任务 / 不存在 id 一律拦截且台账零变动；
+ *   ④ 通用二次确认弹窗 modal-confirm 契约（标题 / 文案 / 确定取消 / 危险态 / 回调）；
+ *   ⑤ 删除结果：台账移除该条、其他订单不受影响、列表与统计同步刷新；
+ *   ⑥ 编辑态收口：resumePublishTaskDraft 记录 id、顶栏按钮显隐、退出即清空；
+ *   ⑦ 草稿转化：由草稿编辑态正式发布后，原草稿条目被移除，不残留重复条目；
+ *   ⑧ 静态契约：DOM 节点、事件绑定、样式类、方法唯一性。
+ *
+ * 用法： node temp/wb-task-draft-verify.js
+ * 退出码 0 = 全过，1 = 有失败
+ */
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+const HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const CSS = fs.readFileSync(path.join(ROOT, 'css', 'style.css'), 'utf8');
+const APP_SRC = fs.readFileSync(path.join(ROOT, 'js', 'app.js'), 'utf8');
+const MOCK_SRC = fs.readFileSync(path.join(ROOT, 'js', 'mock_data.js'), 'utf8');
+
+// ------------------------- 最小 DOM 桩 -------------------------
+class ClassList {
+  constructor() { this.set = new Set(); }
+  add(...c) { c.forEach(x => this.set.add(x)); }
+  remove(...c) { c.forEach(x => this.set.delete(x)); }
+  toggle(c, force) {
+    const on = (force === undefined) ? !this.set.has(c) : !!force;
+    if (on) this.set.add(c); else this.set.delete(c);
+    return on;
+  }
+  contains(c) { return this.set.has(c); }
+}
+
+class El {
+  constructor(id, attrs) {
+    this.id = id;
+    this._attrs = attrs || {};
+    this.innerText = '';
+    this.textContent = '';
+    this.innerHTML = '';
+    this.value = '';
+    this.hidden = false;
+    this.disabled = false;
+    this.style = {};
+    this.classList = new ClassList();
+  }
+  get className() { return Array.from(this.classList.set).join(' '); }
+  set className(v) { this.classList.set = new Set(String(v == null ? '' : v).split(/\s+/).filter(Boolean)); }
+  getAttribute(n) { return this._attrs[n] === undefined ? null : this._attrs[n]; }
+  setAttribute(n, v) { this._attrs[n] = v; }
+  appendChild(c) { return c; }
+  addEventListener() {}
+  querySelectorAll() { return []; }
+  getContext() { return null; }
+  scrollIntoView() {}
+}
+
+const registry = new Map();
+function el(id, attrs) {
+  if (!registry.has(id)) registry.set(id, new El(id, attrs));
+  return registry.get(id);
+}
+
+// 弹窗底座 class 来自 index.html 静态节点，桩里显式补上，
+// App.openModal() 的「下钻置顶」探测才能感知兄弟弹窗
+['modal-confirm'].forEach(id => el(id).classList.add('modal-backdrop'));
+
+const documentStub = {
+  getElementById: (id) => el(id),
+  querySelector: () => null,
+  querySelectorAll: (sel) => {
+    if (sel === '.modal-backdrop.active') {
+      const out = [];
+      registry.forEach(node => {
+        if (node.classList.contains('modal-backdrop') && node.classList.contains('active')) out.push(node);
+      });
+      return out;
+    }
+    return [];
+  },
+  addEventListener: () => {},
+  body: new El('body')
+};
+
+[
+  'tasks-mine-list-container', 'my-tasks-status-tabs',
+  'my-active-tasks-count', 'my-finished-tasks-count',
+  'tasks-main-shell', 'tasks-publish-page', 'tasks-detail-page',
+  'publish-delete-draft-btn',
+  'modal-confirm', 'modal-confirm-title', 'modal-confirm-message',
+  'modal-confirm-ok', 'modal-confirm-cancel', 'modal-confirm-close'
+].forEach(id => el(id));
+
+const windowStub = {
+  location: { hash: '' },
+  scrollTo: () => {},
+  addEventListener: () => {},
+  setTimeout, clearTimeout, setInterval, clearInterval,
+  document: documentStub
+};
+
+const sandbox = {
+  window: windowStub,
+  document: documentStub,
+  console,
+  setTimeout, clearTimeout, setInterval, clearInterval,
+  Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Error,
+  isNaN, parseInt, parseFloat, encodeURIComponent
+};
+sandbox.globalThis = sandbox;
+vm.createContext(sandbox);
+vm.runInContext(MOCK_SRC + '\nglobalThis.__MockData = MockData;', sandbox, { filename: 'mock_data.js' });
+vm.runInContext(APP_SRC + '\nglobalThis.__App = App;', sandbox, { filename: 'app.js' });
+
+const MockData = sandbox.__MockData;
+const App = sandbox.__App;
+
+// ------------------------- 断言工具 -------------------------
+let pass = 0;
+const fails = [];
+function ok(cond, label, extra) {
+  if (cond) { pass += 1; } else { fails.push(label + (extra ? '  → ' + extra : '')); }
+}
+function eq(actual, expected, label) {
+  ok(actual === expected, label, `实际 ${JSON.stringify(actual)}，期望 ${JSON.stringify(expected)}`);
+}
+function has(str, sub, label) {
+  ok(String(str).indexOf(sub) !== -1, label, `未找到「${sub}」`);
+}
+function notHas(str, sub, label) {
+  ok(String(str).indexOf(sub) === -1, label, `不应出现「${sub}」`);
+}
+
+// Toast / 跳转捕获
+const toasts = [];
+App.showToast = function (msg) { toasts.push(String(msg)); };
+let navigatedTo = null;
+App.navigateTo = function (view) { navigatedTo = view; this.currentView = view; };
+App.renderTransactionsTable = function () {};
+App.renderTasksPlaza = function () {};
+App.renderGalleryPlaza = function () {};
+function lastToast() { return toasts.length ? toasts[toasts.length - 1] : ''; }
+function resetToast() { toasts.length = 0; }
+function stubEl(keys) { return keys; }
+
+App.currentView = 'tasks';
+
+// ------------------------- 台账工具 -------------------------
+const ORDERS = () => MockData.tasks.myOrders || [];
+const draftOf = (id) => ORDERS().find(o => o.id === id) || null;
+const DRAFT_ID = 'MO-P0';                       // 种子草稿样本
+const PUBLISHED_ID = 'MO-P1';                   // 种子「招募中」发布任务
+function deepSnapshot() {
+  const map = {};
+  ORDERS().forEach(o => { map[o.id] = JSON.stringify(o); });
+  return map;
+}
+function sameAs(before) {
+  const now = deepSnapshot();
+  const keys = Object.keys(before);
+  if (keys.length !== Object.keys(now).length) return false;
+  return keys.every(k => now[k] === before[k]);
+}
+
+// =========================================================================
+// A 组 · 草稿台账基线
+// =========================================================================
+ok(Array.isArray(MockData.tasks.myOrders), 'A01 我的任务台账存在且为数组');
+
+const seedDraft = draftOf(DRAFT_ID);
+ok(!!seedDraft, 'A02 种子草稿样本 ' + DRAFT_ID + ' 在册');
+eq(seedDraft && seedDraft.status, '草稿', 'A03 种子草稿状态为「草稿」');
+eq(seedDraft && seedDraft.isDraft, true, 'A04 种子草稿带 isDraft 标记');
+eq(seedDraft && !!(seedDraft.rewardAmount > 0), true, 'A05 草稿带有预算金额（规划值，非已冻结资金）');
+
+eq(App.isDraftOrder({ status: '草稿' }), true, 'A06 status=草稿 判定为草稿');
+eq(App.isDraftOrder({ isDraft: true }), true, 'A07 isDraft=true 判定为草稿');
+eq(App.isDraftOrder({ status: '招募中' }), false, 'A08 招募中不算草稿');
+eq(App.isDraftOrder(null), false, 'A09 null 安全返回 false');
+eq(App.isDraftOrder(undefined), false, 'A10 undefined 安全返回 false');
+eq(App.isDraftOrder({ isDraft: false, status: '招募中' }), false, 'A11 isDraft=false 且非草稿状态 → false');
+
+eq(App.findMyOrder(DRAFT_ID) === seedDraft, true, 'A12 findMyOrder 命中草稿');
+eq(App.findMyOrder('NOT-EXIST'), null, 'A13 findMyOrder 未命中返回 null');
+eq(App.findMyOrder(''), null, 'A14 findMyOrder 空 id 返回 null');
+eq(App.findMyOrder(null), null, 'A15 findMyOrder null 安全');
+
+const pubOptions = App.getMyTasksStatusOptions('published');
+ok(pubOptions.indexOf('草稿') !== -1, 'A16 发布任务视角状态标签含「草稿」', pubOptions.join('/'));
+eq(pubOptions.indexOf('草稿'), 1, 'A17「草稿」为发布任务视角第 2 个过滤标签');
+
+const takenOptions = App.getMyTasksStatusOptions('taken');
+eq(takenOptions.indexOf('草稿'), -1, 'A18 承接任务视角不含「草稿」标签');
+
+// =========================================================================
+// B 组 · 草稿卡片渲染
+// =========================================================================
+App.activeTasksMode = 'mine';
+App.activeMyTasksRole = 'published';
+App.activeMyTasksStatus = '全部';
+App.renderMyTasks();
+const allHtml = el('tasks-mine-list-container').innerHTML;
+
+// 按钮文案精确匹配：必须比对完整标签（`>编辑</button>`），
+// 否则「编辑」是「继续编辑」的子串，旧文案会假阳性通过。
+const EDIT_BTN = '>编辑</button>';
+has(allHtml, EDIT_BTN, 'B01 草稿卡片渲染【编辑】');
+notHas(allHtml, '>继续编辑</button>', 'B01b 旧文案【继续编辑】已下线');
+has(allHtml, `App.requestDeleteDraft('${DRAFT_ID}')`, 'B02 草稿卡片的【删除】接到 requestDeleteDraft');
+has(allHtml, `App.resumePublishTaskDraft('${DRAFT_ID}')`, 'B03 草稿卡片的【编辑】接到 resumePublishTaskDraft');
+has(allHtml, 'btn-apply-task is-danger', 'B04 草稿【删除】按钮使用 is-danger 危险样式');
+
+const draftCardCount = (allHtml.match(/App\.requestDeleteDraft\(/g) || []).length;
+const draftOrderCount = ORDERS().filter(o => App.isDraftOrder(o)).length;
+eq(draftCardCount, draftOrderCount, 'B05【删除】按钮数量 = 台账草稿条数（非草稿卡片一律无删除入口）');
+ok(draftOrderCount >= 1, 'B06 台账存在草稿条目', String(draftOrderCount));
+
+// 招中订单的卡片不得出现删除入口：按卡片切分逐张核对
+const cardChunks = allHtml.split('class="task-plaza-card tasks-mine-card"').slice(1);
+ok(cardChunks.length >= 3, 'B07 发布任务视角渲染出多张卡片', String(cardChunks.length));
+const cardsWithDelete = cardChunks.filter(c => c.indexOf('requestDeleteDraft') !== -1);
+const cardsWithout = cardChunks.filter(c => c.indexOf('requestDeleteDraft') === -1);
+eq(cardsWithDelete.length, draftOrderCount, 'B08 仅草稿卡片带【删除】入口');
+ok(cardsWithout.length >= 1, 'B09 存在非草稿卡片（招募中 / 进行中等）', String(cardsWithout.length));
+ok(cardsWithDelete.every(c => c.indexOf(EDIT_BTN) !== -1), 'B10 每张带【删除】的卡片同时有【编辑】');
+ok(cardsWithout.every(c => c.indexOf(EDIT_BTN) === -1), 'B11 非草稿卡片不得出现【编辑】');
+ok(cardsWithDelete.every(c => c.indexOf('>继续编辑</button>') === -1), 'B11b 草稿卡片不再残留旧文案【继续编辑】');
+
+App.activeMyTasksStatus = '草稿';
+App.renderMyTasks();
+const onlyDraftHtml = el('tasks-mine-list-container').innerHTML;
+notHas(onlyDraftHtml, '暂无该状态的发布任务', 'B12「草稿」标签下有内容（非空态）');
+const onlyDraftCount = (onlyDraftHtml.match(/App\.requestDeleteDraft\(/g) || []).length;
+eq(onlyDraftCount, draftOrderCount, 'B13 草稿标签页仅列出草稿且每张卡都有【删除】');
+
+App.activeMyTasksStatus = '全部';
+App.renderMyTasks();
+
+// =========================================================================
+// C 组 · 删除闸门（仅草稿可删）
+// =========================================================================
+let snap = deepSnapshot();
+resetToast();
+App.requestDeleteDraft(PUBLISHED_ID);
+eq(draftOf(PUBLISHED_ID) !== null, true, 'C01 对招募中订单请求删除后台账仍在');
+ok(sameAs(snap), 'C02 拦截时台账零变动');
+has(lastToast(), '仅「草稿」', 'C03 拦截提示说明仅草稿可删');
+eq(lastToast().indexOf('已删除'), -1, 'C04 拦截时不得出现「已删除」字样');
+eq(!!App.pendingConfirmAction, false, 'C05 拦截时不打开确认回调');
+
+snap = deepSnapshot();
+resetToast();
+App.requestDeleteDraft('MO-NOT-EXIST');
+ok(sameAs(snap), 'C06 不存在的 id 台账零变动');
+has(lastToast(), '未找到', 'C07 不存在的 id 给出「未找到」提示');
+
+// 非草稿但带 isDraft=false 的样本
+const fakeId = 'MO-FAKE';
+MockData.tasks.myOrders.push({ id: fakeId, role: 'publisher', title: '测试样本', status: '招募中', isDraft: false });
+snap = deepSnapshot();
+resetToast();
+App.requestDeleteDraft(fakeId);
+ok(sameAs(snap), 'C08 isDraft=false 的非草稿样本被拦截且台账零变动');
+has(lastToast(), '仅「草稿」', 'C09 非草稿样本拦截提示正确');
+MockData.tasks.myOrders = MockData.tasks.myOrders.filter(o => o.id !== fakeId);
+
+// =========================================================================
+// D 组 · 通用二次确认弹窗（modal-confirm）契约
+// =========================================================================
+resetToast();
+App.requestDeleteDraft(DRAFT_ID);
+eq(el('modal-confirm').classList.contains('active'), true, 'D01 二次确认弹窗被打开');
+eq(el('modal-confirm-title').textContent, '删除草稿任务', 'D02 弹窗标题为「删除草稿任务」');
+has(el('modal-confirm-message').textContent, '寒假研学国际宣传短片需求', 'D03 弹窗展示草稿标题');
+has(el('modal-confirm-message').textContent, '不可恢复', 'D04 弹窗明示不可恢复风险');
+eq(el('modal-confirm-ok').textContent, '确认删除', 'D05 确定按钮文案为「确认删除」');
+eq(el('modal-confirm-cancel').textContent, '取消', 'D06 取消按钮文案为「取消」');
+eq(el('modal-confirm-ok').classList.contains('is-danger'), true, 'D07 确定按钮带危险态 is-danger');
+eq(typeof App.pendingConfirmAction, 'function', 'D08 确认回调已登记');
+eq(App.pendingDraftDeleteId, DRAFT_ID, 'D09 待删草稿 id 已登记');
+
+snap = deepSnapshot();
+resetToast();
+App.closeConfirmModal();
+eq(el('modal-confirm').classList.contains('active'), false, 'D10 取消后弹窗关闭');
+eq(App.pendingConfirmAction, null, 'D11 取消后回调被清空');
+eq(draftOf(DRAFT_ID) !== null, true, 'D12 取消后草稿仍保留在台账');
+ok(sameAs(snap), 'D13 取消后台账零变动');
+
+// 危险态复用：非危险的通用确认不应带 is-danger
+App.openConfirmModal({ title: '操作确认', message: '确认执行此操作？' });
+eq(el('modal-confirm-title').textContent, '操作确认', 'D14 通用确认可自定义标题');
+eq(el('modal-confirm-message').textContent, '确认执行此操作？', 'D15 通用确认可自定义文案');
+eq(el('modal-confirm-ok').textContent, '确定', 'D16 未指定 okText 时回落为「确定」');
+eq(el('modal-confirm-ok').classList.contains('is-danger'), false, 'D17 非危险确认不带 is-danger');
+let called = 0;
+App.openConfirmModal({ onConfirm: () => { called += 1; } });
+App.confirmModalAction();
+eq(called, 1, 'D18 确定按钮触发登记的回调');
+eq(el('modal-confirm').classList.contains('active'), false, 'D19 确认后弹窗自动关闭');
+eq(App.pendingConfirmAction, null, 'D20 确认后回调被清空（不可重复触发）');
+App.confirmModalAction();
+eq(called, 1, 'D21 回调不会被二次触发');
+
+// =========================================================================
+// E 组 · 删除结果与台账一致性
+// =========================================================================
+const beforeCount = ORDERS().length;
+const keepIds = ORDERS().filter(o => o.id !== DRAFT_ID).map(o => o.id);
+const snapshotKeep = {};
+ORDERS().filter(o => o.id !== DRAFT_ID).forEach(o => { snapshotKeep[o.id] = JSON.stringify(o); });
+
+resetToast();
+App.requestDeleteDraft(DRAFT_ID);
+App.confirmModalAction();
+
+eq(draftOf(DRAFT_ID), null, 'E01 草稿已从台账移除');
+eq(ORDERS().length, beforeCount - 1, 'E02 台账总条数 -1');
+ok(keepIds.every(id => !!draftOf(id)), 'E03 其余订单条目均未被误删');
+ok(keepIds.every(id => JSON.stringify(draftOf(id)) === snapshotKeep[id]), 'E04 其余订单内容逐字未变');
+eq(el('modal-confirm').classList.contains('active'), false, 'E05 删除后确认弹窗已关闭');
+eq(App.pendingDraftDeleteId, null, 'E06 待删 id 已清空');
+has(lastToast(), '已删除', 'E07 删除成功 Toast');
+has(lastToast(), '寒假研学国际宣传短片需求', 'E08 Toast 回显草稿标题（去除【草稿】前缀）');
+eq(lastToast().indexOf('【草稿】'), -1, 'E09 Toast 不携带【草稿】前缀');
+
+const listAfter = el('tasks-mine-list-container').innerHTML;
+notHas(listAfter, `App.requestDeleteDraft('${DRAFT_ID}')`, 'E10 列表已刷新，被删草稿不再出现');
+eq((listAfter.match(/App\.requestDeleteDraft\(/g) || []).length, 0, 'E11 删除后【删除】按钮数量归零');
+
+App.activeMyTasksStatus = '草稿';
+App.renderMyTasks();
+has(el('tasks-mine-list-container').innerHTML, '暂无该状态的发布任务', 'E12 草稿清空后标签页显示空态');
+App.activeMyTasksStatus = '全部';
+
+// 已发布任务不受影响：招募中订单仍在且仍走详情页
+eq(draftOf(PUBLISHED_ID) !== null, true, 'E13 招募中订单未受影响');
+
+// 统计口径同步
+App.syncTaskStats();
+ok(MockData.currentUser.activeTasks >= 0, 'E14 任务统计可正常重算（activeTasks）');
+ok(typeof el('my-active-tasks-count').innerText !== 'undefined', 'E15 统计节点被写入');
+
+// =========================================================================
+// F 组 · 草稿编辑态收口
+// =========================================================================
+// 重新注入一条草稿用于编辑态验证
+MockData.tasks.myOrders.unshift({
+  id: 'MO-ZD1', role: 'publisher', type: 'plaza', sourceId: 'TK99',
+  title: '【草稿】测试用草稿需求', status: '草稿', isDraft: true,
+  rewardMoney: '¥ 1,000', rewardAmount: 1000, cover: 'assets/covers/task_main_1.png',
+  counterpart: '待发布', deadline: '草稿随时可编辑', coreInfo: '草稿箱 · 未付保证金'
+});
+
+navigatedTo = null;
+App.currentView = 'assets';
+App.resumePublishTaskDraft('MO-ZD1');
+eq(navigatedTo, 'tasks', 'F01 非任务页调用续编会先切到任务广场');
+eq(App.editingDraftOrderId, 'MO-ZD1', 'F02 记录编辑中的草稿 id');
+eq(el('tasks-publish-page').hidden, false, 'F03 进入发布任务中心全页');
+eq(el('publish-delete-draft-btn').hidden, false, 'F04 顶栏【删除草稿】按钮亮出');
+has(lastToast(), '删除草稿', 'F05 Toast 提示可放弃草稿的入口');
+
+App.closePublishTaskPage(true);
+eq(App.editingDraftOrderId, null, 'F06 退出发布页即清空编辑态');
+eq(el('publish-delete-draft-btn').hidden, true, 'F07 退出后【删除草稿】按钮隐藏');
+eq(el('tasks-publish-page').hidden, true, 'F08 已退回任务台账主视图');
+
+// 从大厅「发布任务」入口起草：必须清空残留编辑态
+App.editingDraftOrderId = 'MO-ZD1';
+App.openPublishTaskModal();
+eq(App.editingDraftOrderId, null, 'F09 大厅【发布任务】入口清空草稿编辑态（从零起草）');
+eq(el('publish-delete-draft-btn').hidden, true, 'F10 从零起草时顶栏无【删除草稿】');
+
+// 编辑态指向已失效草稿：打开发布页时自动脱敏
+App.editingDraftOrderId = 'MO-ALREADY-GONE';
+App.openPublishTaskPage();
+eq(App.editingDraftOrderId, null, 'F11 编辑态指向不存在订单时自动清空');
+eq(el('publish-delete-draft-btn').hidden, true, 'F12 编辑态失效时按钮隐藏');
+
+// 编辑态下删除当前草稿 → 应退回列表
+App.currentView = 'tasks';
+App.resumePublishTaskDraft('MO-ZD1');
+eq(el('publish-delete-draft-btn').hidden, false, 'F13 顶栏按钮在草稿编辑态可见');
+resetToast();
+App.requestDeleteDraft(App.editingDraftOrderId);
+App.confirmModalAction();
+eq(draftOf('MO-ZD1'), null, 'F14 编辑中的草稿被删除');
+eq(App.editingDraftOrderId, null, 'F15 删除后编辑态被清空');
+eq(el('tasks-publish-page').hidden, true, 'F16 删除编辑中的草稿后自动退出发布任务中心');
+has(lastToast(), '已删除', 'F17 删除 Toast 正常');
+
+// 顶栏按钮在非草稿态直接调用会被拦截
+snap = deepSnapshot();
+resetToast();
+const nonDraftId = ORDERS().find(o => !App.isDraftOrder(o)).id;
+App.requestDeleteDraft(nonDraftId);
+ok(sameAs(snap), 'F18 顶栏入口对非草稿同样被拦截');
+
+// =========================================================================
+// G 组 · 草稿转化为发布
+// =========================================================================
+MockData.tasks.myOrders.unshift({
+  id: 'MO-ZD2', role: 'publisher', type: 'plaza', sourceId: 'TK98',
+  title: '【草稿】待转化草稿', status: '草稿', isDraft: true,
+  rewardMoney: '¥ 2,000', rewardAmount: 2000, cover: 'assets/covers/task_main_1.png',
+  counterpart: '待发布', deadline: '草稿随时可编辑', coreInfo: '草稿箱 · 未付保证金'
+});
+const listBeforePublish = (MockData.tasks.list || []).length;
+const ordersBeforePublish = ORDERS().length;
+
+App.currentView = 'tasks';
+App.resumePublishTaskDraft('MO-ZD2');
+eq(App.editingDraftOrderId, 'MO-ZD2', 'G01 进入草稿编辑态');
+
+// 兜底：把预算调到小额，确保托管冻结可通过
+el('task-pub-budget').value = '0';
+resetToast();
+App.submitPublishTask(false);
+
+eq(draftOf('MO-ZD2'), null, 'G02 发布成功后原草稿条目被移除（状态转化，不残留重复条目');
+eq(ORDERS().length, ordersBeforePublish, 'G03 台账总条数持平：草稿 -1 / 新发布 +1');
+eq((MockData.tasks.list || []).length, listBeforePublish + 1, 'G04 大厅新增 1 条任务');
+eq(App.editingDraftOrderId, null, 'G05 发布后编辑态被清空');
+eq(el('publish-delete-draft-btn').hidden, true, 'G06 发布后【删除草稿】按钮隐藏');
+
+const freshOrder = ORDERS().find(o => o.status === '招募中' && o.id.indexOf('MO_') === 0);
+ok(!!freshOrder, 'G07 生成新的「招募中」发布任务条目');
+eq(freshOrder && App.isDraftOrder(freshOrder), false, 'G08 新条目不是草稿（不可删）');
+resetToast();
+const snapshotAfterPublish = deepSnapshot();
+App.requestDeleteDraft(freshOrder.id);
+ok(sameAs(snapshotAfterPublish), 'G09 刚发布的任务不可删除，台账零变动');
+has(lastToast(), '仅「草稿」', 'G10 已发布任务的删除请求被正确拦截');
+
+// 保存草稿（isDraft=true）路径不应误删原草稿
+MockData.tasks.myOrders.unshift({
+  id: 'MO-ZD3', role: 'publisher', type: 'plaza', sourceId: 'TK97',
+  title: '【草稿】暂存路径草稿', status: '草稿', isDraft: true,
+  rewardMoney: '¥ 3,000', rewardAmount: 3000, cover: 'assets/covers/task_main_1.png',
+  counterpart: '待发布', deadline: '草稿随时可编辑', coreInfo: '草稿箱 · 未付保证金'
+});
+App.resumePublishTaskDraft('MO-ZD3');
+el('task-pub-budget').value = '0';
+App.submitPublishTask(true);
+eq(draftOf('MO-ZD3') !== null, true, 'G11 【保存草稿】路径不触发草稿转化清理（原草稿仍在）');
+App.editingDraftOrderId = null;
+
+// =========================================================================
+// H 组 · 静态契约（DOM / 绑定 / 样式 / 方法唯一性）
+// =========================================================================
+has(HTML, 'id="publish-delete-draft-btn"', 'H01 发布页顶栏存在【删除草稿】按钮节点');
+has(HTML, 'App.requestDeleteDraft(App.editingDraftOrderId)', 'H02 顶栏按钮接到 requestDeleteDraft');
+has(HTML, 'class="hero-btn-danger" id="publish-delete-draft-btn"', 'H03 顶栏按钮使用危险样式');
+has(HTML, 'id="publish-delete-draft-btn" onclick=', 'H04 顶栏按钮已绑定点击事件');
+ok(/id="publish-delete-draft-btn"[^>]*\shidden/.test(HTML), 'H05 顶栏按钮默认隐藏（仅草稿编辑态亮出）');
+
+has(HTML, 'id="modal-confirm"', 'H06 通用确认弹窗节点存在');
+has(HTML, 'onclick="App.closeConfirmModal()"', 'H07 取消/关闭按钮绑定 closeConfirmModal');
+has(HTML, 'onclick="App.confirmModalAction()"', 'H08 确定按钮绑定 confirmModalAction');
+has(HTML, 'id="modal-confirm-ok"', 'H09 确定按钮节点存在');
+has(HTML, 'id="modal-confirm-cancel"', 'H10 取消按钮节点存在');
+has(HTML, 'modal-confirm-backdrop', 'H11 确认弹窗带独立底色类（z-index 1200 置顶层）');
+
+has(CSS, '.hero-btn-danger', 'H12 危险按钮样式已定义');
+has(CSS, '.hero-btn-primary.is-danger', 'H13 主按钮危险态样式已定义');
+has(CSS, '.btn-apply-task.is-danger', 'H14 卡片删除按钮危险样式已定义');
+
+// 方法唯一性：新增方法不得与既有定义重名
+['isDraftOrder', 'findMyOrder', 'syncPublishDraftActions', 'openConfirmModal',
+  'closeConfirmModal', 'confirmModalAction', 'requestDeleteDraft', 'confirmDeleteDraft',
+  'resumePublishTaskDraft'].forEach((fn) => {
+  const re = new RegExp('^ {2}' + fn + '\\s*:\\s*(?:function|\\()', 'gm');
+  const hits = APP_SRC.match(re) || [];
+  eq(hits.length, 1, 'H15 方法唯一：' + fn + ' 仅定义 1 处');
+});
+
+eq(/^ {2}submitPublishTask\s*:\s*function/.test(APP_SRC) || APP_SRC.indexOf('submitPublishTask: function') !== -1, true,
+  'H16 submitPublishTask 定义存在');
+
+// 仅草稿可删：源码中所有删除入口都先过 isDraftOrder 闸门
+const reqBlock = APP_SRC.slice(
+  APP_SRC.indexOf('requestDeleteDraft: function'),
+  APP_SRC.indexOf('confirmDeleteDraft: function')
+);
+has(reqBlock, 'this.isDraftOrder(order)', 'H17 requestDeleteDraft 内含草稿闸门');
+const confBlock = APP_SRC.slice(
+  APP_SRC.indexOf('confirmDeleteDraft: function'),
+  APP_SRC.indexOf('confirmDeleteDraft: function') + 900
+);
+has(confBlock, 'this.isDraftOrder(orders[idx])', 'H18 confirmDeleteDraft 二次校验草稿闸门');
+
+// =========================================================================
+console.log('\n' + '-'.repeat(72));
+console.log(' 任务广场 ·「发布任务」草稿任务删除 自检');
+console.log('-'.repeat(72));
+console.log('  通过 ' + pass + ' 项 ｜ 失败 ' + fails.length + ' 项');
+if (fails.length) {
+  console.log('-'.repeat(72));
+  fails.forEach((f, i) => console.log('  ✗ ' + (i + 1) + '. ' + f));
+}
+console.log('-'.repeat(72));
+console.log(fails.length === 0 ? ' 结论：草稿删除闭环全链路自检通过。' : ' 结论：存在未通过项，请修复后重跑。');
+console.log('-'.repeat(72) + '\n');
+process.exit(fails.length === 0 ? 0 : 1);

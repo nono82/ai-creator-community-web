@@ -1,0 +1,119 @@
+Created At: 2026-09-17T17:34:38+08:00
+Completed At: 2026-09-17T17:34:38+08:00
+File Path: `file:///Users/huangjianbin/Desktop/AI%E5%88%9B%E4%BD%9C%E8%80%85%E7%A4%BE%E5%8C%BA/ai-creator-community/js/app.js`
+Total Lines: 7991
+Total Bytes: 357891
+Showing lines 4140 to 4250
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4140:               <div class="detail-review-tags">
+4141:                 <span class="detail-review-tag">#需求清晰</span>
+4142:                 <span class="detail-review-tag">#打款爽快</span>
+4143:                 <span class="detail-review-tag">#五星雇主</span>
+4144:               </div>
+4145:             </div>
+4146:           </div>
+4147:         </div>
+4148: 
+4149:         <!-- 商业成果归档与展厅收录情况 -->
+4150:         <div class="detail-state-card">
+4151:           <div class="detail-state-card-head">
+4152:             <h3 class="detail-state-card-title">
+4153:               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+4154:               商业版权归档与展厅精选收录
+4155:             </h3>
+4156:             <span class="detail-state-card-badge" style="background:#EEF2FF; color:var(--primary);">版权存证编号：OPC-CERT-202609-088</span>
+4157:           </div>
+4158:           <div style="display:flex; align-items:center; justify-content:space-between; background:#F8FAFC; border-radius:10px; padding:14px 18px;">
+4159:             <div>
+4160:               <div style="font-weight:700; font-size:14px; color:var(--text-primary); margin-bottom:4px;">该任务优秀成果已正式入选【作品展厅 · 精选馆】</div>
+4161:               <div style="font-size:12.5px; color:var(--text-secondary);">全平台创作者可前往展厅观摩学习，其他品牌商可直接基于该样片发起同款定向定制。</div>
+4162:             </div>
+4163:             <button type="button" class="hero-btn-primary" style="white-space:nowrap; padding:8px 16px; font-size:12.5px;" onclick="App.setTasksMode('gallery'); App.closeTaskDetailPage();">逛作品展厅查看</button>
+4164:           </div>
+4165:         </div>
+4166:       </div>`;
+4167:   },
+4168: 
+4169:   // 7. 未成交 / 已截止：结案审计 + 资金退回凭证 + 创作者竞标落选补偿
+4170:   renderSectionClosed: function(task, isPublisher, myOrderAny) {
+4171:     return `
+4172:       <div class="detail-state-section">
+4173:         <div class="detail-state-card">
+4174:           <div class="detail-state-card-head">
+4175:             <h3 class="detail-state-card-title" style="color:var(--text-secondary);">
+4176:               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+4177:               商单结案审计与安全善后报告
+4178:             </h3>
+4179:             <span class="detail-state-card-badge" style="background:#F1F5F9; color:#64748B;">商单状态：未成交结案 · 全周期审计合规</span>
+4180:           </div>
+4181: 
+4182:           <div style="background:#F8FAFC; border-radius:10px; padding:14px 16px; margin-bottom:14px; font-size:13px; color:var(--text-secondary); line-height:1.6;">
+4183:             <strong>结案原因说明：</strong>本商单招募期满，由于项目非标定制要求特殊，未能匹配到完全契合的高校创作方，系统已自动触发安全结案机制。<br>
+4184:             <strong>资金退回凭证：</strong>发布方预先全额托管的赏金 <strong>${task.rewardMoney || '¥ 5,000'}</strong> 已通过工行资金监管通道 100% 原路返还至发布方账户，零手续费。<br>
+4185:             <strong>创作者竞标保护：</strong>所有提交了有效竞标方案的高校学生个体，平台均已补偿发放 <strong>5点创作积分 + 1点信誉分</strong>。
+4186:           </div>
+4187: 
+4188:           <div style="display:flex; justify-content:flex-end; gap:10px;">
+4189:             <button type="button" class="hero-btn-secondary" onclick="App.closeTaskDetailPage()">返回任务大厅</button>
+4190:             ${isPublisher ? `<button type="button" class="hero-btn-primary" onclick="App.openPublishTaskModal()">调整赏金并重新发布</button>` : ''}
+4191:           </div>
+4192:         </div>
+4193:       </div>`;
+4194:   },
+4195: 
+4196:   renderTaskApplicantsSection: function(task, isPublisher, manageMode) {
+4197:     const mode = this.getTaskAcceptMode(task);
+4198:     const applicants = task.applicants || [];
+4199:     const life = this.getTaskHallLifecycle(task);
+4200:     const manage = manageMode === true || (manageMode == null && !!this._taskDetailManageMode);
+4201: 
+4202:     // 大厅公开详情：所有人一致的基本说明；本人已报名时提示已报名
+4203:     if (!manage) {
+4204:       if (life === 'open') {
+4205:         const my = this.getMyCreatorOrderForTask(task.id, { includeDone: true });
+4206:         const applied = !!(my && ['待选定', '进行中', '待验收'].includes(my.status));
+4207:         return `
+4208:       <section class="tasks-detail-card tasks-detail-applicants" id="task-detail-applicants">
+4209:         <div class="tasks-detail-applicants-head">
+4210:           <h3>${mode === 'manual' ? '报名说明' : '接单说明'}</h3>
+4211:           <span>${this.formatTaskParticipants(task)}${applied ? ' · 你已报名' : ''}</span>
+4212:         </div>
+4213:         <p class="tasks-detail-text is-muted">${applied
+4214:           ? (mode === 'manual'
+4215:             ? '你已提交报名，请等待发布方选定。可在「我的任务 · 承接任务」查看进度。'
+4216:             : '你已接单成功，可在「我的任务 · 承接任务」继续履约。')
+4217:           : (mode === 'manual'
+4218:             ? '发布方选定模式：提交报名后等待发布方确认合作人选。'
+4219:             : '报名即接模式：名额未满时可直接接单，接单后进入履约。')}</p>
+4220:       </section>`;
+4221:       }
+4222:       return `
+4223:       <section class="tasks-detail-card tasks-detail-applicants" id="task-detail-applicants">
+4224:         <div class="tasks-detail-applicants-head">
+4225:           <h3>任务概况</h3>
+4226:           <span>${life === 'active' ? '履约中' : '已结束'}</span>
+4227:         </div>
+4228:         <p class="tasks-detail-text is-muted">大厅仅展示公开基本信息（需求、赏金、截止时间等）。</p>
+4229:       </section>`;
+4230:     }
+4231: 
+4232:     if (!isPublisher) {
+4233:       if (life !== 'open') {
+4234:         const selected = applicants.find(a => a.status === 'accepted' || a.id === task.selectedCreatorId);
+4235:         return `
+4236:       <section class="tasks-detail-card tasks-detail-applicants" id="task-detail-applicants">
+4237:         <div class="tasks-detail-applicants-head">
+4238:           <h3>任务概况</h3>
+4239:           <span>${life === 'active' ? '履约中' : '已结束'}</span>
+4240:         </div>
+4241:         <p class="tasks-detail-text is-muted">${selected
+4242:           ? `合作创作者：${selected.name}。`
+4243:           : '可在下方查看履约进度与日报。'}</p>
+4244:       </section>`;
+4245:       }
+4246:       if (mode === 'auto') {
+4247:         return `
+4248:       <section class="tasks-detail-card tasks-detail-applicants" id="task-detail-applicants">
+4249:         <div class="tasks-detail-applicants-head">
+4250:           <h3>接单说明</h3>
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

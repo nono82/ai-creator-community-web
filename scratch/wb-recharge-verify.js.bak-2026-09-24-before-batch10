@@ -1,0 +1,427 @@
+#!/usr/bin/env node
+/**
+ * 人民币账户充值 · 仅限已绑定本人同名借记卡 自检脚本
+ * ---------------------------------------------------------------------------
+ * 零依赖、离线。用最小 DOM 桩加载 js/mock_data.js + js/app.js，断言：
+ *   ① 充值渠道收敛：聚合支付（微信 / 支付宝）与银联对公转账整体下线，
+ *      只能经「已在安全设置绑定的本人同名借记卡」协议代扣；
+ *   ② 充值三闸：必须已实名 → 必须已绑定银行卡（不接受临时输卡号）→ 仅限借记卡；
+ *   ③ 不合格已绑卡在下拉中置灰并标注不可用原因（口径在界面可见）；
+ *   ④ 拦截时资金台账零变动；通过时余额、可提现余额、breakdown、流水四处同步；
+ *   ⑤ 与绑卡台账联动（新绑卡立即可选 / 解绑后同步收敛），且绑卡本身零资金动作；
+ *   ⑥ 静态契约（DOM 节点、渠道下拉已删除、样式类齐备、方法无重复定义）。
+ *
+ * 用法： node temp/wb-recharge-verify.js
+ * 退出码 0 = 全过，1 = 有失败
+ */
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const ROOT = path.resolve(__dirname, '..');
+const HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const CSS = fs.readFileSync(path.join(ROOT, 'css', 'style.css'), 'utf8');
+const APP_SRC = fs.readFileSync(path.join(ROOT, 'js', 'app.js'), 'utf8');
+const MOCK_SRC = fs.readFileSync(path.join(ROOT, 'js', 'mock_data.js'), 'utf8');
+
+// ------------------------- 最小 DOM 桩 -------------------------
+class ClassList {
+  constructor() { this.set = new Set(); }
+  add(...c) { c.forEach(x => this.set.add(x)); }
+  remove(...c) { c.forEach(x => this.set.delete(x)); }
+  toggle(c, force) {
+    const on = (force === undefined) ? !this.set.has(c) : !!force;
+    if (on) this.set.add(c); else this.set.delete(c);
+    return on;
+  }
+  contains(c) { return this.set.has(c); }
+}
+
+class El {
+  constructor(id, attrs) {
+    this.id = id;
+    this._attrs = attrs || {};
+    this.innerText = '';
+    this.textContent = '';
+    this.innerHTML = '';
+    this.value = '';
+    this.disabled = false;
+    this.style = {};
+    this.classList = new ClassList();
+  }
+  // className 与 classList 在真实 DOM 中是同一份数据的两种视图，桩必须同步
+  get className() { return Array.from(this.classList.set).join(' '); }
+  set className(v) { this.classList.set = new Set(String(v == null ? '' : v).split(/\s+/).filter(Boolean)); }
+  getAttribute(n) { return this._attrs[n] === undefined ? null : this._attrs[n]; }
+  setAttribute(n, v) { this._attrs[n] = v; }
+  appendChild(c) { return c; }
+  addEventListener() {}
+  querySelectorAll() { return []; }
+  getContext() { return null; }
+  scrollIntoView() {}
+}
+
+const registry = new Map();
+function el(id, attrs) {
+  if (!registry.has(id)) registry.set(id, new El(id, attrs));
+  return registry.get(id);
+}
+
+const documentStub = {
+  getElementById: (id) => el(id),
+  querySelector: () => null,
+  querySelectorAll: () => [],
+  addEventListener: () => {},
+  body: new El('body')
+};
+
+[
+  'modal-account-recharge', 'recharge-cur-balance', 'recharge-cur-withdrawable',
+  'recharge-rule-row', 'recharge-card-select', 'recharge-card-note',
+  'recharge-add-card-row', 'recharge-amount-input', 'recharge-submit-btn',
+  'modal-bank-card-bind', 'bank-bind-title', 'bank-bind-sub',
+  'bank-bind-verify-strip', 'bank-bind-verify-text', 'bank-bind-verify-state',
+  'bank-bind-rule-row', 'bank-bind-rebind-strip',
+  'bank-bind-holder', 'bank-bind-cardno', 'bank-bind-branch', 'bank-bind-code',
+  'bank-bind-detect', 'bank-bind-demo', 'bank-bind-hint',
+  'bank-bind-code-btn', 'bank-bind-submit-btn',
+  'modal-bank-card-manage', 'bank-manage-rule-row', 'bank-manage-list', 'bank-manage-tip', 'bank-manage-add',
+  'modal-withdraw', 'withdraw-account-select', 'withdraw-account-note',
+  'withdraw-amount-input', 'withdraw-amount-hint', 'withdraw-submit-btn',
+  'withdraw-verify-strip', 'withdraw-verify-text', 'withdraw-verify-state', 'withdraw-rule-row',
+  'asset-display-balance', 'asset-display-withdrawable', 'escrow-library-desc'
+].forEach(id => el(id));
+
+const windowStub = {
+  location: { hash: '' },
+  scrollTo: () => {},
+  addEventListener: () => {},
+  setTimeout, clearTimeout, setInterval, clearInterval,
+  document: documentStub
+};
+
+const sandbox = {
+  window: windowStub,
+  document: documentStub,
+  console,
+  setTimeout, clearTimeout, setInterval, clearInterval,
+  Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Error,
+  isNaN, parseInt, parseFloat, encodeURIComponent
+};
+sandbox.globalThis = sandbox;
+vm.createContext(sandbox);
+vm.runInContext(MOCK_SRC + '\nglobalThis.__MockData = MockData;', sandbox, { filename: 'mock_data.js' });
+vm.runInContext(APP_SRC + '\nglobalThis.__App = App;', sandbox, { filename: 'app.js' });
+
+const MockData = sandbox.__MockData;
+const App = sandbox.__App;
+
+// ------------------------- 断言工具 -------------------------
+let pass = 0;
+const fails = [];
+function ok(cond, label, extra) {
+  if (cond) { pass += 1; } else { fails.push(label + (extra ? '  → ' + extra : '')); }
+}
+function eq(actual, expected, label) {
+  ok(actual === expected, label, `实际 ${JSON.stringify(actual)}，期望 ${JSON.stringify(expected)}`);
+}
+function has(str, sub, label) {
+  ok(String(str).indexOf(sub) !== -1, label, `未找到「${sub}」`);
+}
+function notHas(str, sub, label) {
+  ok(String(str).indexOf(sub) === -1, label, `不应出现「${sub}」`);
+}
+function count(str, re) { return (String(str).match(re) || []).length; }
+
+// Toast / 跳转捕获
+const toasts = [];
+App.showToast = function (msg) { toasts.push(String(msg)); };
+let securityOpenedWith = null;
+const origOpenSecuritySettings = App.openSecuritySettings.bind(App);
+App.openSecuritySettings = function (focusItem) {
+  securityOpenedWith = focusItem;
+  return origOpenSecuritySettings(focusItem);
+};
+App.renderTransactionsTable = function () {};
+
+const num = (s) => parseFloat(String(s == null ? '0' : s).replace(/[,\s¥]/g, '')) || 0;
+function lastToast() { return toasts.length ? toasts[toasts.length - 1] : ''; }
+function resetToast() { toasts.length = 0; }
+
+const REAL = MockData.currentUser.realName;
+
+// ------------------------- 不合规存量样本注入器 -------------------------
+// 生产台账固定 2 张本人同名借记卡（与常用功能「银行卡管理」列表 2 条记录一致）；
+// 「信用卡 / 异名卡」两类不合规样本由本脚本临时注入，用于覆盖充值侧
+// 【仅限借记卡】与【仅限本人卡】两闸的拦截路径。
+const LEGACY = {
+  credit: {
+    id: 'BC3', bank: '中国银行', cardNo: '6227601234596608', tail: '6608',
+    cardType: 'credit', cardTypeLabel: '信用卡', holder: '黄*彬',
+    branch: '南京城中支行', boundAt: '2024-02-20', isDefault: false
+  },
+  otherName: {
+    id: 'BC4', bank: '招商银行', cardNo: '6225888765403302', tail: '3302',
+    cardType: 'debit', cardTypeLabel: '储蓄卡（借记卡）', holder: '李*华',
+    branch: '南京新街口支行', boundAt: '2024-02-25', isDefault: false
+  }
+};
+function pushLegacy(...keys) {
+  keys.forEach(k => MockData.assets.bankCards.push(Object.assign({}, LEGACY[k])));
+}
+
+// 冻结金额不在 cards 上，唯一真源是 breakdown 的「冻结金额」项
+const frozenOf = () => {
+  const it = (MockData.assets.breakdown.items || []).find(x => x.label === '冻结金额');
+  return num(it && it.value);
+};
+const snap = () => ({
+  balance: num(MockData.assets.cards.balance),
+  withdrawable: num(MockData.assets.cards.withdrawable),
+  frozen: frozenOf(),
+  txCount: MockData.assets.transactions.length
+});
+
+// =========================================================================
+console.log('== A. 数据层：充值规则与渠道收敛 ==');
+const rr = MockData.assets.rechargeRules;
+ok(!!rr, 'A01 rechargeRules 唯一真源存在');
+eq(rr.boundCardOnly, true, 'A02 【要求】只能使用已绑定银行卡充值');
+eq(rr.requireIdVerified, true, 'A03 必须已实名方可充值');
+eq(rr.debitOnly, true, 'A04 仅限借记卡充值');
+eq(rr.sameNameOnly, true, 'A05 仅限本人同名卡充值');
+eq(rr.maxPerTx, 50000, 'A06 单笔充值上限 ¥50,000');
+ok(!!rr.arrivalNote, 'A07 到账时效说明存在', rr.arrivalNote);
+has(rr.note, '借记卡', 'A08 口径文案明确借记卡限制');
+
+const txNames = (MockData.assets.transactions || []).map(t => String(t.name || ''));
+const rechargeTx = txNames.filter(n => n.indexOf('人民币账户充值') === 0);
+ok(rechargeTx.length >= 2, 'A09 含历史充值流水', rechargeTx.length);
+ok(rechargeTx.every(n => n.indexOf('微信支付') === -1 && n.indexOf('支付宝') === -1 && n.indexOf('银联对公') === -1),
+  'A10 历史充值流水渠道已无聚合支付 / 对公转账字样');
+ok(rechargeTx.every(n => /尾号 \d{4}/.test(n)), 'A11 历史充值流水渠道可追溯到尾号');
+
+const inv = App.getInvoiceRecords();
+ok(inv.length >= 2, 'A12 发票管理可开票记录来自充值流水');
+ok(inv.every(r => r.channel.indexOf('微信') === -1 && r.channel.indexOf('支付宝') === -1 && r.channel.indexOf('银联对公') === -1),
+  'A13 发票记录的充值渠道同样不含已下线渠道');
+ok(inv.some(r => r.channel.indexOf('尾号') !== -1), 'A14 发票渠道含扣款卡尾号');
+
+// 生产台账基线：固定 2 张本人同名借记卡（对应「银行卡管理」列表的 2 条记录）
+const prodCards = MockData.assets.bankCards || [];
+eq(prodCards.length, 2, 'A15 【台账基线】生产台账固定 2 张（与「银行卡管理」列表 2 条一致）');
+ok(prodCards.every(c => c.cardType === 'debit' && c.holder === REAL),
+  'A16 生产台账 2 张均为本人同名借记卡（可用于充值）');
+
+// 注入 2 张不合规样本，覆盖充值侧「仅限借记卡 / 仅限本人卡」两闸
+pushLegacy('credit', 'otherName');
+eq(MockData.assets.bankCards.length, 4, 'A17 注入 2 张不合规样本后台账 = 4 张（供拦截断言）');
+
+// =========================================================================
+console.log('== B. 规则读取与可用卡来源 ==');
+eq(App.getRechargeRules().boundCardOnly, true, 'B01 getRechargeRules 暴露 boundCardOnly');
+eq(App.getRechargeRules().maxPerTx, 50000, 'B02 getRechargeRules 暴露 maxPerTx');
+ok(!!App.getRechargeRules().arrivalNote, 'B03 getRechargeRules 暴露到账时效');
+eq(App.getRechargeCards(), MockData.assets.bankCards, 'B04 充值可用卡与绑卡台账是同一份数组（同源）');
+eq(App.getRechargeCards().length, App.getBankCards().length, 'B05 充值可用卡数 = 已绑定卡数');
+
+// =========================================================================
+console.log('== C. 单卡准入校验（充值三闸） ==');
+const c1 = App.validateRechargeCard('');
+ok(!c1.ok, 'C01 未选择银行卡 → 拦截');
+has(c1.reason, '请选择', 'C02 未选卡给出「请选择」引导');
+const cBC1 = App.validateRechargeCard('BC1');
+ok(cBC1.ok, 'C03 同名借记卡 BC1 → 通过', JSON.stringify(cBC1.reason));
+const cBC3 = App.validateRechargeCard('BC3');
+ok(!cBC3.ok, 'C04 信用卡 BC3 → 拦截（仅限借记卡）');
+has(cBC3.reason, '仅支持使用银行借记卡充值', 'C05 信用卡给出借记卡口径原因');
+const cBC4 = App.validateRechargeCard('BC4');
+ok(!cBC4.ok, 'C06 异名借记卡 BC4 → 拦截（仅限本人卡）');
+has(cBC4.reason, REAL, 'C07 异名卡原因回显实名姓名');
+const cMiss = App.validateRechargeCard('BC999');
+ok(!cMiss.ok, 'C08 不存在的卡 id → 拦截');
+
+MockData.currentUser.idVerified = false;
+const cUnverified = App.validateRechargeCard('BC1');
+ok(!cUnverified.ok, 'C09 未实名 + 可用卡 → 仍拦截');
+has(cUnverified.reason, '实名认证', 'C10 未实名原因含「实名认证」');
+
+// =========================================================================
+console.log('== D. 弹窗渲染（口径 chips / 下拉置灰 / 提交按钮可用态） ==');
+App.openAccountRechargeModal();
+eq(el('modal-account-recharge').classList.contains('active'), true, 'D01 充值弹窗已打开');
+eq(el('recharge-cur-balance').innerText, '¥ ' + MockData.assets.cards.balance, 'D02 余额条回填账户总额');
+eq(el('recharge-cur-withdrawable').innerText, '可提现 ¥ ' + MockData.assets.cards.withdrawable, 'D03 余额条回填可提现金额');
+has(el('recharge-rule-row').innerHTML, '必须已实名', 'D04 口径 chips 含「必须已实名」');
+has(el('recharge-rule-row').innerHTML, '仅限已绑定银行卡', 'D05 口径 chips 含「仅限已绑定银行卡」');
+has(el('recharge-rule-row').innerHTML, '仅限借记卡', 'D06 口径 chips 含「仅限借记卡」');
+has(el('recharge-rule-row').innerHTML, '单笔上限 ¥ 50,000', 'D07 口径 chips 含单笔上限');
+eq(count(el('recharge-rule-row').innerHTML, /recharge-rule-chip/g), 4, 'D08 口径 chips 共 4 条');
+eq(count(el('recharge-rule-row').innerHTML, /is-error/g), 1, 'D09 未实名时首条 chip 转红');
+has(el('recharge-rule-row').innerHTML, 'recharge-rule-chip is-error">✕ 必须已实名', 'D10 未实名标记落在「必须已实名」上');
+eq(el('recharge-submit-btn').classList.contains('is-disabled'), true, 'D11 未实名时【确认充值】置灰');
+eq(el('recharge-card-note').className.indexOf('is-error') !== -1, true, 'D12 未实名时卡说明转红');
+has(el('recharge-card-note').innerText, '未实名认证', 'D13 卡说明提示先完成实名');
+eq(count(el('recharge-card-select').innerHTML, /disabled/g), 4, 'D14 未实名时 4 张已绑卡全部置灰不可选');
+
+MockData.currentUser.idVerified = true;
+App.refreshRechargePanel();
+eq(count(el('recharge-card-select').innerHTML, /<option/g), 4, 'D15 下拉渲染全部 4 张已绑卡');
+eq(count(el('recharge-card-select').innerHTML, /disabled/g), 2, 'D16 信用卡与异名卡被置灰（2 张）');
+has(el('recharge-card-select').innerHTML, '不可用：', 'D17 置灰项标注不可用原因');
+has(el('recharge-card-select').innerHTML, '招商银行（尾号 1234）· 储蓄卡（借记卡）', 'D18 可用卡标签含发卡行 / 尾号 / 卡种');
+eq(el('recharge-card-select').value, 'BC1', 'D19 默认选中首张可用卡');
+eq(el('recharge-submit-btn').classList.contains('is-disabled'), false, 'D20 有可用卡时【确认充值】可点');
+has(el('recharge-card-note').innerText, '与实名一致', 'D21 卡说明回显同名核验结论');
+has(el('recharge-card-note').innerText, '协议代扣', 'D22 卡说明说明代扣方式');
+eq(el('recharge-card-note').className.indexOf('is-error'), -1, 'D23 可用卡时卡说明不转红');
+
+// 切换到信用卡 → 回显原因
+el('recharge-card-select').value = 'BC3';
+App.onRechargeCardChange();
+eq(el('recharge-card-note').className.indexOf('is-error') !== -1, true, 'D24 切到信用卡时卡说明转红');
+has(el('recharge-card-note').innerText, '仅支持使用银行借记卡充值', 'D25 切到信用卡时给出借记卡口径');
+el('recharge-card-select').value = 'BC1';
+App.onRechargeCardChange();
+
+// =========================================================================
+console.log('== E. 提交三闸（拦截零变动 / 通过四账同步） ==');
+const s0 = snap();
+MockData.currentUser.idVerified = false;
+resetToast();
+el('recharge-amount-input').value = '1000';
+App.submitAccountRecharge();
+has(lastToast(), '未完成实名认证', 'E01 未实名提交 → 拦截并提示实名为前置');
+eq(securityOpenedWith, '实名认证', 'E02 未实名提交 → 自动跳转安全设置实名认证');
+eq(el('modal-account-recharge').classList.contains('active'), true, 'E03 未实名提交 → 弹窗保持打开');
+const s1 = snap();
+ok(s1.balance === s0.balance && s1.withdrawable === s0.withdrawable && s1.txCount === s0.txCount,
+  'E04 未实名拦截时资金台账零变动');
+
+MockData.currentUser.idVerified = true;
+// 无可用卡：清空台账后提交
+const cardsBackup = MockData.assets.bankCards.slice();
+MockData.assets.bankCards.length = 0;
+App.refreshRechargePanel();
+has(el('recharge-card-select').innerHTML, '暂无已绑定银行卡，请先绑卡', 'E05b 空台账时下拉给出「暂无已绑定银行卡」兜底项');
+eq(el('recharge-card-select').value, '', 'E05 无已绑卡时下拉选中为空');
+eq(el('recharge-submit-btn').classList.contains('is-disabled'), true, 'E06 无已绑卡时【确认充值】置灰');
+resetToast();
+App.submitAccountRecharge();
+has(lastToast(), '尚未绑卡请先完成绑卡', 'E07 无已绑卡提交 → 拦截并引导先绑卡');
+const s2 = snap();
+ok(s2.balance === s0.balance && s2.withdrawable === s0.withdrawable && s2.txCount === s0.txCount,
+  'E08 无卡拦截时资金台账零变动');
+cardsBackup.forEach(c => MockData.assets.bankCards.push(c));
+App.refreshRechargePanel();
+
+// 金额闸
+resetToast();
+el('recharge-amount-input').value = '0';
+App.submitAccountRecharge();
+has(lastToast(), '有效的充值金额', 'E09 金额 0 → 拦截');
+resetToast();
+el('recharge-amount-input').value = '60000';
+App.submitAccountRecharge();
+has(lastToast(), '单笔充值上限', 'E10 超单笔上限 → 拦截');
+eq(el('recharge-card-select').value, 'BC1', 'E11 金额拦截不影响已选卡');
+
+// 正常充值
+const before = snap();
+resetToast();
+el('recharge-amount-input').value = '1000';
+App.submitAccountRecharge();
+eq(num(MockData.assets.cards.balance), before.balance + 1000, 'E12 充值成功：账户总额 +1,000');
+eq(num(MockData.assets.cards.withdrawable), before.withdrawable + 1000, 'E13 充值成功：可提现余额 +1,000');
+eq(frozenOf(), before.frozen, 'E14 充值不影响冻结金额');
+eq(MockData.assets.transactions.length, before.txCount + 1, 'E15 充值成功写入 1 条流水');
+const topTx = MockData.assets.transactions[0];
+has(topTx.name, '人民币账户充值 (招商银行 借记卡 尾号 1234)', 'E16 流水名含扣款卡（发卡行 + 借记卡 + 尾号）');
+eq(topTx.amount, '+ ¥ 1,000.00', 'E17 流水金额格式正确');
+eq(topTx.category, '收入', 'E18 流水归入「收入」Tab');
+eq(topTx.statusType, 'success', 'E19 流水状态为已到账');
+has(lastToast(), '已由招商银行借记卡（尾号 1234）扣款入账', 'E20 Toast 回带扣款卡信息');
+eq(el('modal-account-recharge').classList.contains('active'), false, 'E21 充值成功后弹窗关闭');
+const availItem = (MockData.assets.breakdown.items || []).find(it => it.label === '可提现余额');
+eq(num(availItem.amount), num(MockData.assets.cards.withdrawable), 'E22 breakdown 可提现项与余额同源');
+eq(el('asset-display-balance').innerText, '¥ ' + MockData.assets.cards.balance, 'E23 资产卡总额同步刷新');
+eq(el('asset-display-withdrawable').innerText, '¥ ' + MockData.assets.cards.withdrawable, 'E24 资产卡可提现同步刷新');
+const eqOk = Math.abs(num(MockData.assets.cards.balance) - (num(MockData.assets.cards.withdrawable) + frozenOf())) < 0.005;
+ok(eqOk, 'E25 充值后「总额 = 可提现 + 冻结」恒等式仍成立',
+  `${MockData.assets.cards.balance} vs ${MockData.assets.cards.withdrawable} + ${frozenOf()}`);
+
+// =========================================================================
+console.log('== F. 与绑卡台账的联动 ==');
+App.openAccountRechargeModal();
+const optBefore = count(el('recharge-card-select').innerHTML, /<option/g);
+const txBefore = MockData.assets.transactions.length;
+const balBefore = num(MockData.assets.cards.balance);
+// 走完整绑卡链路新增一张本人借记卡
+// 本组专注校验「充值侧与绑卡台账的联动」，先临时放开绑卡张数上限（上限口径见 temp/wb-bankcard-verify.js）
+const capBackupF = MockData.assets.bankBindRules.maxCards;
+MockData.assets.bankBindRules.maxCards = 99;
+App.openBankCardBindModal('bind');
+el('bank-bind-holder').value = REAL;
+el('bank-bind-cardno').value = '6222023456789016';   // 工行借记卡演示号
+App.sendBankBindCode();
+el('bank-bind-code').value = App._bankBind.code;
+App.submitBankCardBind();
+eq(MockData.assets.bankCards.length, 5, 'F01 绑卡成功写入台账（4 → 5 张）');
+eq(count(el('recharge-card-select').innerHTML, /<option/g), optBefore + 1, 'F02 绑卡后充值下拉同源刷新 +1 项');
+has(el('recharge-card-select').innerHTML, '中国工商银行（尾号 9016）', 'F03 新绑借记卡立即可作充值卡');
+eq(MockData.assets.transactions.length, txBefore, 'F04 绑卡为零资金动作，不写资产流水');
+eq(num(MockData.assets.cards.balance), balBefore, 'F05 绑卡不改变账户总额');
+MockData.assets.bankBindRules.maxCards = capBackupF;
+
+// 解绑新增卡（非默认卡）→ 充值下拉同步收敛
+App.armUnbindBankCard('BC5');
+App.confirmUnbindBankCard('BC5');
+eq(MockData.assets.bankCards.length, 4, 'F06 解绑后台账回到 4 张');
+eq(count(el('recharge-card-select').innerHTML, /<option/g), optBefore, 'F07 解绑后充值下拉同步收敛');
+eq(MockData.assets.transactions.length, txBefore, 'F08 解绑亦为零资金动作');
+
+// =========================================================================
+console.log('== G. 静态契约（DOM / 渠道删除 / 样式 / 方法唯一） ==');
+['recharge-card-select', 'recharge-rule-row', 'recharge-card-note',
+  'recharge-add-card-row', 'recharge-submit-btn'].forEach((id, i) => {
+  has(HTML, 'id="' + id + '"', `G0${i + 1} 充值弹窗含 #${id}`);
+});
+notHas(HTML, 'id="recharge-channel-select"', 'G06 旧的充值渠道下拉已删除');
+notHas(HTML, '银联对公转账', 'G07 银联对公转账渠道已下线');
+ok(!/<option[^>]*value="(微信支付|支付宝)"/.test(HTML), 'G08 全站已无微信 / 支付宝渠道下拉项');
+has(HTML, "App.openBankCardBindModal('bind')", 'G09 充值弹窗提供就地绑卡入口');
+has(HTML, '充值银行卡（仅限已绑定的本人同名借记卡）', 'G10 充值卡下拉标签写明口径');
+has(HTML, '充值不接受临时输入卡号或第三方钱包', 'G11 提示文案明确不接受临时卡号');
+
+ok(!APP_SRC.includes('recharge-channel-select'), 'G12 app.js 无旧渠道下拉残留');
+eq(count(APP_SRC, /getRechargeRules: function/g), 1, 'G13 App.getRechargeRules 定义唯一');
+eq(count(APP_SRC, /getRechargeCards: function/g), 1, 'G14 App.getRechargeCards 定义唯一');
+eq(count(APP_SRC, /validateRechargeCard: function/g), 1, 'G15 App.validateRechargeCard 定义唯一');
+eq(count(APP_SRC, /renderRechargeCards: function/g), 1, 'G16 App.renderRechargeCards 定义唯一');
+eq(count(APP_SRC, /refreshRechargePanel: function/g), 1, 'G17 App.refreshRechargePanel 定义唯一');
+eq(count(APP_SRC, /onRechargeCardChange: function/g), 1, 'G18 App.onRechargeCardChange 定义唯一');
+has(APP_SRC, 'this.refreshRechargePanel();', 'G19 绑卡变更联动刷新充值面板');
+
+['.recharge-rule-row', '.recharge-rule-chip', '.recharge-card-note',
+  '.recharge-add-card-row', '.recharge-add-card-hint', '.recharge-add-card-link'].forEach((cls, i) => {
+  has(CSS, cls, `G2${i + 1} css 定义 ${cls}`);
+});
+has(CSS, '#recharge-card-select option:disabled', 'G27 充值下拉置灰项样式已定义');
+has(CSS, '.recharge-rule-chip.is-error', 'G28 口径 chip 错误态样式已定义');
+has(CSS, '.recharge-card-note.is-error', 'G29 卡说明错误态样式已定义');
+
+// ------------------------- 结果汇总 -------------------------
+console.log('\n' + '-'.repeat(72));
+if (fails.length === 0) {
+  console.log(` 充值合规自检：${pass} / ${pass} 全通过 ✓`);
+  console.log(' 结论：充值只能经已绑定的本人同名借记卡，三闸拦截与资金台账均符合预期。');
+  console.log('-'.repeat(72) + '\n');
+  process.exit(0);
+} else {
+  console.log(` 充值合规自检：${pass} 通过 / ${fails.length} 失败 ✗`);
+  fails.forEach((f, i) => console.log(`   ${i + 1}. ${f}`));
+  console.log('-'.repeat(72) + '\n');
+  process.exit(1);
+}

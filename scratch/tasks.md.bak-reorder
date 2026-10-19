@@ -1,0 +1,265 @@
+# SPEC-001 · 任务清单（tasks.md）
+
+> **依 `AGENTS.md` §22**：Task 必须来源于 `spec.md` + `plan.md`。**不得在 Tasks 阶段新增 Spec 中不存在的业务范围。**
+> **组织原则**：原子化 / 可执行 / 可验证 / 有依赖顺序 / 可追溯；按**用户可感知的增量**分期组织。
+> **本 Feature 的任务对齐到两期**：`Phase 1 · 第一刀` 与 `Phase 2 · 第二刀`（见 `plan.md` §四）。
+> **生命周期状态**：`TASKED` → **`IMPLEMENTED`**（2026-09-24；Phase 1 的 **24 项全部完成**，CHG-013）
+> 🔴 **Phase 1 已收口，DoD 逐条达成**（见 §⑩ 实施结果）。**Phase 2 未启动**（其 12 项为粗粒度登记）。
+> 🔴 **Phase 1 的验收判据只有一个**：`tools/wb-identity-admission-verify.js` 的 **【功能断言】由 3/37 → 37/37**，且 10 套既有绿灯零新失败。**该套件就是 DoD，不是"参考"。**
+
+---
+
+## 〇、任务地图
+
+```text
+Phase 1 · 第一刀（准入判定最小切片）—— ✅ 可立即开始
+  ├─ ① Setup            2 项   T-001-01 ~ 02
+  ├─ ② Foundation       9 项   T-001-11 ~ 19
+  ├─ ③ User Story 切片   4 项   T-001-21 ~ 24
+  ├─ ④ Cross-cutting    3 项   T-001-31 ~ 33
+  └─ ⑤ Verification     6 项   T-001-41 ~ 46
+                                 小计 24 项
+
+Phase 2 · 第二刀（账号骨架重构）—— ⏳ 待 Phase 1 完成后细化
+  └─ 12 项  T-002-01 ~ 12（粗粒度；Phase 2 启动时须重做其 plan/tasks）
+```
+
+| 期 | 对应 `spec.md` 验收场景 | 是否阻塞 MVP 关键路径 |
+| :--- | :--- | :--- |
+| Phase 1 | `SC-001-05 / 11 / 12 / 14 / 15 / 17 / 18` | ✅ 是（`SPEC-002 / 008 / 009` 的准入前置） |
+| Phase 2 | `SC-001-01 ~ 04 / 06 ~ 10 / 13 / 16 / 19 ~ 22` | 否（可随 `SPEC-014` 治理一并推进） |
+
+---
+
+## ① Phase 1 · Setup
+
+| ID | 任务 | 来源 | 依赖 | 验收方式 | 状态 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **T-001-01** | 备份 `js/app.js` 与 `js/mock_data.js` 到 `scratch/app.js.bak-<YYYYMMDD-HHMMSS>`、`scratch/mock_data.js.bak-<...>`（沿用 `CHG-007` 既有做法；`scratch/` 为过程产物区，`CON-030`） | `plan.md` §17.3 | — | `ls scratch/*.bak-*` 存在 2 个文件 | ✅ |
+| **T-001-02** | **记录改动前基线**：跑 `node tools/gates.js --baseline`，记录 L1 ERROR 数 / DUP / L2 / MX / L3 绿套与红灯数 / 断言合计 | `plan.md` §18.1 | — | 基线值已记入本轮 `change-impact.md`；**必须与 `plan.md` 附录的实测值一致**（L1 7 / DUP 0 / L2 6/6 / MX 通过 / L3 绿 2,130 + 红 3/37） | ✅ |
+
+> ⚠️ **T-001-02 不可跳过**：没有改动前的数值，就无法判断后续是否引入回归（`plan.md` §十九 R-1 / R-3 的缓解措施依赖它）。
+
+---
+
+## ② Phase 1 · Foundation
+
+> 本组全部落在 `ai-creator-community-wh/js/`。**顺序即为依赖顺序**：数据 → 常量 → 纯函数 → 判定 → 守卫包装 → 引导入口。
+
+| ID | 任务 | 来源 | 依赖 | 验收方式（断言） | 状态 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **T-001-11** | `js/mock_data.js`：`currentUser` 增 3 个字段并**显式赋初值** —— `accountStatus: '正常'`、`merchantStatus: '已入驻'`、`birthDate: '<演示值>'`（内部字段，不展示） | `FR-001-04` / `FR-001-16`；`plan.md` §8.4；`data-model.md` §5.2 | T-001-01 | 红灯 **A4 / A5**：两字段均为合法四态之一，且**不是 `undefined`** | ✅ |
+| **T-001-12** | `js/mock_data.js`：从 `systemAdmin.roles` **移除 `mentor` 项**；**在代码注释与 `CHG` 中显式记录"依 `Q-002` 弃用"**（原则 12：显式弃用而非静默删） | `Q-002`；`plan.md` §三 3.2 事实二 | T-001-01 | 红灯 **K1**（keys 不含 `mentor`）/ **K3**（无「签约导师 / 教学机构」字样）；**K2 保持通过**（`creator` / `buyer` 仍在） | ✅ |
+| **T-001-13** | `js/app.js`：新增 `App.ADMISSION_ACTIONS`（5 动作数组）与 `App.ADMISSION_MISSING_SPEC`（缺失项 key → `{label, guide}` 映射） | `FR-001-20`；`plan.md` §5.1 / §9.1 | T-001-11 | 红灯 **A3**：`Array.isArray` 且含 5 个动作。⚠️ `guide` 值**必须是 `App` 上真实存在的方法名** | ✅ |
+| **T-001-14** | `js/app.js`：新增 `App.evaluateAgeGate(birthDate)` —— **纯函数**；按 `research.md` **R2** 的口径实现（**手工解析 `YYYY-MM-DD`，不用 `new Date(str)`**；日历三元组比较；本地时区；闰年无特例） | `FR-001-45 / 46`；`SC-001-17 / 18`；`EX-001-13`；`research.md` R2 | T-001-13 | 红灯 **B1 ~ B6**（6 项）：17 岁拒 / 18 岁当日过 / 24 岁过 / `null` 拒 / 不可解析拒；**B2 要求 `reason` 非空** | ✅ |
+| **T-001-15** | `js/app.js`：新增 `App.checkAdmission(action)` —— **全站唯一判定入口**；按 `FR-001-20` 的**固定顺序**判定（`account` → `identity` → `campus`（按需，Phase 1 无动作需要）→ `merchant`）；返回 `{allowed, missing[], guide}`；🔴 **幂等且无副作用**（不写任何数据、不初始化默认值）；🔴 **每次读真源、不缓存**（`FR-001-25`） | `FR-001-20 ~ 26`；`FR-001-16`；`plan.md` §5.3 | T-001-11 / T-001-13 | 红灯 **C1 ~ C8**（8 项，含 C7「5 个动作全拦」与 **C8 幂等无副作用**）、**D1 ~ D3**（3 项，不得过度拦截）、**E1 ~ E3**（3 项，收款主体资格门控）、**H1 / H2**（2 项，冻结态全拦） | ✅ |
+| **T-001-16** | `js/app.js`：新增 `App.assertAdmission(action)` —— **守卫包装**：调 `checkAdmission`；不通过时 `showToast`（**须含缺失项中文名**，故含「实名认证」时即可满足「实名」断言）+ **同时给出唯一引导入口**；返回 `boolean` | `FR-001-21`（禁止静默失败）；`plan.md` §5.2 | T-001-15 | 红灯 **F5**（Toast 含「实名」）/ **G2**（同上）—— 由 C 组的 `missing[0]` 派生，故 T-001-15 必须先生效 | ✅ |
+| **T-001-17** | `js/app.js`：新增 `App.openIdentityVerifyModal()` —— **实名认证引导入口**（`ADMISSION_MISSING_SPEC.identity.guide` 指向它） | `FR-001-21`；红灯 C6 的"可执行引导"要求；`plan.md` §9.1 | T-001-13 | 红灯 **C6**：`typeof App[r.guide] === 'function'` | ✅ |
+| **T-001-18** | `js/app.js`：新增 `App.openMerchantOnboardingModal()` —— **收款主体资格引导入口**（`...merchant.guide` 指向它） | `FR-001-16 / 21`；`CON-055` | T-001-13 | `ADMISSION_MISSING_SPEC.merchant.guide === 'openMerchantOnboardingModal'` 且该方法是函数（**红灯未直接断言，由 T-001-15 的 E2 间接覆盖；须在 T-001-41 中人工确认**） | ✅ |
+| **T-001-19** | 🔴 **确认 `checkAdmission` 复用既有 `App.isIdVerified()` 而非新建判定**（原则 2：不得出现第二事实源）；同时确认既有 6 处实名拦截（`submitWithdraw` / `submitBankCardBind` ×2 / `submitAccountRecharge` / `validateWithdrawAccount` / `getBankCardStatus` / `validateBankCardBind`）**仍按原逻辑工作** | Constitution 原则 2；`plan.md` §三 3.2 事实一 | T-001-15 | 跑 `wb-withdraw` / `wb-bankcard` / `wb-recharge` 三套 → **零失败**（此步是 R-1 的第一道拦网） | ✅ |
+
+---
+
+## ③ Phase 1 · User Story 切片（运行时守卫）
+
+> 🔴 **本组是 Phase 1 唯一有回归风险的改动**（`plan.md` §4.4）。**每个任务改完立刻跑门禁，不得批量改完再跑**（R-1 缓解措施）。
+
+| ID | 任务 | 来源 | 依赖 | 验收方式 | 状态 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **T-001-21** | `openWithdrawModal(source)` **开头**加：`if (!this.assertAdmission('withdraw')) return;` | `FR-001-20 / 21`；`SC-001-05` | T-001-16 / T-001-17 | 红灯 **F1**（未实名时 `modal-withdraw` 不得 active）/ **F6**（已实名时**仍须能打开** —— 不得误拦）。⚠️ **不得改变** H09d / H11 依赖的调用方源码文本（`this.openWithdrawModal('income')`） | ✅ |
+| **T-001-22** | `openTaskApplyModal(taskId)` **开头**加：`if (!this.assertAdmission('acceptTask')) return;` | `FR-001-20 / 21`；`SC-001-05` | T-001-16 / T-001-17 | 红灯 **G1**（未实名时 `modal-task-apply` 不得 active）/ **G2**（Toast 含「实名」）。⚠️ 须在既有"任务生命周期检查"**之前或之后均不改变其语义**（守卫失败即返回，不进入后续分支） | ✅ |
+| **T-001-23** | `submitPublishTask(isDraft)` **开头**加：`if (!this.assertAdmission('publishTask')) return;` | `FR-001-20 / 21`；`SC-001-05` | T-001-16 / T-001-17 | 红灯 **G3**（`escrowProjects` 零新增）/ **G4**（`myOrders` 零新增）。🔴 **守卫必须在 `freezeEscrow` 之前** —— 这是原则 8（资金恒等式）在本任务中的落地要求 | ✅ |
+| **T-001-24** | **委托化改造（Phase 1b）**：把 6 处既有实名拦截改为委托 `checkAdmission`，🔴 **逐字保留原有文案**（`'实名认证'` / `'不能提现'` / `'不能绑定银行卡'` / `'未完成实名认证'` 等）与 `openSecuritySettings('实名认证')` 的引导行为 | Constitution 原则 2；`plan.md` §三 3.2 / §十九 R-1 | T-001-21 ~ 23 | 跑 `wb-withdraw` G01/G02/G03、`wb-bankcard` G01/G02/G03、`wb-recharge` E01/E02 → **逐字仍通过**。⚠️ **若某处文案确实无法保留，须先改断言再改实现，并在 `CHG` 中显式记录"断言变更"** | ✅ |
+
+> ⚠️ **T-001-24 是"可延后但不该省略"的任务**：不做它，`checkAdmission` 就成了**第二套判定**（违反原则 2）—— 本 Feature 一落地就留下架构债。若 Phase 1 时间紧张，允许**紧随 Phase 1 完成后单独做**，但**必须做**。
+
+---
+
+## ④ Phase 1 · Cross-cutting
+
+| ID | 任务 | 来源 | 依赖 | 验收方式 | 状态 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **T-001-31** | **审计留痕**：新增 `App._auditLog`（append-only 内存数组）+ 记录函数；在**认证状态变更 / 准入拦截 / 账号状态变更**处写入（操作人 / 时间 / 原因） | `FR-001-43`；`plan.md` §十六 | T-001-15 / T-001-21 ~ 23 | ① 拦截时产生一条记录且含**缺失项名称**（支撑 `FR-001-22` 可回放）；② **红灯 C8 仍须通过** —— ⚠️ **审计写入不得发生在 `checkAdmission` 内部**（那样就有副作用了）；须在 `assertAdmission` / 入口层写 | ✅ |
+| **T-001-32** | **防规避计数**：对"未满 18 被拒 / 不可解析被拒 / 同一证件或手机号的重复注册尝试"**计数**（`FR-001-48` 要求"可观察的三件事"中的第①件：**存在计数**） | `FR-001-48`；`EX-001-15` | T-001-14 | 存在计数且可被断言（阈值与拦截策略归 `SPEC-014`，**本任务不实现阈值**） | ✅ |
+| **T-001-33** | 🔴 **确认 `index.html` 零改动**：`openIdentityVerifyModal` / `openMerchantOnboardingModal` 复用 `openSecuritySettings` 的既有渲染路径或既有弹窗骨架（`CON-027` 禁止整文件重写） | `CON-027`；`plan.md` §二十一 | T-001-17 / T-001-18 | `git`/文件时间戳显示 `index.html` **未变更**。⚠️ **若确实必须改 HTML ⇒ 须先回 `plan.md` §二十一 更新"Affected Components"，再改**（原则 13：不得静默扩大改动面） | ✅ |
+
+---
+
+## ⑤ Phase 1 · Verification
+
+> 依 `AGENTS.md` §38：`Plan → Testing Strategy`，`Tasks → Test Work`。**本组即 `plan.md` §二十二 DoD 的逐条执行。**
+
+| ID | 任务 | 对应 DoD | 验收方式 | 状态 |
+| :--- | :--- | :--- | :--- | :--- |
+| **T-001-41** | 跑 `node tools/wb-identity-admission-verify.js` | DoD ① | **退出码 0**；**【功能断言】37/37**；【不变量断言】16/16 | ✅ |
+| **T-001-42** | 跑 `node tools/gates.js --baseline` | DoD ②③ | 总判定通过；L1 ≤ 7 ERROR；DUP = 0；L2 6/6；MX 通过；**L3 既有 10 套零新失败**（重点：`wb-withdraw` / `wb-bankcard` / `wb-recharge` / `wb-escrow-progress` / `wb-debt-remediation`） | ✅ |
+| **T-001-43** | **资金恒等式复算**（原则 8） | DoD ④ | `5,320.50 + 1,500.00 = 6,820.50` 仍成立；`assets.breakdown` 无新增第二真源 | ✅ |
+| **T-001-44** | **确定性验证**：连续 3 次跑 `gates.js --baseline` | DoD ⑤ | 3 次结果**完全一致**（`ENV-09` 要求门禁用 `worker_threads` 隔离） | ✅ |
+| **T-001-45** | 从 `tools/gates-baseline.json` 的 `l3ExpectedRed` **移除 `wb-identity-admission-verify`**（红灯已转绿，防静默遗忘） | DoD ⑥ | `l3ExpectedRed: []`；重跑门禁后该套件计入正常 L3 绿套 | ✅ |
+| **T-001-46** | **同步全局 Artifact**：`01-requirements/traceability.md` §四 回填 `Txxx` / `CODE` / `TEST`；`99-ai/workspace-state.yaml`；`99-ai/design-status.md`；`99-ai/change-impact.md`（`CHG-012`）；`CHANGELOG.md`；`specs/README.md` | DoD ⑨ | 各文件与本 `tasks.md` 的任务编号一致；`CHG-012` 含十一维影响分析 | ✅ |
+
+---
+
+## ⑥ Phase 2 · 第二刀（账号骨架重构）—— 粗粒度清单
+
+> ⏳ **本组不进入当前实施**。依 `AGENTS.md` §22「不得在 Tasks 阶段新增 Spec 中不存在的业务范围」，本组仅为**已识别的工作范围登记**，供 Phase 2 启动时重做其 `plan.md` / `tasks.md`。
+> 🔴 **Phase 2 启动前必须先做**：`research.md` 补并发/一致性专项（若届时引入数据库）；`Q-041` 法务口径到位。
+
+| ID | 任务 | 来源 | 关键风险 |
+| :--- | :--- | :--- | :--- |
+| **T-002-01** | 引入 `MockData.accounts` 集合；`currentUser` 改为"当前账号视图"；41 个字段按「账号主体 / 创作者档案 / 凭据」重新归属 | `FR-001-01 / 02` | 🔴 波及 97 处引用 —— **必须按引用密度分批 + 每批跑门禁** |
+| **T-002-02** | `App.switchBusinessIdentity()` —— 创作者 ⇄ 发包方，**不改变 RBAC 角色** | `FR-001-03`；`SC-001-10` | 中 |
+| **T-002-03** | **凭据对象化**：布尔 → 五态（`FR-001-11`）；`checkAdmission` **换读取实现、契约不变**（`research.md` R3） | `FR-001-11` | 中；⚠️ 须同步 `wb-withdraw` / `wb-bankcard` / `wb-recharge` 对 `idVerified` 的直接读写 |
+| **T-002-04** | **`roles` 维度重切**：拆为「账号角色 / 业务身份 / 管理岗位语境」三组；收敛 `currentUser.role` 自由文案 | `03-domain`；`ACTORS` A-03 | 中；⚠️ 改动 `openSystemAdminModal` / `switchSystemAdminRole` |
+| **T-002-05** | **权限矩阵运行时鉴权**：`App.PERMISSION_MATRIX`（`spec.md` §G.1 的 13 × 5）+ `App.can(action, dataObject)`；**禁止新建第二套权限体系** | `FR-001-50 ~ 54`；`SC-001-19 ~ 21` | 中；⚠️ 单用户演示态**无法真实验证** ⇒ 必须先建多角色态 |
+| **T-002-06** | **留存期限机制**：到期**删除或匿名化**的**能力**（取值待 `Q-041`，不得伪造） | `FR-001-55`；`NFR-016` | 中；🔴 须先取得法务口径 |
+| **T-002-07** | **注销后标识释放**：手机号释放 + 身份证号解绑但保留**不可逆摘要** + 最小记录保留 | `FR-001-56`；`SC-001-22`；`EX-001-14` | 🔴 高；**不得用"注销时清零积分"实现防刷新**（`CON-022` 红线） |
+| **T-002-08** | **运行时接线**：`publishStudioToShowcase`（`publishShowcase`）/ 结算入账路径（`receiveSettlement`）加守卫 | `FR-001-20`；`FR-001-16` | 中；⚠️ **与 `SPEC-008` 联合落地**；`creditCreatorIncome` 须保持为 `settleTaskReward` 的纯转发别名（`wb-debt-remediation` E12/E13） |
+| **T-002-09** | **存量数据补正**：无出生日期 / 无 `accountStatus` 的账号标记「待补正」并**冻结出金与交易类动作**（**不得默认放行**） | `plan.md` §17.2；`AGENTS.md` §37 | 🔴 高；与 `EX-001-13` 同源 |
+| **T-002-10** | **合并执行**：`FU-007`（多账号身份态）+ `FU-001`（AI 积分按 `source` 分池）+ `FU-002`（L1 7 条命名漂移）+ `Q-036`（发布表单字段对齐）**同批做** | `plan.md` §4.3 | 🔴 高；同改 `app.js`，一次改完更便宜 |
+| **T-002-11** | **`GAP-8`**：`03-domain/domain-overview.md` 同步 `RULE-008`（负向身份动作的触发方由"系统"改为"管理员 + 系统建议"） | `GAP-8`；`RULE-008` | 低 |
+| **T-002-12** | **`GAP-9`**：为 `roles` 维度重切**补断言**（红灯 K 组只覆盖"移除 mentor"，是下限） | `GAP-9` | 低 |
+
+---
+
+## ⑦ 追溯矩阵（`REQ → SPEC → US → FR → TASK → TEST`）
+
+| REQ | SPEC | US | FR | TASK | TEST（断言位置） |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `REQ-010` | SPEC-001 | US-001-01 / 11 | `FR-001-45 ~ 48` | **T-001-14**（年龄闸门）/ **T-001-32**（防规避计数） | 红灯 B1 ~ B6；`SC-001-17 / 18` |
+| `REQ-001` / `REQ-002` | SPEC-001 | US-001-01 ~ 03 / 07 | `FR-001-20 ~ 26` | **T-001-13 / 15 / 16**（判定）/ **T-001-21 ~ 23**（守卫）/ **T-001-24**（委托化） | 红灯 C1 ~ C8、D1 ~ D3、F1 / F5 / F6、G1 ~ G4、H1 / H2；`SC-001-05` |
+| `REQ-001` | SPEC-001 | US-001-01 | `FR-001-04` | **T-001-11**（账号四态） | 红灯 A4；`SC-001-12` |
+| `REQ-002` | SPEC-001 | US-001-08 | `FR-001-16` | **T-001-11**（`merchantStatus`）/ **T-001-18**（引导入口） | 红灯 A5、E1 ~ E3；`SC-001-11`（跨 Feature，需 `SPEC-008`） |
+| `REQ-006` | SPEC-001 | US-001-01 | `FR-001-30 ~ 34` | Phase 1 **只建契约不改账本**；Phase 2 `T-002-10`（按 `source` 分池） | 红灯 H3 ~ H5、I1 ~ I4、J1 ~ J6；`SC-001-12 / 14 / 15` |
+| `REQ-003` | SPEC-001 | US-001-04 / 05 | `FR-001-14 / 15 / 19` | Phase 2（学籍 / OPC 认证过程） | 待 Phase 2 |
+| `REQ-001` / `REQ-002`（权限面） | SPEC-001 | US-001-10 / 12 | `FR-001-50 ~ 54` | Phase 2 **T-002-05** | 待 Phase 2（`SC-001-19 ~ 21`） |
+| `REQ-002` / `REQ-001`（留存面） | SPEC-001 | US-001-09 | `FR-001-55 / 56`、`FR-001-07` | Phase 2 **T-002-06 / 07** | 待 Phase 2（`SC-001-13 / 22`） |
+| — | SPEC-001 | — | `FR-001-43`（审计） | **T-001-31** | 人工确认 + 支撑 `FR-001-22` 可回放 |
+| — | SPEC-001 | — | `FR-001-01 ~ 03 / 05 ~ 07` | Phase 2 `T-002-01 / 02` / `SPEC-014` | 待 Phase 2 |
+| — | SPEC-001 | — | `FR-001-57`（并发可观察） | Phase 1 以**行为契约**覆盖（`research.md` R1）；Phase 2 补断言 | 红灯 C8（幂等无副作用）已覆盖其一 |
+
+---
+
+## ⑧ 执行顺序与门禁节奏（🔴 必须遵守）
+
+```text
+T-001-01  备份
+T-001-02  记录基线 ────────────────▶ 跑 gates（记下数值）
+   │
+T-001-11  数据字段 ───────┐
+T-001-12  roles −mentor ──┤        ▶ 跑红套件 A/K 组（应开始转绿）
+T-001-13  常量 / 映射表 ──┤        ▶ 跑红套件 A3
+T-001-14  年龄闸门 ───────┤        ▶ 跑红套件 B 组（6 项）
+T-001-15  checkAdmission ─┤        ▶ 跑红套件 C / D / E / H 组（16 项）
+T-001-16  assertAdmission ┤        ▶ 跑红套件 C 组（Toast 依赖）
+T-001-17  实名引导入口 ───┤        ▶ 跑红套件 C6
+T-001-18  收款引导入口 ───┤        ▶ 人工确认
+T-001-19  复用既有判定 ───┘        ▶ 跑 wb-withdraw / wb-bankcard / wb-recharge（★门禁）
+   │
+T-001-21  提现守卫 ────────────────▶ 跑红套件 F 组 + wb-withdraw + wb-assets-plus（★门禁）
+T-001-22  接单守卫 ────────────────▶ 跑红套件 G1/G2 + wb-task-select（★门禁）
+T-001-23  发包守卫 ────────────────▶ 跑红套件 G3/G4 + wb-task-draft（★门禁）
+T-001-24  委托化 6 处 ─────────────▶ 跑 wb-withdraw / wb-bankcard / wb-recharge（★门禁，逐处跑）
+   │
+T-001-31  审计留痕 ────────────────▶ 跑红套件 C8（确认无副作用被破坏）
+T-001-32  防规避计数
+T-001-33  确认 index.html 零改动
+   │
+T-001-41 ~ 46  收口验证 ───────────▶ 全量 gates.js --baseline ×3 + 同步 Artifact
+```
+
+🔴 **四条节奏铁律**：
+
+1. **★ 标记处必跑门禁** —— 尤其 T-001-21 ~ 24（唯一有回归风险的改动）。**不得批量改完再跑**（`plan.md` §十九 R-1）。
+2. **同文件严禁并行 Edit**（`ENV-02`：实测报 Success 但部分未落盘）⇒ `app.js` 的所有改动**串行**，改完立刻 grep/读取复核。
+3. **不用子进程跑门禁**（`ENV-08`：`spawnSync` 抛 EBUSY，stdout 恒空）⇒ 一律用 `node tools/gates.js`。
+4. **红灯的进度只认「功能断言」** —— 「不变量断言」在未实现时会**平凡通过**，**不构成证据**（`plan.md` §18.2）。
+
+---
+
+## ⑩ Phase 1 实施结果（2026-09-24 收口，CHG-013）
+
+### 10.1 DoD 逐条达成（`plan.md` §二十二）
+
+```text
+✅ ① wb-identity-admission-verify.js —— 退出码 0，【功能断言】37/37，【不变量断言】16/16（53/53）
+✅ ② gates.js --baseline —— 总判定通过；L1 = 7 ERROR（= 基线，未超）；DUP 480/480（0 重复）；
+     L2 6/6；MX 通过
+✅ ③ 既有 10 套绿灯零新失败（L3 由 2130 → 2183，增量为本套件转绿后的 53 项）
+✅ ④ 资金恒等式复算：5,320.50 + 1,500.00 = 6,820.50 成立（breakdown 仍 4 项，未新增第二真源）
+✅ ⑤ 连续 3 次运行结果完全一致（2183/2183；断言合计 2669/2670）
+✅ ⑥ gates-baseline.json 的 l3ExpectedRed 已移除本套件（现为 []）
+✅ ⑦ SC-001-05 / 11 / 12 / 14 / 15 / 17 / 18 均有对应断言且通过
+✅ ⑧ 改动面未超声明范围：js/app.js + js/mock_data.js（**index.html / css/style.css 时间戳未变**）
+✅ ⑨ 全局 Artifact 已同步（本文件 / traceability / workspace-state / design-status / change-impact / CHANGELOG）
+```
+
+### 10.2 关键数字
+
+| 项 | 改动前 | 改动后 |
+| :--- | :--- | :--- |
+| 红灯真实进度 | 功能断言 **3/37** | **37/37**（转绿） |
+| L3 | 绿套 2,130（10 套）+ 🔴 红灯 3/37（1 套） | **绿套 2,183（11 套）**，红灯 **0** |
+| DUP 键数 | 466 | **480**（+14 = 新增方法，全部唯一 ⇒ 0 重复） |
+| `l3ExpectedRed` | `["wb-identity-admission-verify"]` | `[]` |
+| `l3AssertionTotal` | 2130 | **2183** |
+
+### 10.3 承担了风险的三个节点（★ 逐处改完即验，未批量）
+
+| 节点 | 做法 | 结果 |
+| :--- | :--- | :--- |
+| **T-001-19**（`isIdVerified` 委托化） | 保留契约名、实现改为委托 `isCredentialMet('identity')` | `wb-withdraw` / `wb-bankcard` / `wb-recharge` 三套 **exit 0** ✅ |
+| **T-001-21 ~ 23**（3 个运行时守卫） | 逐个插入（提现 / 接单 / 发包），每次跑红灯套件 | 红灯 **31/37 → 37/37** ✅ |
+| **T-001-24**（委托化 `submitWithdraw` 闸一） | 文案按**真实缺失项**构造，保留既有断言子串 | 三套绿灯仍 **exit 0**；红灯仍全绿 ✅ |
+
+### 10.4 🔑 委托化带来的**新能力**（冒烟实测，不在红灯覆盖内）
+
+`submitWithdraw` 委托 `checkAdmission('withdraw')` 后：
+
+- **旧实现**：只查 `isIdVerified()` ⇒ 账号**冻结**时提现**不会被拦截**（因实名没问题），且即使拦也一律归咎"未实名"（**错误归因**）。
+- **新实现**：冻结态**正确拦截**（`FR-001-24`），且提示归因于**真实缺失项**「账号状态」⇒ 用户知道该去解决什么。
+
+实测：`checkAdmission('withdraw')` → `{allowed:false, missing:['账号状态']}`；Toast = 「按监管要求不能提现：账号状态未满足；请先在【安全设置】处理」。
+
+### 10.5 ⚠️ 实施中发现并修正的 2 处**断言错误**（是测试写错，不是代码错）
+
+行为冒烟（`scratch/_spec001-phase1-smoke.js`，27 项）首跑 **24/27**，两处失败均为断言本身有误：
+
+| # | 错误断言 | 实际正确行为 |
+| :--- | :--- | :--- |
+| ① | 「默认路径不应产生任何 Toast」 | 成功发布**本就会**产生一条**成功** Toast ⇒ 应断言「未出现**拦截** Toast」（`/需先完成/`） |
+| ② | 「`2008-02-29` 出生未满 18 应拒绝」 | `2008-02-29`（有效闰日）在 2026-09 **已满 18** ⇒ 应**通过**；改为验证 ① 有效闰日可解析 ② 非闰年的 `2009-02-29` 不存在 ⇒ 拒绝 |
+
+⇒ **修正断言后 27/27**。**教训：断言失败时先怀疑断言，再怀疑实现** —— 但必须真的去核对，不能默认"是测试的问题"。
+
+### 10.6 未做（Phase 1 边界内的有意留白）
+
+- **未做 `publishShowcase` / `receiveSettlement` 的运行时接线** —— 红灯只要求**判定能力**（E 组已验），接线与 `SPEC-008` 的托管状态机联合落地（`T-002-08`）；
+- **未做 `roles` 维度重切**（`GAP-9`）、**未建 `accounts` 集合**、**未做权限矩阵运行时鉴权**、**未做留存期限机制** ⇒ 均为 Phase 2；
+- **未改** `index.html` / `css/style.css` / `00-input/` / `ai-creator-community-fjc/` / `03-domain/`。
+
+> 过程产物：`scratch/app.js.bak-20260924-222825` / `scratch/mock_data.js.bak-20260924-222825`（回滚用）、
+> `scratch/_spec001-phase1-smoke.js`（行为冒烟，27 项）。**按 `CON-030` 属过程产物区，不得被正式代码引用。**
+
+---
+
+## ⑨ 不做什么（与 `AGENTS.md` §46 对齐，本 Feature 专用）
+
+- ❌ 不在 Tasks 中新增 `spec.md` 不存在的业务能力；
+- ❌ 不实现 `SPEC-014` 的登录失败计数 / 临时锁定（`FR-001-05` 已明确整项归其）；
+- ❌ 不实现注册接口的**频次阈值**（`FR-001-58` 只要求"存在计数 / 存在拦截 / 存在告警"，阈值归 `SPEC-014`）；
+- ❌ 不实现二级商户的**机构侧开户对接**与分账冻结/解冻（归 `SPEC-008`）；
+- ❌ 不伪造 `Q-041`（留存期限）/ `Q-039`（算力包额度）/ `Q-037`（有效期长度）/ `Q-013 ~ Q-018`（规模）的任何数值；
+- ❌ 不引入人脸活体（`CON-062`）；
+- ❌ 不引入任何新依赖（含 Playwright / 日期库）；
+- ❌ 不新建第五个全局对象（`CON-028`）；
+- ❌ 不整文件重写 `index.html`（`CON-027`）；
+- ❌ 不以"分布式锁"作为并发方案（`AGENTS.md` §32）。
+
+---
+
+## 变更记录
+
+| 日期 | 变更类型 | 变更内容 | 影响范围 |
+| :--- | :--- | :--- | :--- |
+| 2026-09-24 | 新增 | **首次建立 `SPEC-001` 的 `tasks.md`**（`SPEC-001`：`PLANNED` → **`TASKED`**）。按 `AGENTS.md` §22 组织为 **Phase 1（24 项：Setup 2 / Foundation 9 / US 切片 4 / Cross-cutting 3 / Verification 6）** 与 **Phase 2（12 项粗粒度登记）**；Phase 1 全部任务**逐项对齐红灯套件的 34 项待实现功能断言**（即 DoD）；含 **`REQ → SPEC → US → FR → TASK → TEST` 追溯矩阵**、**执行顺序图与 4 条门禁节奏铁律**、**本 Feature 专用的 10 条"不做什么"** | `specs/001-identity-onboarding/`（新建 `tasks.md`）；`01-requirements/traceability.md`；`99-ai/{design-status,workspace-state,change-impact}`；`specs/README.md`；`CHANGELOG.md` |

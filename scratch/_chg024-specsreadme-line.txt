@@ -1,0 +1,1 @@
+| **第 4 批** | ⚠️ **顺序待裁决（`GAP-14`）** —— 本表写 `SPEC-009 → SPEC-008`，但 `workspace-state.yaml` 的 `key_path_note` 与 `design-status.md` §七 均记 **`SPEC-006 → SPEC-008 → SPEC-009`**（**与本节相反**）；且依赖图实测 `S008 → S009` / `S008 → S006` / `S006 → S008` 并存 ⇒ **循环**。⇒ **裁决前不得启动 `SPECIFY`** | 资金口径须先澄清 |

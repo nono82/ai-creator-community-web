@@ -1,0 +1,4987 @@
+// =========================================================================
+// AI创作者社区 - 完整前端 Mock 数据集
+// 包含 7 大核心页面对应的完整初始数据与动态状态
+// =========================================================================
+
+const MockData = {
+  // 当前登录用户信息（高校学生 + 校园认证 OPC 商业工作室）
+  currentUser: {
+    name: "小宇同学",
+    school: "南京大学",
+    role: "校园 OPC 商业主理人",
+    level: 4,
+    avatar: "assets/avatars/user_header.png",
+    avatarLarge: "assets/avatars/user_profile_large.png",
+    realName: "黄*彬",
+    phone: "138****2618",
+    email: "xiaoyu****@nju.edu.cn",
+    studentId: "2021****0823",
+    idVerified: true,
+    campusVerified: true, // 高校在校认证
+    opcStudio: "星芒 AI 视觉工作室（南大创客基地）",
+    opcCertified: true,
+    opcLevelName: "Lv.4 认证校园商业工作室",
+    creditScore: 785, // OPC 商业履约信誉分（满分850）
+    deliveryRate: "99.4%", // 准时交付达成率
+    avgDeliveryHours: "36h", // 平均交付时效
+    efficiencyLeverage: "3.8x", // AI 自动化人效杠杆
+    gpuQuota: "12,500 Tflops", // 移动校园卡专享算力池
+    mentorshipIncome: "¥620", // 学弟学妹带教生态分润
+    menteesCount: 3, // 签约带教学生
+    worksCount: 36,
+    viewsCount: "128.6万",
+    fansCount: "2.8万",
+    likesCount: "12.6万",
+    income: "¥6,820",
+    expCurrent: 3450,
+    expMax: 5000,
+    followingCount: 128,
+    activeTasks: 3,
+    finishedTasks: 12,
+    finishedTasksBase: 11,
+    taskRewards: "¥6,820",
+    points: 2680,
+    studyHours: 128,
+    coursesFinished: 16,
+    certificates: 8,
+    learningPoints: 2680,          // 可用创作积分（发任务奖励会扣减）
+    learningPointsLifetime: 4120,  // 累计获得（只增不减，不影响等级）
+    streakDays: 7
+  },
+
+  // 站内消息中心（收件箱 in + 已发送 out）
+  // 「选定创作者」「催办响应」等动作由 App.sendSiteMessage() 写入 direction:"out" 记录
+  messages: {
+    "records": [
+      {
+        "id": "MSG-IN-01",
+        "direction": "in",
+        "type": "task-pending",
+        "typeLabel": "任务提醒",
+        "title": "你有商单待处理",
+        "body": "「进行中 / 待验收」的商单需要你关注交付节点与验收时限。",
+        "from": "平台任务助手",
+        "fromAvatar": "assets/avatars/rank_user_1.png",
+        "to": "小宇同学",
+        "taskId": "",
+        "taskTitle": "",
+        "ts": "10 分钟前",
+        "read": false,
+        "route": "tasks"
+      },
+      {
+        "id": "MSG-IN-02",
+        "direction": "in",
+        "type": "interaction",
+        "typeLabel": "互动通知",
+        "title": "展厅作品获得新的点赞与收藏",
+        "body": "《未来信号》等作品近期互动上升，建议保持更新节奏。",
+        "from": "社区运营",
+        "fromAvatar": "assets/avatars/rank_user_2.png",
+        "to": "小宇同学",
+        "taskId": "",
+        "taskTitle": "",
+        "ts": "2 小时前",
+        "read": false,
+        "route": "community"
+      },
+      {
+        "id": "MSG-IN-03",
+        "direction": "in",
+        "type": "escrow",
+        "typeLabel": "资金通知",
+        "title": "定制托管冻结提醒",
+        "body": "定制订单托管款已冻结，验收通过后自动结算给创作者。",
+        "from": "平台资金中心",
+        "fromAvatar": "assets/avatars/rank_user_3.png",
+        "to": "小宇同学",
+        "taskId": "MO03",
+        "taskTitle": "定制商单 · MO03",
+        "ts": "昨天 18:20",
+        "read": false,
+        "route": "assets"
+      }
+    ]
+  },
+
+  // 全局平台底部数据
+  platformStats: {
+    creators: "128,560+",
+    opcStudios: "18,420+", // 孵化校园 OPC 工作室
+    works: "862,430+",
+    brands: "2,340+",
+    tasksDone: "18,760+",
+    totalPaid: "¥3,256,890+",
+    taxComplianceRate: "100%", // 官方增值税专票代开合规率
+    subsidizedGpu: "1,500万+ Tflops" // 运营商校园算力补贴总量
+  },
+
+  // 1. 发现页 (Discover)
+  discover: {
+    works: [
+      {
+        id: 1,
+        title: "《未来信号》AI科幻短剧",
+        author: "小宇同学",
+        school: "南京大学",
+        authorLine: "南京大学 | @小宇同学",
+        tag: "精选",
+        category: "AI短剧",
+        duration: "03:28",
+        views: "12.8万",
+        likes: 12000,
+        likesDisplay: "1.2万",
+        cover: "assets/covers/work_1.png",
+        capabilityTag: "商单履约",
+        matrixSync: "全网同步",
+        level: "Lv.4 商业创作者",
+        completedTasks: "24 单已履约 · 100% 准时",
+        customPrice: "¥ 1,800 ~ 3,500 / 支",
+        tool: "文生视频",
+        prompt: "未来江南水乡赛博朋克风，古风亭台与全息霓虹雨丝交织，少女撑油纸伞伫立桥头，8K电影质感，运镜平滑推拉 --ar 16:9 --kling v1.5"
+      },
+      {
+        id: 2,
+        title: "校园生活的100种可能",
+        author: "晨晨学姐",
+        school: "浙江大学",
+        authorLine: "@晨晨学姐",
+        tag: "",
+        category: "校园Vlog",
+        duration: "02:15",
+        views: "8.6万",
+        likes: 8560,
+        likesDisplay: "8560",
+        cover: "assets/covers/work_2.png",
+        capabilityTag: "精选版权",
+        matrixSync: "社区首发",
+        level: "Lv.3 内容创作者",
+        completedTasks: "12 单已履约 · 99% 好评",
+        customPrice: "¥ 800 ~ 1,500 / 支",
+        tool: "智能剪辑",
+        prompt: "阳光洒在大学林荫大道，青春大学生结伴骑行，日系清新胶片色调，自动动态卡点，超清流畅画质"
+      },
+      {
+        id: 3,
+        title: "AI漫画 | 少年与机械城",
+        author: "漫话世界",
+        school: "中国美院",
+        authorLine: "@漫话世界",
+        tag: "",
+        category: "AI漫剧",
+        duration: "04:03",
+        views: "15.2万",
+        likes: 16000,
+        likesDisplay: "1.6万",
+        cover: "assets/covers/work_3.png",
+        capabilityTag: "社区金奖",
+        matrixSync: "全网同步",
+        level: "Lv.4 商业创作者",
+        completedTasks: "31 单已履约 · 漫剧金奖",
+        customPrice: "¥ 2,500 ~ 5,000 / 支",
+        tool: "AI图像生成",
+        prompt: "废土朋克少年与巨大的发光机械巨兽并肩俯瞰燃烧的城市，日漫手绘厚涂风，角色五官固定种子锁，高对比度史诗光影"
+      },
+      {
+        id: 4,
+        title: "AI数字人直播带货实战",
+        author: "带货小能手",
+        school: "华南理工",
+        authorLine: "@带货小能手",
+        tag: "",
+        category: "AI广告",
+        duration: "02:45",
+        views: "9.3万",
+        likes: 11000,
+        likesDisplay: "1.1万",
+        cover: "assets/covers/work_4.png",
+        capabilityTag: "带货优选",
+        matrixSync: "全网同步",
+        level: "Lv.4 商业创作者",
+        completedTasks: "45 场直播脚本交付 · GMV破百万",
+        customPrice: "¥ 1,200 ~ 2,800 / 场",
+        tool: "超写实数字人",
+        prompt: "专业电商带货主播，超写实拟真数字人模型，精准唇形音画对齐，自然肢体手势驱动，背景为现代3C数码科技直播间"
+      },
+      {
+        id: 5,
+        title: "山河之美 · 中国风AI视觉",
+        author: "视觉创想家",
+        school: "中央美院",
+        authorLine: "@视觉创想家",
+        tag: "",
+        category: "热门榜单",
+        duration: "01:52",
+        views: "6.3万",
+        likes: 6421,
+        likesDisplay: "6421",
+        cover: "assets/covers/work_5.png",
+        capabilityTag: "官方证书",
+        matrixSync: "社区首发",
+        level: "Lv.5 OPC 创业者",
+        completedTasks: "50+ 品牌案例 · 官方认证",
+        customPrice: "¥ 3,000 ~ 8,000 / 支",
+        tool: "文生视频",
+        prompt: "水墨丹青风写意山河，群鹤飞过云雾缭绕的奇峰绝壁，金色晨曦破云而出，慢门云海延时摄影镜头，4K 60FPS影视渲染"
+      },
+      {
+        id: 6,
+        title: "赛博霓虹：AI音乐MV",
+        author: "SoundWave",
+        school: "上海交大",
+        authorLine: "@SoundWave",
+        tag: "推荐",
+        category: "AI音乐",
+        duration: "03:40",
+        views: "11.4万",
+        likes: 9820,
+        likesDisplay: "9820",
+        cover: "assets/covers/task_side_1.png",
+        level: "Lv.3 内容创作者",
+        completedTasks: "8 首商业配乐交付",
+        customPrice: "¥ 1,000 ~ 2,000 / 首",
+        tool: "AI原创音乐",
+        prompt: "电子合成器浪潮，未来都市深夜穿梭电音，动感低音鼓点与梦幻女声吟唱融合，支持商用买断授权"
+      }
+    ],
+
+    tasks: [
+      {
+        id: "T101",
+        title: "某手机品牌AI短视频挑战赛",
+        desc: "创作手机功能相关的AI短视频",
+        category: "品牌任务",
+        typeTag: "品牌任务",
+        themeTag: "AI短视频",
+        reward: "¥ 50,000",
+        applied: "327人报名",
+        deadline: "剩余5天",
+        badgeClass: "badge-brand",
+        applicantAvatars: [0, 1, 2, 3, 4]
+      },
+      {
+        id: "T102",
+        title: "AI漫剧创作大赛",
+        desc: "创作30秒以内AI漫剧作品",
+        category: "创作挑战",
+        typeTag: "创作挑战",
+        themeTag: "AI漫剧",
+        reward: "¥ 30,000",
+        applied: "218人报名",
+        deadline: "",
+        badgeClass: "badge-challenge",
+        applicantAvatars: [2, 4, 1, 5, 0]
+      },
+      {
+        id: "T103",
+        title: "海外抖音矩阵内容合作",
+        desc: "长期寻找海外短视频创作者",
+        category: "长期合作",
+        typeTag: "长期合作",
+        themeTag: "海外运营",
+        reward: "¥ 面议",
+        applied: "15人报名",
+        deadline: "长期有效",
+        badgeClass: "badge-long",
+        applicantAvatars: []
+      },
+      {
+        id: "T104",
+        title: "校园探店AI视频征集",
+        desc: "校园周边探店AI视频创作",
+        category: "校园推广",
+        typeTag: "校园推广",
+        themeTag: "探店视频",
+        reward: "¥ 8,000",
+        applied: "156人报名",
+        deadline: "剩余3天",
+        badgeClass: "badge-brand",
+        applicantAvatars: [1, 3, 5]
+      }
+    ],
+
+    courses: [
+      {
+        id: "C1",
+        title: "从0到1掌握AI短视频创作",
+        level: "初级 · 32课时",
+        students: "1.2万 人学习",
+        cover: "assets/covers/course_1.png"
+      },
+      {
+        id: "C2",
+        title: "用AI制作你的专属漫画",
+        level: "初级 · 24课时",
+        students: "8560 人学习",
+        cover: "assets/covers/course_2.png"
+      },
+      {
+        id: "C3",
+        title: "数字人直播带货实操课程",
+        level: "进阶 · 28课时",
+        students: "6321 人学习",
+        cover: "assets/covers/course_3.png"
+      },
+      {
+        id: "C4",
+        title: "海外平台 YouTube 运营技巧",
+        level: "中级 · 36课时",
+        students: "9550 人学习",
+        cover: "assets/covers/course_4.png"
+      },
+      {
+        id: "C5",
+        title: "AI剪辑大师课",
+        level: "初级 · 20课时",
+        students: "1.1万 人学习",
+        cover: "assets/covers/course_5.png"
+      }
+    ],
+
+    matrixStats: {
+      platforms: [
+        { name: "社区大本营", key: "native", isNative: true, count: "5.8万", views: "5.8万", likes: "1.5万", income: "¥2,480", icon: "assets/decorations/logo_icon.png" },
+        { name: "抖音", key: "douyin", count: "12.6万", views: "12.6万", likes: "1.8万", income: "¥1,280", icon: "assets/icons/douyin.png" },
+        { name: "小红书", key: "xiaohongshu", count: "6.3万", views: "6.3万", likes: "1.2万", income: "¥860", icon: "assets/icons/xiaohongshu.png" },
+        { name: "视频号", key: "shipinhao", count: "8.2万", views: "8.2万", likes: "1.1万", income: "¥920", icon: "assets/icons/shipinhao.png" },
+        { name: "TikTok", key: "tiktok", count: "18.7万", views: "18.7万", likes: "2.1万", income: "¥1,920", icon: "assets/icons/tiktok.png" },
+        { name: "YouTube", key: "youtube", count: "9.4万", views: "9.4万", likes: "7.2千", income: "¥800", icon: "assets/icons/youtube.png" },
+        { name: "推特 (X)", key: "twitter", count: "4.6万", views: "4.6万", likes: "5,400", income: "¥450", icon: "assets/icons/twitter.png" },
+        { name: "更多", key: "more", isMore: true, count: "+5平台", views: "+5平台", likes: "—", income: "—", icon: "assets/icons/more.png" }
+      ],
+      totalViews: "65.6万",
+      newFans: "4.5万",
+      interactions: "8.7万",
+      predictedIncome: "¥5,118"
+    },
+
+    recommendedTasksRight: [
+      {
+        id: "TR2",
+        title: "品牌宣传片AI制作",
+        tag: "AI视频",
+        reward: "¥ 20,000",
+        applied: "89人报名",
+        deadline: "剩余6天",
+        cover: "assets/covers/rec_task_2.png"
+      },
+      {
+        id: "TR3",
+        title: "小红书种草视频征集",
+        tag: "种草视频",
+        reward: "¥ 6,000",
+        applied: "203人报名",
+        deadline: "剩余2天",
+        cover: "assets/covers/rec_task_3.png"
+      },
+      {
+        id: "TR4",
+        title: "校园AI短剧共创计划",
+        tag: "AI短剧",
+        reward: "¥ 15,000",
+        applied: "142人报名",
+        deadline: "剩余5天",
+        cover: "assets/covers/task_side_1.png"
+      },
+      {
+        id: "TR5",
+        title: "TikTok海外运营挑战",
+        tag: "海外运营",
+        reward: "¥ 8,000",
+        applied: "76人报名",
+        deadline: "剩余3天",
+        cover: "assets/covers/task_side_2.png"
+      }
+    ]
+  },
+
+  // 2. 成长学院 (Academy)
+  academy: {
+    // 定制播放器口径（唯一真源）：防拖拽 / 断点续播 / 播放安全三大能力开关与阈值
+    //   antiSeek          禁止拖拽跳过未观看内容（仅允许回看已观看区间）
+    //   resume            断点续播（进度落 MockData.__lessonProgress 并持久化到 localStorage）
+    //   watermark         动态水印（署名 + 学号 + 滚动时间戳，防录屏溯源）
+    playerConfig: {
+      antiSeek: true,
+      resume: true,
+      watermark: true,
+      seekToleranceSec: 3,     // 拖拽容差：跳到已观看点 3 秒内视为回看，不做拦截
+      heartbeatSec: 30,        // 观看凭证心跳周期（每满 30 秒生成一次有效播放凭证）
+      minFinishPercent: 95,    // 达到该观看进度才允许标记本节完成
+      speeds: [1, 1.5, 2, 3],  // 可选倍速（不支持任意倍速与拖条快进）
+      storageKey: "occ_lesson_progress_v1"
+    },
+    // 成长路径 Lv.1 ~ Lv.5：等级门槛（创作积分区间）+ 晋级需完成清单 + 达成后解锁权益
+    //   pointsMin/pointsMax 为创作积分门槛区间；requirements[].points 存在时该项达成状态由真实积分动态判定，
+    //   其余项以 done 为准；metric 为该项的量化对照（当前 / 要求）。
+    paths: [
+      {
+        level: "Lv.1", name: "AI 体验者", status: "已解锁", active: false, done: true, icon: "path_lv1",
+        perk: "体验 AI 工具与基础课程",
+        pointsMin: 0, pointsMax: 499,
+        goal: "完成身份与校园认证，跑通第一件 AI 作品",
+        scope: "可浏览全部免费课程与社区内容，可领取平台 AI 工具试用额度",
+        requirements: [
+          { text: "完成实名认证与校园 OPC 认证", done: true, metric: "2 / 2 项" },
+          { text: "完成 1 门入门课程并打卡", done: true, metric: "16 / 1 门" },
+          { text: "体验 3 个以上 AI 创作工具", done: true, metric: "5 / 3 个" },
+          { text: "累计创作积分达 100", points: 100 }
+        ],
+        perks: ["全部免费课程开放", "AI 工具试用额度", "社区浏览与互动"]
+      },
+      {
+        level: "Lv.2", name: "AI 创作者", status: "已解锁", active: false, done: true, icon: "path_lv2",
+        perk: "稳定创作与社区发布",
+        pointsMin: 500, pointsMax: 1499,
+        goal: "稳定产出原创作品，建立个人创作节奏",
+        scope: "可发布作品并参与全网分发，可领取课程结业证书",
+        requirements: [
+          { text: "累计创作积分达 500", points: 500 },
+          { text: "完成 5 门课程", done: true, metric: "16 / 5 门" },
+          { text: "发布 3 个原创作品", done: true, metric: "36 / 3 个" },
+          { text: "连续打卡 3 天", done: true, metric: "7 / 3 天" },
+          { text: "领取 1 张课程结业证书", done: true, metric: "8 / 1 张" }
+        ],
+        perks: ["创作积分加成", "作品全网多平台分发", "课程结业证书"]
+      },
+      {
+        level: "Lv.3", name: "内容创作者", status: "已解锁", active: false, done: true, icon: "path_lv3",
+        perk: "可承接基础任务与挑战赛",
+        pointsMin: 1500, pointsMax: 2499,
+        goal: "具备稳定交付能力，可承接基础商单与挑战赛",
+        scope: "可报名承接基础任务与挑战赛，作品可申请上架展厅审核",
+        requirements: [
+          { text: "累计创作积分达 1,500", points: 1500 },
+          { text: "完成 10 门课程", done: true, metric: "16 / 10 门" },
+          { text: "社区发布 10 个作品", done: true, metric: "36 / 10 个" },
+          { text: "通过「内容创作者认证」", done: true, metric: "已持有" },
+          { text: "完成首个实战任务交付", done: true, metric: "12 / 1 单" }
+        ],
+        perks: ["承接基础任务与挑战赛", "社区精选流量加权", "学院认证徽章"]
+      },
+      {
+        level: "Lv.4", name: "商业创作者", status: "进行中", active: true, done: false, icon: "path_lv4",
+        perk: "可接高赏金商单 · 展厅优先加权",
+        pointsMin: 2500, pointsMax: 3999,
+        goal: "具备商业交付与口碑能力，可承接品牌商单",
+        scope: "可承接高赏金品牌商单与展厅定制，赏金平台全额托管",
+        requirements: [
+          { text: "累计创作积分达 2,500", points: 2500 },
+          { text: "完成 12 门课程", done: true, metric: "16 / 12 门" },
+          { text: "累计完成 15 个商单交付", done: false, metric: "12 / 15 单" },
+          { text: "准时交付率不低于 95%", done: true, metric: "99.4% / 95%" },
+          { text: "通过「商业创作者认证」", done: true, metric: "已持有" }
+        ],
+        perks: ["承接高赏金品牌商单", "作品展厅优先加权", "定制托管与商业结算", "提现 T+0 免手续费"]
+      },
+      {
+        level: "Lv.5", name: "OPC 创业者", status: "未解锁", active: false, done: false, icon: "path_lv5",
+        perk: "个人品牌工作室化与团队协作",
+        pointsMin: 4000, pointsMax: null,
+        goal: "从个人创作者升级为一人公司（OPC）经营者",
+        scope: "可组建协作团队派单交付，可开设导师课程并获得带教收益",
+        requirements: [
+          { text: "累计创作积分达 4,000", points: 4000 },
+          { text: "累计完成 30 个商单交付", done: false, metric: "12 / 30 单" },
+          { text: "累计创作收益达 ¥20,000", done: false, metric: "¥6,820 / ¥20,000" },
+          { text: "通过 OPC 工作室认证", done: true, metric: "已认证" },
+          { text: "孵化 1 位以上学徒或团队成员", done: true, metric: "3 / 1 人" }
+        ],
+        perks: ["个人品牌工作室化", "团队协作与派单", "更高分成与专属辅导", "导师收益与学徒孵化"]
+      }
+    ],
+
+    plans: [
+      {
+        id: "P1",
+        badge: "新手入门",
+        title: "AI 短视频入门到精通",
+        lessons: "5节课 | 32课时",
+        students: "1.2万人学习",
+        progress: 40,
+        category: "新手入门",
+        cover: "assets/covers/academy_course_1.png",
+        desc: "从工具安装到成片发布，掌握 AI 短视频创作的完整入门路径。",
+        teacher: "林晓 · 学院导师",
+        credit: 2,
+        certId: "CERT-P1",
+        isFree: true,
+        price: 0,
+        priceText: "免费精选",
+        pointsPrice: 0,
+        pointsReward: 150,
+        rewardPerLesson: 30,
+        rating: 4.9,
+        reviewsCount: 382,
+        reviews: [
+          {
+            id: "REV-101",
+            author: "张同学",
+            avatar: "assets/avatars/user_header.png",
+            school: "清华大学 · 交叉信息研究院",
+            rating: 5,
+            date: "2024-05-18",
+            progress: "已学完 100%",
+            content: "课程非常扎实，完全没有传统网课的注水！学完第3节文生视频参数调优后，直接配合种子锁定交付了人生首个商单短片！看完视频送的创作积分也直接抵扣了广场任务押金，太给力了！"
+          },
+          {
+            id: "REV-102",
+            author: "李子木",
+            avatar: "assets/avatars/rank_user_1.png",
+            school: "中国传媒大学 · 动画与数字艺术学院",
+            rating: 5,
+            date: "2024-05-14",
+            progress: "已学 80%",
+            content: "不搞生硬的做题考试，而是纯粹的实操视频与成片复盘，每节看完还有 +30 创作积分即时入账，学习正反馈拉满。"
+          },
+          {
+            id: "REV-103",
+            author: "周小萌",
+            avatar: "assets/avatars/rank_user_2.png",
+            school: "浙江大学 · 计算机科学与技术学院",
+            rating: 5,
+            date: "2024-05-09",
+            progress: "已学完 100%",
+            content: "提示词五段式骨架直接治好了我的提示词焦虑，导出的成片质量显著提升，准备继续学习高阶实战课！"
+          }
+        ],
+        lessonList: [
+          { id: "P1-L01", title: "AI 工具速览与环境配置", duration: "18 分钟", type: "video", status: "done", rewardPoints: 30, summary: "安装常用创作工具，完成账号与素材目录初始化。", keypoints: ["工具清单", "账号准备", "素材目录"], content: "本课带你搭好创作环境：剪辑软件、文生视频入口、素材盘与导出预设。完成后即可领取 +30 创作积分并开始下一课提示词练习。" },
+          { id: "P1-L02", title: "Prompt 结构工程解析", duration: "22 分钟", type: "video", status: "done", rewardPoints: 30, summary: "学会可复用的提示词骨架：主体、风格、镜头、约束。", keypoints: ["主体描述", "风格词", "负向约束"], content: "用「主体 + 场景 + 镜头 + 风格 + 约束」五段式写提示词，并对照成片质量做迭代。" },
+          { id: "P1-L03", title: "AI 视频创作基础", duration: "26 分钟", type: "video", status: "learning", rewardPoints: 30, summary: "文生视频原理、参数与常见翻车点。", keypoints: ["文生视频", "时长控制", "一致性"], content: "理解文生视频链路：文本理解 → 关键帧 → 时序生成。掌握时长、运动幅度与角色一致性调参。" },
+          { id: "P1-L04", title: "成片剪辑与字幕包装", duration: "24 分钟", type: "article", status: "todo", rewardPoints: 30, summary: "节奏、字幕、BGM 与封面导出规范。", keypoints: ["节奏剪辑", "字幕", "导出"], content: "用三段式节奏剪辑，自动字幕校对，导出 9:16 / 16:9 双规格，并生成封面候选。" },
+          { id: "P1-L05", title: "实战成片打包与商业交付归档", duration: "25 分钟", type: "video", status: "todo", rewardPoints: 30, summary: "高价值实操：成片母带封装、工程源文件整理与交付报告编写。", keypoints: ["交付报告", "工程源文件", "版权归档"], content: "学习真实商单交付标准：母带视频编码参数、工程素材分类归档、验收单据生成与版权交割流程。学完即获结业专属勋章与 +30 创作积分。" }
+        ]
+      },
+      {
+        id: "P2",
+        badge: "技能提升",
+        title: "AI 漫剧创作全流程",
+        lessons: "5节课 | 36课时",
+        students: "8560人学习",
+        progress: 60,
+        category: "技能提升",
+        cover: "assets/covers/academy_course_2.png",
+        desc: "分镜、角色一致性、配音与分集发布的漫剧工业化流程。",
+        teacher: "周可 · 漫剧导演",
+        credit: 3,
+        certId: "CERT-P2",
+        isFree: true,
+        price: 0,
+        priceText: "免费精选",
+        pointsPrice: 0,
+        pointsReward: 150,
+        rewardPerLesson: 30,
+        rating: 4.9,
+        reviewsCount: 295,
+        reviews: [
+          {
+            id: "REV-201",
+            author: "林深时",
+            avatar: "assets/avatars/rank_user_3.png",
+            school: "同济大学 · 设计创意学院",
+            rating: 5,
+            date: "2024-05-16",
+            progress: "已学 80%",
+            content: "角色一致性的种子锁定方法简直是漫剧救星，终于不需要每一集手动微调人物了！社区不设考试，学完视频就送积分，很注重实际输出。"
+          },
+          {
+            id: "REV-202",
+            author: "王同学",
+            avatar: "assets/avatars/user_header.png",
+            school: "北京电影学院 · 声音学院",
+            rating: 5,
+            date: "2024-05-11",
+            progress: "已学完 100%",
+            content: "分镜头脚本和配音情绪对齐的章节十分专业，跟着实操直接产出了三集古风微剧，已经入选展厅精选了！"
+          }
+        ],
+        lessonList: [
+          { id: "P2-L01", title: "漫剧选题与人设", duration: "20 分钟", type: "video", status: "done", rewardPoints: 30, summary: "选题漏斗与人设卡。", keypoints: ["选题", "人设卡"], content: "用三问法筛选题，输出人设卡：欲望、冲突、口头禅。" },
+          { id: "P2-L02", title: "分镜与镜头语言", duration: "28 分钟", type: "video", status: "done", rewardPoints: 30, summary: "分镜表与镜头节奏。", keypoints: ["分镜表", "景别"], content: "用景别交替控制情绪，关键冲突镜头前置。" },
+          { id: "P2-L03", title: "角色一致性生成", duration: "30 分钟", type: "video", status: "done", rewardPoints: 30, summary: "参考图与种子锁定。", keypoints: ["参考图", "种子"], content: "固定参考图与种子，批量生成同角色多姿态。" },
+          { id: "P2-L04", title: "配音与分集发布", duration: "22 分钟", type: "article", status: "learning", rewardPoints: 30, summary: "配音情绪与发布清单。", keypoints: ["配音", "发布"], content: "情绪轨对齐口型，分集封面与标题模板化发布。" },
+          { id: "P2-L05", title: "漫剧整季工业化工作流实操", duration: "28 分钟", type: "video", status: "todo", rewardPoints: 30, summary: "整季连贯、资产复用与长视频批量分发实战。", keypoints: ["整季连贯", "资产复用", "批量分发"], content: "掌握多集长线漫剧的工业化协同管线，打通从剧本到多平台分发的全流程。" }
+        ]
+      },
+      {
+        id: "P3",
+        badge: "实战进阶",
+        title: "数字人直播带货实战",
+        lessons: "5节课 | 42课时",
+        students: "1.6万人学习",
+        progress: 45,
+        category: "实战进阶",
+        cover: "assets/covers/academy_course_3.png",
+        desc: "数字人搭建、话术、互动与复盘的直播带货闭环。",
+        teacher: "陈岚 · 直播操盘手",
+        credit: 3,
+        certId: "CERT-P3",
+        isFree: false,
+        price: 49,
+        priceText: "¥ 49",
+        pointsPrice: 490,
+        pointsReward: 180,
+        rewardPerLesson: 35,
+        rating: 4.8,
+        reviewsCount: 412,
+        reviews: [
+          {
+            id: "REV-301",
+            author: "高歌",
+            avatar: "assets/avatars/rank_user_1.png",
+            school: "武汉大学 · 经济与管理学院",
+            rating: 5,
+            date: "2024-05-15",
+            progress: "已学完 100%",
+            content: "49元性价比超高，也可以用490积分免费换。陈岚老师讲的话术四段式在实战中直接转化率翻倍，值得每一位想做数字人带货的同学细看！"
+          },
+          {
+            id: "REV-302",
+            author: "苏子墨",
+            avatar: "assets/avatars/rank_user_2.png",
+            school: "南京大学 · 软件学院",
+            rating: 5,
+            date: "2024-05-10",
+            progress: "已学 60%",
+            content: "每节课看完都能拿到 +35 创作积分，边学高阶课边赚积分，没有任何考试门槛，体验非常顺畅。"
+          }
+        ],
+        lessonList: [
+          { id: "P3-L01", title: "数字人形象与声线", duration: "24 分钟", type: "video", status: "done", rewardPoints: 35, summary: "形象与声线匹配品类。", keypoints: ["形象", "声线"], content: "按品类选择人设与声线，完成基础驱动测试。" },
+          { id: "P3-L02", title: "带货话术脚本", duration: "26 分钟", type: "video", status: "done", rewardPoints: 35, summary: "话术四段式。", keypoints: ["话术"], content: "痛点开场 → 卖点证据 → 限时权益 → 行动指令。" },
+          { id: "P3-L03", title: "直播互动技巧", duration: "28 分钟", type: "video", status: "learning", rewardPoints: 35, summary: "弹幕与逼单节奏。", keypoints: ["互动", "逼单"], content: "弹幕关键词回复、库存播报与逼单节奏表。" },
+          { id: "P3-L04", title: "场次复盘表", duration: "18 分钟", type: "article", status: "todo", rewardPoints: 35, summary: "转化漏斗复盘。", keypoints: ["复盘"], content: "观看-互动-加购-成交四段漏斗与改进项。" },
+          { id: "P3-L05", title: "数字人直播全天无人值守与应急复盘", duration: "30 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "24小时无人值守直播搭建、违规断播预警与应急预案。", keypoints: ["无人值守", "违规避坑", "销售转化"], content: "详解无人直播架构搭建、断流自动重连、违规词实时屏蔽与高GMV转化配置技巧。" }
+        ]
+      },
+      {
+        id: "P4",
+        badge: "出海运营",
+        title: "TikTok 短视频运营秘籍",
+        lessons: "5节课 | 48课时",
+        students: "2.3万人学习",
+        progress: 20,
+        category: "出海运营",
+        cover: "assets/covers/academy_course_4.png",
+        desc: "账号定位、内容日历、合规与推流的出海运营体系。",
+        teacher: "Eva · 出海增长",
+        credit: 2,
+        certId: "CERT-P4",
+        isFree: false,
+        price: 69,
+        priceText: "¥ 69",
+        pointsPrice: 690,
+        pointsReward: 200,
+        rewardPerLesson: 40,
+        rating: 4.9,
+        reviewsCount: 518,
+        reviews: [
+          {
+            id: "REV-401",
+            author: "赵天成",
+            avatar: "assets/avatars/user_header.png",
+            school: "上海外国语大学 · 英语学院",
+            rating: 5,
+            date: "2024-05-17",
+            progress: "已学 40%",
+            content: "出海最重要的就是合规避坑，Eva 老师把海外版权、推流算法底层讲得很透，课后积分奖励也很丰厚！"
+          }
+        ],
+        lessonList: [
+          { id: "P4-L01", title: "账号定位与垂类", duration: "20 分钟", type: "video", status: "done", rewardPoints: 40, summary: "垂类与人设。", keypoints: ["定位"], content: "选定垂类、受众国家与内容支柱。" },
+          { id: "P4-L02", title: "内容日历与批量生产", duration: "24 分钟", type: "video", status: "learning", rewardPoints: 40, summary: "周更节奏。", keypoints: ["日历"], content: "用模板化分镜实现周更 5 条。" },
+          { id: "P4-L03", title: "海外合规与推流", duration: "22 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "合规清单。", keypoints: ["合规"], content: "版权、广告标识与敏感词清单。" },
+          { id: "P4-L04", title: "数据复盘与投放", duration: "20 分钟", type: "article", status: "todo", rewardPoints: 40, summary: "完播与转化。", keypoints: ["数据"], content: "完播、互动、主页访问三维复盘。" },
+          { id: "P4-L05", title: "海外商业变现漏斗与品牌商单直通", duration: "32 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "创作者基金申请、跨境品牌直单承接与美元结算合规指引。", keypoints: ["海外商单", "外币结算", "长线履约"], content: "梳理海外主流变现路径，建立跨境创作者品牌与商业接单标准通道。" }
+        ]
+      },
+      {
+        id: "P5",
+        badge: "商业变现",
+        title: "从0到1接单变现指南",
+        lessons: "5节课 | 24课时",
+        students: "6321人学习",
+        progress: 10,
+        category: "商业变现",
+        cover: "assets/covers/academy_course_5.png",
+        desc: "接单报价、交付SOP、复盘与 OPC 准入准备。",
+        teacher: "何舟 · 商业顾问",
+        credit: 4,
+        certId: "CERT-P5",
+        isFree: false,
+        price: 99,
+        priceText: "¥ 99",
+        pointsPrice: 990,
+        pointsReward: 240,
+        rewardPerLesson: 50,
+        rating: 5.0,
+        reviewsCount: 367,
+        reviews: [
+          {
+            id: "REV-501",
+            author: "许晓云",
+            avatar: "assets/avatars/rank_user_3.png",
+            school: "复旦大学 · 管理学院",
+            rating: 5,
+            date: "2024-05-18",
+            progress: "已学 20%",
+            content: "这是我见过最务实的接单变现指南，尤其是对公签约与定金托管的几点避坑经验，直接帮助我拿下了 8,000 元的企业定制单！"
+          }
+        ],
+        lessonList: [
+          { id: "P5-L01", title: "接单画像与作品集", duration: "18 分钟", type: "video", status: "learning", rewardPoints: 50, summary: "作品集结构。", keypoints: ["作品集"], content: "三件代表作 + 交付说明 + 可量化结果。" },
+          { id: "P5-L02", title: "报价与合同要点", duration: "22 分钟", type: "video", status: "todo", rewardPoints: 50, summary: "范围与验收。", keypoints: ["报价"], content: "范围、修改次数、验收节点与托管结算。" },
+          { id: "P5-L03", title: "交付 SOP", duration: "20 分钟", type: "article", status: "todo", rewardPoints: 40, summary: "里程碑交付。", keypoints: ["SOP"], content: "需求确认 → 初稿 → 终稿 → 验收归档。" },
+          { id: "P5-L04", title: "复盘与复购", duration: "16 分钟", type: "article", status: "todo", rewardPoints: 50, summary: "客户成功。", keypoints: ["复购"], content: "交付后复盘模板与增购话术。" },
+          { id: "P5-L05", title: "OPC 超级个体商业签约与交付实战", duration: "35 分钟", type: "video", status: "todo", rewardPoints: 50, summary: "商业合同模板、对公账期管理与高溢价复购壁垒构建。", keypoints: ["合同签订", "对公账期", "复购壁垒"], content: "拆解真实高校 OPC 创作者商业案例，从单次交活跃升为长期月度品牌签约顾问。" }
+        ]
+      },
+      {
+        id: "P6",
+        badge: "技能提升",
+        title: "Sora与可灵AI影视级运镜全解",
+        lessons: "5节课 | 20课时",
+        students: "5180人学习",
+        progress: 0,
+        category: "技能提升",
+        cover: "assets/covers/academy_course_1.png",
+        desc: "掌握摄影机轨道、镜头推拉摇移、动态模糊与光影层次影视工业化调校实战。",
+        teacher: "周景深 · 电影摄影指导",
+        credit: 3,
+        certId: null,
+        isFree: false,
+        price: 59,
+        priceText: "¥ 59",
+        pointsPrice: 590,
+        pointsReward: 180,
+        rewardPerLesson: 35,
+        rating: 4.9,
+        reviewsCount: 312,
+        reviews: [
+          {
+            id: "REV-601",
+            author: "苏子涵",
+            avatar: "assets/avatars/rank_user_1.png",
+            school: "北京电影学院 · 摄影系",
+            rating: 5,
+            date: "2024-05-18",
+            progress: "已学 10%",
+            content: "周老师对电影焦段和光圈的提示词解构非常专业，特别是结合可灵1.5运镜参数，生成的画面完全达到了院线级质感！"
+          }
+        ],
+        lessonList: [
+          { id: "P6-L01", title: "电影焦段与构图法则", duration: "22 分钟", type: "video", status: "todo", rewardPoints: 35, summary: "广角、长焦与微距的画面呼吸感控制。", keypoints: ["焦段控制", "景深", "呼吸感"], content: "讲解 35mm 人文焦段与 85mm 特写焦段在大模型中的 Prompt 映射逻辑。" },
+          { id: "P6-L02", title: "运镜轨迹与速度曲线", duration: "25 分钟", type: "video", status: "todo", rewardPoints: 35, summary: "轨道平移、希区柯克变焦与无人机升降模拟。", keypoints: ["希区柯克变焦", "平移轨道", "动态模糊"], content: "结合可灵与Runway的运动笔刷，实现丝滑无卡顿的复杂镜头调度。" },
+          { id: "P6-L03", title: "电影级布光与体积光渲染", duration: "20 分钟", type: "video", status: "todo", rewardPoints: 35, summary: "三点布光、伦勃朗光与丁达尔效应提示词实战。", keypoints: ["三点布光", "体积光", "色彩冷暖"], content: "实战演练通过材质与光照控制，消除画面AI塑料感。" },
+          { id: "P6-L04", title: "多镜头剪辑节奏与转场设计", duration: "18 分钟", type: "article", status: "todo", rewardPoints: 35, summary: "动作匹配剪辑与情绪重音卡点。", keypoints: ["动作匹配", "重音卡点", "转场预设"], content: "图文结合拆解 4 段不同商业场景下的影视级镜头衔接模板。" },
+          { id: "P6-L05", title: "综合影视短片全流程成片实操", duration: "30 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "从故事分镜到4K终稿导出与调色交付。", keypoints: ["成片打包", "4K升频", "达芬奇调色"], content: "完整串联文生图、图生视频、音频铺设与色彩管理全流程。" }
+        ]
+      },
+      {
+        id: "P7",
+        badge: "技能提升",
+        title: "AI生成音乐与商业配乐实战",
+        lessons: "4节课 | 16课时",
+        students: "7210人学习",
+        progress: 0,
+        category: "技能提升",
+        cover: "assets/covers/academy_course_3.png",
+        desc: "使用 Suno v3.5 与 Udio 精准生成无版权纠纷的商业级视频 BGM、卡点音乐与主题曲。",
+        teacher: "林羽 · 音乐制作人",
+        credit: 2,
+        certId: null,
+        isFree: true,
+        price: 0,
+        priceText: "免费精选",
+        pointsPrice: 0,
+        pointsReward: 140,
+        rewardPerLesson: 35,
+        rating: 4.8,
+        reviewsCount: 428,
+        reviews: [
+          {
+            id: "REV-701",
+            author: "高晓峰",
+            avatar: "assets/avatars/rank_user_2.png",
+            school: "武汉大学 · 艺术学院",
+            rating: 5,
+            date: "2024-05-16",
+            progress: "已学 50%",
+            content: "免费课质量竟然这么高！把 Suno 的 [Verse] [Chorus] 结构标签讲得清清楚楚，给自己的短剧配上了专属定制BGM。"
+          }
+        ],
+        lessonList: [
+          { id: "P7-L01", title: "Suno v3.5 标签与结构工程", duration: "18 分钟", type: "video", status: "todo", rewardPoints: 35, summary: "掌握乐器风格、情绪与节奏 BPM 关键词。", keypoints: ["风格标签", "结构控制", "BPM"], content: "系统梳理 Epic Trailer、Lo-Fi Chill、国风古韵三大主流视频赛道音乐生成方案。" },
+          { id: "P7-L02", title: "商用视频精准卡点配乐编排", duration: "20 分钟", type: "video", status: "todo", rewardPoints: 35, summary: "情绪曲线与画面起承转合对齐方法。", keypoints: ["情绪曲线", "Drop点", "节奏卡点"], content: "在剪映中将画面高潮与 AI 生成的高能量 Drop 段落完美咬合。" },
+          { id: "P7-L03", title: "人声修音与无版权商用授权合规", duration: "16 分钟", type: "article", status: "todo", rewardPoints: 35, summary: "商用权益申明与音质 44.1kHz 母带增强。", keypoints: ["商用合规", "母带降噪", "授权存证"], content: "剖析 AI 音乐商业授权边界，掌握一键提取人声、分轨伴奏与降噪技巧。" },
+          { id: "P7-L04", title: "实战：为 60 秒短视频量身定制专属配乐", duration: "22 分钟", type: "video", status: "todo", rewardPoints: 35, summary: "全流程从文案、情绪到最终配乐导出。", keypoints: ["全流程实操", "分轨混音", "多版交付"], content: "跟随导师完成一支国风商业广告片的定制音乐制作与导出交付。" }
+        ]
+      },
+      {
+        id: "P8",
+        badge: "出海运营",
+        title: "TikTok海外自动化短视频批量产出与美金变现",
+        lessons: "5节课 | 22课时",
+        students: "4890人学习",
+        progress: 0,
+        category: "出海运营",
+        cover: "assets/covers/academy_course_4.png",
+        desc: "全自动化脚本抓取热点、AI 多语种情绪配音、多机位自动切片去重的海外出海全套打法。",
+        teacher: "Eva · 跨境航海计划主理人",
+        credit: 3,
+        certId: null,
+        isFree: false,
+        price: 79,
+        priceText: "¥ 79",
+        pointsPrice: 790,
+        pointsReward: 200,
+        rewardPerLesson: 40,
+        rating: 4.9,
+        reviewsCount: 389,
+        reviews: [
+          {
+            id: "REV-801",
+            author: "张铭轩",
+            avatar: "assets/avatars/rank_user_4.png",
+            school: "浙江大学 · 国际商务",
+            rating: 5,
+            date: "2024-05-19",
+            progress: "已学 20%",
+            content: "实测跟着这门课做自动化切片出海，第三周单个账号就跑出了 150 万播放，美金分成已到账！"
+          }
+        ],
+        lessonList: [
+          { id: "P8-L01", title: "海外账号冷启动与网络合规基建", duration: "25 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "安全网络环境、原生节点与伪装度检测。", keypoints: ["网络环境", "防封策略", "权重维护"], content: "手把手配置海外原生合规网络环境，避免 0 播与批量封号隐患。" },
+          { id: "P8-L02", title: "AI 批量文案改写与地道本地化表达", duration: "22 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "利用大模型生成符合欧美俚语与情绪的爆款解说词。", keypoints: ["本地化俚语", "情绪词", "完播率提升"], content: "搭建自动化文案提示词链路，实现一键翻译改写为 6 国地道文案。" },
+          { id: "P8-L03", title: "自动化剪辑脚本与智能去重流水线", duration: "28 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "多层背景替换、动态运镜微扰与音频指纹伪装。", keypoints: ["自动剪辑", "深度去重", "批量导出"], content: "掌握 Python/剪映自动化批量剪辑方案，实现一人日更 20 条高质视频。" },
+          { id: "P8-L04", title: "TikTok 创作者基金与带货橱窗开通指南", duration: "20 分钟", type: "article", status: "todo", rewardPoints: 40, summary: "万粉达标要求、税务表填报与提现实操指引。", keypoints: ["创作者基金", "海外税务", "外币提现"], content: "详解海外银行账户绑定、合规报税申报与收益安全回国路径。" },
+          { id: "P8-L05", title: "品牌海外直单接洽与美元商务谈判", duration: "24 分钟", type: "video", status: "todo", rewardPoints: 40, summary: "海外品牌方邮件商务模版与定制报价体系。", keypoints: ["品牌商单", "英文合同", "长线履约"], content: "分享真实出海达人如何承接海外游戏、3C品牌推广单，单条报价 $500 起。" }
+        ]
+      }
+    ],
+
+    calendarTasks: {
+      "26": [
+        { title: "AI工具速览与环境配置", lesson: "第1课: 软件概览", status: "已完成", state: "已完成", cover: "assets/covers/today_plan_1.png", planId: "P1", lessonId: "P1-L01" }
+      ],
+      "27": [
+        { title: "Prompt结构工程解析", lesson: "第2课: 提示词模型", status: "已完成", state: "已完成", cover: "assets/covers/today_plan_2.png", planId: "P1", lessonId: "P1-L02" }
+      ],
+      "28": [
+        { title: "AI 视频创作基础", lesson: "第3课: 文生视频原理", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_1.png", planId: "P1", lessonId: "P1-L03" },
+        { title: "数字人直播实战", lesson: "第5课: 直播互动技巧", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_2.png", planId: "P3", lessonId: "P3-L03" },
+        { title: "短视频剪辑进阶", lesson: "第2课: 节奏与转场", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_3.png", planId: "P2", lessonId: "P2-L02" }
+      ],
+      "29": [
+        { title: "商业化分镜拆解", lesson: "第4课: 镜头语言", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_3.png", planId: "P2", lessonId: "P2-L02" }
+      ],
+      "30": [
+        { title: "AI配音情感合成技巧", lesson: "第6课: 声线调制", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_1.png", planId: "P2", lessonId: "P2-L04" }
+      ],
+      "31": [
+        { title: "海外合规与推流实操", lesson: "第8课: 流量密码", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_2.png", planId: "P4", lessonId: "P4-L03" }
+      ],
+      "1": [
+        { title: "周度创作成果复盘", lesson: "第5课: 实战成片打包与交付", status: "未开始", state: "去学习", cover: "assets/covers/today_plan_3.png", planId: "P1", lessonId: "P1-L05" }
+      ]
+    },
+
+    resources: [
+      {
+        id: "R1",
+        name: "精品课单路线库",
+        shortName: "课单路线",
+        desc: "2000+ 优质课程体系",
+        iconColor: "#6366F1",
+        icon: "res1",
+        detail: "由官方教研组联合行业头部创作者精选打造的体系化成长路径，涵盖从零起步到商业超级个体的全生命周期。",
+        stats: { count: "2,400+ 节", enrolled: "42,000+ 人", rating: "4.95" },
+        items: [
+          {
+            id: "R1-1",
+            title: "零基础 7 天 AI 视频创作从入门到接单全景营",
+            category: "新手入门",
+            lessons: "8 节体系课",
+            duration: "180 分钟",
+            students: "12,450 人",
+            rewardPoints: 200,
+            badge: "入门必修",
+            planId: "P1",
+            desc: "从主流文生图工具、文生视频模型配置到第一支成片导出，适合没有任何视听基础的创作者。"
+          },
+          {
+            id: "R1-2",
+            title: "百万播放国风 AI 漫剧工业化分镜与角色一致性工作流",
+            category: "技能提升",
+            lessons: "10 节精讲",
+            duration: "240 分钟",
+            students: "8,920 人",
+            rewardPoints: 260,
+            badge: "高薪专项",
+            planId: "P2",
+            desc: "攻克角色换装/角度形变一致性难题，建立十二宫格分镜与多机位调度工业级流水线。"
+          },
+          {
+            id: "R1-3",
+            title: "数字人 24 小时无人值守带货直播间全套搭建与话术库",
+            category: "实战进阶",
+            lessons: "7 节实操课",
+            duration: "160 分钟",
+            students: "6,300 人",
+            rewardPoints: 220,
+            badge: "变现热点",
+            planId: "P3",
+            desc: "超写实数字人定制、声线高保真克隆、OBS 实时推流防违规策略与带货转化爆单话术。"
+          },
+          {
+            id: "R1-4",
+            title: "TikTok + YouTube Shorts 海外自动化起号与美金变现",
+            category: "出海运营",
+            lessons: "6 节深度课",
+            duration: "150 分钟",
+            students: "5,840 人",
+            rewardPoints: 200,
+            badge: "全球变现",
+            planId: "P4",
+            desc: "解决海外推流风控、多语种本地化配音与创作者基金/品牌直单对公跨境合规结算。"
+          }
+        ]
+      },
+      {
+        id: "R2",
+        name: "AI 核心电子教材与手册",
+        shortName: "AI 教材",
+        desc: "500+ 专业电子教材与 SOP",
+        iconColor: "#0EA5E9",
+        icon: "res2",
+        detail: "支持高保真在线预览与极速下载的官方 PDF 讲义、提示词全解手册、商业分镜表及商务合同合规文本。",
+        stats: { count: "520+ 份", downloads: "89,000+ 次", format: "PDF / DOCX / XLSX" },
+        items: [
+          {
+            id: "R2-1",
+            title: "2026 AI 视频创作高阶提示词全解工程手册 (v6.0)",
+            fileType: "PDF",
+            fileSize: "18.5 MB",
+            updatedAt: "2024-05-18",
+            downloads: "28,450",
+            category: "提示词工程",
+            author: "成长学院教研组",
+            summary: "涵盖Midjourney v6/可灵/Runway Gen-3四大底层大模型的镜头运动、光影质感、艺术流派及负面提示词词典（1,200+ 精选词条）。",
+            toc: [
+              "第1章：镜头语言与摄影参数词典（焦段、景深、机位运动）",
+              "第2章：光影风格与色调控制关键词（丁达尔、赛博朋克、胶片颗粒）",
+              "第3章：角色微表情与动态姿态精准驱动技巧",
+              "第4章：中英文双语对照与负向避坑通用模版"
+            ]
+          },
+          {
+            id: "R2-2",
+            title: "商业短视频分镜十二法则与标准工程表",
+            fileType: "XLSX",
+            fileSize: "4.2 MB",
+            updatedAt: "2024-05-15",
+            downloads: "19,200",
+            category: "分镜脚本",
+            author: "视觉导演 陈墨",
+            summary: "企业级视频商单分镜标准表，支持前3秒完播黄金钩子、景别切换节拍、音效点位与Prompt参数栏自动关联计算。",
+            toc: [
+              "Sheet 1: 30秒短视频黄金完播分镜模板（配节拍标记）",
+              "Sheet 2: 60秒剧情类AI漫剧多机位分镜脚本表",
+              "Sheet 3: 甲方企业评审与修改批注协同版",
+              "Sheet 4: 音效/BGM与视觉画面情绪曲线对齐工具"
+            ]
+          },
+          {
+            id: "R2-3",
+            title: "数字人无人值守直播带货话术拆解与违规词红线清单",
+            fileType: "PDF",
+            fileSize: "9.8 MB",
+            updatedAt: "2024-05-12",
+            downloads: "15,600",
+            category: "直播带货",
+            author: "直播操盘手 陆晴",
+            summary: "覆盖美妆、数码、知识付费三大主流赛道的主播高转化逼单话术结构，并附赠抖音/快手平台最新违禁词与规避方案。",
+            toc: [
+              "第1章：留人话术框架（开场前15秒黄金钩子设计）",
+              "第2章：塑价与痛点促单三步法（对标线下销冠模式）",
+              "第3章：平台直播合规与敏感禁限词避雷清单（2026最新版）",
+              "第4章：弹幕智能互动与自动回复问答预设库"
+            ]
+          },
+          {
+            id: "R2-4",
+            title: "创作者商业商单接单报价与合规对公验收白皮书",
+            fileType: "DOCX",
+            fileSize: "6.1 MB",
+            updatedAt: "2024-05-10",
+            downloads: "12,800",
+            category: "商务合同",
+            author: "何舟 商业顾问",
+            summary: "包含个人独资/高校个体接单标准服务协议、定金托管声明、修改次数限制条款及免税合规开票全流程。",
+            toc: [
+              "附件一：创作者商业定制委托制作合同（标准版）",
+              "附件二：商单验收确认书与著作权授权转让承诺函",
+              "附件三：常见违约/拖欠款追索法务流程与证据链留存清单",
+              "附件四：阶梯报价参考基准表（微短剧、企业宣传、带货视频）"
+            ]
+          }
+        ]
+      },
+      {
+        id: "R3",
+        name: "爆款实战案例拆解库",
+        shortName: "案例库",
+        desc: "1000+ 真实爆款商业案例",
+        iconColor: "#8B5CF6",
+        icon: "res3",
+        detail: "全面解构高完播、高点赞与高收益商业作品的制作幕后，提供从构思、提示词到变现的完整链路数据。",
+        stats: { count: "1,200+ 个", views: "1.2 亿+ 曝光", revenue: "¥ 280 万+ GMV" },
+        items: [
+          {
+            id: "R3-1",
+            title: "国风神话 AI 漫剧第1集：单条播放 1200W+ 工业化制作复盘",
+            cover: "assets/covers/work_1.png",
+            track: "AI 漫剧 / 动画短剧",
+            metrics: { views: "1250w", likes: "52.4w", revenue: "¥ 42,000" },
+            author: "山海造境工作室",
+            date: "2024-05",
+            summary: "如何用 Midjourney 生成固定角色神韵，并借助 Kling 可灵 1.5 配合摄影机运镜实现无跳帧大招打斗特效。",
+            keypoints: ["角色LoRA一致性", "慢动作运镜解算", "电影级国风调色", "剧情悬念卡点"],
+            detail: "该案例来自创作者社区标杆团队。全剧时长 2 分 15 秒，通过建立统一人物面部参考库与固定种子参数，攻克角色在激烈打斗中面容崩解问题，上线24小时播放破800万，直接带动创作者基金与定制商单双向转化。"
+          },
+          {
+            id: "R3-2",
+            title: "女装品牌数字人 24h 无人值守带货：单场 GMV 破 16 万操盘拆解",
+            cover: "assets/covers/work_2.png",
+            track: "电商带货 / 数字人",
+            metrics: { views: "86w", likes: "12.8w", revenue: "¥ 168,500" },
+            author: "晴天电商实验室",
+            date: "2024-04",
+            summary: "从写实人设选型、面料质感展示、实时插播排期到违规推流零熔断的实操全周期拆解。",
+            keypoints: ["超写实数字人驱动", "直播间防封推流", "动态话术编排", "ROI 3.8 高效转化"],
+            detail: "采用数字人主播结合 3D 虚拟展厅技术，通过 OBS 实时监测在线人数并自动动态切换促单话术与尺码推荐，实现连续30天全天候不间断直播，人力成本降低92%，转化率超越普通真人副播。"
+          },
+          {
+            id: "R3-3",
+            title: "TikTok 影视解说自动化矩阵：30 天起号 45 万粉美金分成实测",
+            cover: "assets/covers/work_3.png",
+            track: "出海运营 / 矩阵变现",
+            metrics: { views: "3400w", likes: "180w", revenue: "$ 6,850" },
+            author: "全球航海计划 Eva",
+            date: "2024-05",
+            summary: "全自动化脚本抓取热点文案、AI 多语种情绪配音生成、多机位自动切片去重的出海流水线实操。",
+            keypoints: ["多语言自然配音", "自动化剪辑流水线", "防搬运指纹重写", "海外创作者基金提现"],
+            detail: "针对欧美及东南亚市场，利用 AI 翻译与语音情感克隆，1人操盘 5 个矩阵账号，通过标准化工作流实现日更 15 条高质量混剪短视频，单月获得创作者基金折合人民币逾 4.8 万元。"
+          },
+          {
+            id: "R3-4",
+            title: "品牌 4K 商业宣传片交付：从需求对接、分镜评审到 8 万元全款结项",
+            cover: "assets/covers/work_4.png",
+            track: "商业定制 / 品牌广告",
+            metrics: { views: "320w", likes: "9.6w", revenue: "¥ 80,000" },
+            author: "何舟 商业顾问团队",
+            date: "2024-03",
+            summary: "拆解真实甲方新能源汽车品牌 60 秒视觉概念片，展示从初稿评审、修改反馈到定稿验收对公对账凭证。",
+            keypoints: ["甲方需求提炼", "预演分镜过审", "修改轮次控制", "对公高溢价结算"],
+            detail: "通过在合同中严格约定 2 轮免费微调、超出按课时计费的边界保护，以及使用可量化交付清单（分镜表+成片+工程源文件），实现零扯皮、100%全款如期到账，成为高校团队商业化代表作。"
+          }
+        ]
+      },
+      {
+        id: "R4",
+        name: "创作资产与生产模板库",
+        shortName: "生产模板",
+        desc: "2000+ 工程预设与分镜模板",
+        iconColor: "#A855F7",
+        icon: "res4",
+        detail: "可直接导入剪映、PR、After Effects、Figma 与 Photoshop 的专业工业级模板与工程源文件。",
+        stats: { count: "2,150+ 套", usage: "340,000+ 次", format: "CapCut / PSD / Figma / PR" },
+        items: [
+          {
+            id: "R4-1",
+            title: "剪映 / CapCut 4K 电影感短视频商业工程预设包",
+            fileType: "CapCut / 剪映",
+            fileSize: "145 MB",
+            downloads: "36,800",
+            category: "剪辑工程",
+            author: "官方特效实验室",
+            summary: "内含 24 种无缝动态转场、8 组调色 LUT 滤镜（胶片/复古/赛博/科幻）及 12 组电影级片头文字排版预设。"
+          },
+          {
+            id: "R4-2",
+            title: "9:16 商业竖屏高完播爆款封面 PSD / Figma 源文件",
+            fileType: "PSD / Figma",
+            fileSize: "88 MB",
+            downloads: "28,200",
+            category: "视觉封面",
+            author: "UED 视觉设计组",
+            summary: "严格遵循黄金视线热区与吸睛大标题网格布局，支持一键替换人像、发光字效与背景色。"
+          },
+          {
+            id: "R4-3",
+            title: "AI 漫剧标准故事板十二宫格分镜草图模版",
+            fileType: "PDF / Procreate",
+            fileSize: "12 MB",
+            downloads: "19,500",
+            category: "分镜模板",
+            author: "漫剧分镜师 白鸟",
+            summary: "专为 AI 漫剧创作者优化的分镜框线模板，自带景别标注、运镜方向箭头与机位焦段指示辅助线。"
+          },
+          {
+            id: "R4-4",
+            title: "带货主播 6 步逼单话术思维导图与逐字稿模板",
+            fileType: "XMind / PDF",
+            fileSize: "5.8 MB",
+            downloads: "14,300",
+            category: "话术模板",
+            author: "直播导师 陆晴",
+            summary: "结构化展现引流品、承接品、利润品的转换节奏，支持直接按本演练或录入智能提词器。"
+          }
+        ]
+      },
+      {
+        id: "R5",
+        name: "主流 AI 工具实操指南与参数库",
+        shortName: "工具指南",
+        desc: "50+ 热门工具全景评测与参数",
+        iconColor: "#EC4899",
+        icon: "res5",
+        detail: "全面解析可灵、Runway、Midjourney、GPT-4o、Suno 等主流工具的最佳参数配置与实操避坑方案。",
+        stats: { count: "58 款", rating: "4.92", update: "周度实时迭代" },
+        items: [
+          {
+            id: "R5-1",
+            name: "快手可灵 Kling 1.5",
+            category: "文生/图生视频",
+            badge: "国产主力",
+            rating: "★★★★★ 4.9",
+            strengths: "支持单次生成最高10秒视频，动态运镜控制极其自然，角色面容肢体稳定性极高。",
+            recommendedParams: "模式: 高表现力; 运镜模式: 水平平移+微缩放; 运动强度: 4~6; CFG Scale: 0.5~0.6",
+            tips: "推荐结合起始帧与尾帧双图控制，能完美解决大动作剧情镜头的连续性。"
+          },
+          {
+            id: "R5-2",
+            name: "Runway Gen-3 Alpha",
+            category: "电影级视频生成",
+            badge: "好莱坞级",
+            rating: "★★★★★ 4.95",
+            strengths: "光影渲染极度真实，物理碰撞与烟火液体解算世界顶尖，支持镜头画笔精准笔刷引导。",
+            recommendedParams: "Resolution: 1080p 60fps; Motion Brush: 垂直运动锁定; Camera Pan: Speed 2.5",
+            tips: "输入 Prompt 时优先描述物理环境与光影变化（如 volumetric lighting, cinematic anamorphic bokeh）。"
+          },
+          {
+            id: "R5-3",
+            name: "Midjourney v6.0",
+            category: "商业级文生图",
+            badge: "画质标杆",
+            rating: "★★★★★ 5.0",
+            strengths: "文本渲染准确度大幅提高，皮肤毛孔质感与写实细节极为强悍，多主体构图极少崩解。",
+            recommendedParams: "--v 6.0 --ar 16:9 --style raw --stylize 250 --chaos 0",
+            tips: "使用 --cref 参数固定人物角色面孔，使用 --sref 参数固定视觉画风色彩。"
+          },
+          {
+            id: "R5-4",
+            name: "Suno v3.5",
+            category: "AI 商业音乐创作",
+            badge: "音频首选",
+            rating: "★★★★☆ 4.8",
+            strengths: "支持自定义风格标签与结构标签（[Verse] [Chorus] [Bridge]），音质达到广播级 44.1kHz。",
+            recommendedParams: "Genre: Epic Cinematic Hybrid Trailer; Tempo: 120 BPM; Mood: Tense / Inspiring",
+            tips: "在歌词中使用精准方括号结构控制高潮落点，能极大降低商用配乐购买成本。"
+          }
+        ]
+      },
+      {
+        id: "R6",
+        name: "官方创作者共学圈与打卡营",
+        shortName: "共学社群",
+        desc: "加入官方实战学习社群",
+        iconColor: "#6366F1",
+        icon: "res6",
+        detail: "与全国高校创作者与商业导师同行，享受每日作业点评、商单内推、最新模型首发测试与同行答疑。",
+        stats: { groups: "12 个活跃群", members: "18,000+ 创作者", mentors: "24 位实战导师" },
+        items: [
+          {
+            id: "R6-1",
+            title: "新手 7 天入门共学打卡营（第18期）",
+            category: "新手专项",
+            mentor: "小宇学长 & 导师团队",
+            members: "1,880 / 2,000 人",
+            status: "招募中",
+            activity: "极高（日均发言 1,500+ 条）",
+            perks: ["每日打卡领额外创作积分", "导师助教全天候作业点评", "精选小白避坑答疑合集"],
+            qrNotice: "扫码添加学习助理微信：AICreator_01，发送「7天打卡」免审核进群"
+          },
+          {
+            id: "R6-2",
+            title: "国风 AI 漫剧工业化交付核心创作者圈",
+            category: "漫剧进阶",
+            mentor: "山海造境 团队主理人",
+            members: "1,420 / 1,500 人",
+            status: "资格审核中",
+            activity: "专业研讨（日均共享资产 50+ 份）",
+            perks: ["独家角色LoRA与Seed库共享", "千万播放爆款分镜工程源文件", "短剧制作方定向委托派单对接"],
+            qrNotice: "扫码添加学术助教微信：AICreator_Pro，提供个人漫剧作品即可免费加入"
+          },
+          {
+            id: "R6-3",
+            title: "数字人直播间无人值守商业变现操盘群",
+            category: "商业直播",
+            mentor: "晴天电商 陆晴",
+            members: "1,150 / 1,500 人",
+            status: "招募中",
+            activity: "商业变现（周度发布实战复盘）",
+            perks: ["OBS防违规直播插件包", "美妆数码全套话术逐字稿", "品牌方直播代播商单内推"],
+            qrNotice: "扫码添加商业顾问微信：AICreator_Biz，备注「数字人接单」即刻进群"
+          },
+          {
+            id: "R6-4",
+            title: "TikTok & 海外出海流量变现俱乐部",
+            category: "全球出海",
+            mentor: "全球航海计划 Eva",
+            members: "980 / 1,200 人",
+            status: "招募中",
+            activity: "海外前沿（实时同步海外推流规则）",
+            perks: ["海外网络合规搭建指引", "创作者基金合规跨境结算SOP", "出海跨境品牌直客接单通道"],
+            qrNotice: "扫码添加出海顾问微信：AICreator_Global，发送「出海俱乐部」进群"
+          }
+        ]
+      }
+    ],
+
+    achievements: [
+      { id: "A1", title: "AI 创作达人", desc: "完成10门课程", date: "2024.05.20", badge: "gold", icon: "assets/decorations/achievement_medal_gold.png" },
+      { id: "A2", title: "内容创作专家", desc: "累计创作50个作品", date: "2024.04.15", badge: "orange", icon: "assets/decorations/achievement_medal_orange.png" },
+      { id: "A3", title: "商业变现新星", desc: "完成首次商单", date: "2024.03.10", badge: "blue", icon: "assets/decorations/achievement_medal_blue.png" }
+    ],
+
+    certificates: [
+      { id: "CERT-BASE", title: "AI 基础创作结业证书", issuer: "成长学院", date: "2024-03-12", level: "Lv.2", type: "completion", status: "owned", planId: null, credit: 1, desc: "完成基础创作路径后颁发。" },
+      { id: "CERT-LV3", title: "内容创作者认证", issuer: "平台官方", date: "2024-04-08", level: "Lv.3", type: "official", status: "owned", planId: null, credit: 0, desc: "达到 Lv.3 后解锁基础任务接单资格。" },
+      { id: "CERT-LV4", title: "商业创作者认证", issuer: "平台官方", date: "2024-05-01", level: "Lv.4", type: "official", status: "owned", planId: null, credit: 0, desc: "达到 Lv.4 后解锁高赏金商单。" },
+      { id: "CERT-P1", title: "AI 短视频入门结业证书", issuer: "成长学院", date: "", level: "专项", type: "completion", status: "locked", planId: "P1", credit: 2, desc: "完成 P1 全部实战课节后即可直接领取；同步发放高校微学分凭证。" },
+      { id: "CERT-P2", title: "短剧全流程实战证书", issuer: "成长学院", date: "2024-05-10", level: "专项", type: "completion", status: "owned", planId: "P2", credit: 3, desc: "漫剧全流程专项结业。" },
+      { id: "CERT-P3", title: "数字人直播脚本证书", issuer: "成长学院", date: "", level: "专项", type: "completion", status: "locked", planId: "P3", credit: 3, desc: "完成直播实战计划全部课节后即可直接领取。" },
+      { id: "CERT-P4", title: "矩阵分发运营证书", issuer: "成长学院", date: "2024-05-16", level: "专项", type: "completion", status: "owned", planId: "P4", credit: 2, desc: "出海与矩阵分发专项。" },
+      { id: "CERT-P5", title: "商业变现结业证书", issuer: "成长学院", date: "", level: "专项", type: "completion", status: "locked", planId: "P5", credit: 4, desc: "完成商业变现计划后领取，并解锁 OPC 准入执照申请。" },
+      { id: "CERT-CREDIT", title: "高校微学分凭证", issuer: "成长学院 · 学分中心", date: "", level: "微学分", type: "microcredit", status: "claimable", planId: "P1", credit: 2, desc: "课程结业后可领取的微学分凭证，可用于校园认定展示。" },
+      { id: "CERT-OPC", title: "OPC 商业准入执照", issuer: "平台官方", date: "", level: "执照", type: "license", status: "locked", planId: "P5", credit: 0, desc: "Lv.4+ 且完成商业变现结业后可申请，用于商单准入展示。" },
+      { id: "CERT-CAMPUS", title: "校园创作者官方认证", issuer: "平台官方", date: "2024-02-20", level: "官方", type: "official", status: "owned", planId: null, credit: 0, desc: "校园创作者身份认证。" },
+      { id: "CERT-PRO", title: "Pro 会员创作者权益凭证", issuer: "会员中心", date: "2024-05-18", level: "会员", type: "member", status: "owned", planId: null, credit: 0, desc: "Pro 会员权益凭证。" }
+    ],
+
+    studyLog: [
+      { id: "SL1", at: "今天 09:20", planId: "P1", lessonId: "P1-L02", title: "Prompt 结构工程解析", action: "完成课节", points: 50 },
+      { id: "SL2", at: "昨天 21:05", planId: "P1", lessonId: "P1-L01", title: "AI 工具速览与环境配置", action: "完成课节", points: 50 },
+      { id: "SL3", at: "05/16 16:40", planId: "P2", lessonId: "P2-L03", title: "角色一致性生成", action: "完成课节", points: 50 },
+      { id: "SL4", at: "05/15 11:12", planId: "P3", lessonId: "P3-L01", title: "数字人形象与声线", action: "完成课节", points: 50 }
+    ]
+  },
+
+  // 3. 创作工具 (Tools)
+  tools: {
+    myToolbox: [
+      { name: "AI 文案助手", desc: "智能生成文案", recent: true, icon: "file-text", color: "#3B82F6" },
+      { name: "AI 图片生成", desc: "文生图 / 图生图", recent: true, icon: "image", color: "#8B5CF6" },
+      { name: "智能剪辑", desc: "AI 视频剪辑工具", recent: true, icon: "video", color: "#6366F1" },
+      { name: "配音合成", desc: "多语种配音合成", recent: true, icon: "mic", color: "#A855F7" },
+      { name: "AI 音乐", desc: "生成原创音乐", recent: true, icon: "music", color: "#EC4899" }
+    ],
+
+    recentProjects: [
+      {
+        id: "RP1",
+        title: "短视频脚本初稿",
+        type: "文案",
+        tool: "AI 文案助手",
+        updatedAt: "今天 10:24",
+        cover: "assets/covers/today_plan_1.png",
+        icon: "file-text"
+      },
+      {
+        id: "RP2",
+        title: "小红书封面图",
+        type: "图像",
+        tool: "AI 封面设计",
+        updatedAt: "昨天 21:08",
+        cover: "assets/covers/rec_task_2.png",
+        icon: "image"
+      },
+      {
+        id: "RP3",
+        title: "校园Vlog 粗剪",
+        type: "视频",
+        tool: "智能剪辑",
+        updatedAt: "05/18 16:40",
+        cover: "assets/covers/task_side_3.png",
+        icon: "video"
+      }
+    ],
+
+    generationQueue: [
+      {
+        id: "GQ1",
+        title: "赛博朋克校园夜景",
+        type: "图像生成",
+        status: "rendering",
+        progress: 68,
+        eta: "约 26 秒",
+        cover: "assets/covers/work_1.png"
+      },
+      {
+        id: "GQ2",
+        title: "品牌片 15s 口播视频",
+        type: "视频生成",
+        status: "queued",
+        progress: 12,
+        eta: "排队第 2 位",
+        cover: "assets/covers/work_2.png"
+      },
+      {
+        id: "GQ3",
+        title: "产品主图 · 白底精修",
+        type: "图像生成",
+        status: "done",
+        progress: 100,
+        eta: "已完成",
+        cover: "assets/covers/work_3.png"
+      }
+    ],
+
+    allTools: [
+      {
+        id: "TL1",
+        name: "AI 长文写作",
+        desc: "快速生成高质量长文，支持多种文体和风格",
+        category: "AI 写作",
+        users: "12.6万人使用",
+        icon: "file-text",
+        color: "#3B82F6",
+        score: 4.7
+      },
+      {
+        id: "TL2",
+        name: "AI 图像生成",
+        desc: "输入文字描述，生成精美图片与角色设定",
+        category: "图像生成",
+        users: "28.4万人使用",
+        icon: "image",
+        color: "#8B5CF6",
+        score: 4.9
+      },
+      {
+        id: "TL3",
+        name: "智能视频剪辑",
+        desc: "AI 自动剪辑，智能配乐和字幕对齐",
+        category: "视频制作",
+        users: "18.7万人使用",
+        icon: "video",
+        color: "#6366F1",
+        score: 4.8
+      },
+      {
+        id: "TL4",
+        name: "AI 配音合成",
+        desc: "多种音色选择，支持情感表达与语调调整",
+        category: "音频处理",
+        users: "9.8万人使用",
+        icon: "mic",
+        color: "#A855F7",
+        score: 4.6
+      },
+      {
+        id: "TL5",
+        name: "AI 封面设计",
+        desc: "智能设计视频/文章高点击率封面",
+        category: "设计辅助",
+        users: "8.3万人使用",
+        icon: "layout",
+        color: "#10B981",
+        score: 4.6
+      },
+      {
+        id: "TL6",
+        name: "AI 思维导图",
+        desc: "智能生成思维导图和流程图，快速梳理灵感",
+        category: "效率工具",
+        users: "6.7万人使用",
+        icon: "share-2",
+        color: "#F97316",
+        score: 4.5
+      },
+      {
+        id: "TL7",
+        name: "AI 翻译助手",
+        desc: "多语言翻译，保持原意和地道本土语境",
+        category: "AI 写作",
+        users: "15.2万人使用",
+        icon: "globe",
+        color: "#06B6D4",
+        score: 4.6
+      },
+      {
+        id: "TL8",
+        name: "AI 数据分析",
+        desc: "智能分析数据，生成可视化图表与归因报告",
+        category: "效率工具",
+        users: "5.9万人使用",
+        icon: "bar-chart-2",
+        color: "#14B8A6",
+        score: 4.7
+      }
+    ],
+
+    categories: [
+      { name: "AI 写作", count: "12 个工具", icon: "file-text", color: "#3B82F6" },
+      { name: "图像生成", count: "8 个工具", icon: "image", color: "#8B5CF6" },
+      { name: "视频制作", count: "15 个工具", icon: "video", color: "#6366F1" },
+      { name: "音频处理", count: "9 个工具", icon: "mic", color: "#06B6D4" },
+      { name: "设计辅助", count: "7 个工具", icon: "edit-3", color: "#A855F7" },
+      { name: "效率工具", count: "11 个工具", icon: "zap", color: "#3B82F6" }
+    ],
+
+    stats: {
+      usedThisMonth: 128,
+      usedChange: "+15%",
+      creationHours: 24.6,
+      hoursChange: "+20%",
+      contentsGen: 356,
+      contentsChange: "+18%",
+      savedHours: 18.5,
+      savedChange: "+22%",
+      chartDates: ["05/12", "05/13", "05/14", "05/15", "05/16", "05/17", "05/18"],
+      chartUsage: [15, 22, 18, 28, 20, 24, 32],
+      chartHours: [3.2, 4.5, 3.8, 5.2, 4.0, 4.8, 6.1]
+    },
+
+    leaderboard: [
+      { rank: 1, name: "AI 图像生成", users: "28.4万人使用", score: 4.9, icon: "image", color: "#8B5CF6" },
+      { rank: 2, name: "智能视频剪辑", users: "18.7万人使用", score: 4.8, icon: "video", color: "#6366F1" },
+      { rank: 3, name: "AI 长文写作", users: "12.6万人使用", score: 4.7, icon: "file-text", color: "#3B82F6" },
+      { rank: 4, name: "AI 配音合成", users: "9.8万人使用", score: 4.6, icon: "mic", color: "#A855F7" },
+      { rank: 5, name: "AI 封面设计", users: "8.3万人使用", score: 4.6, icon: "layout", color: "#8B5CF6" }
+    ]
+  },
+
+  // 4. 社区中心 (Community)
+  community: {
+    hotTopics: [
+      { name: "AI短剧创作挑战赛", discusses: "12.6万讨论", hot: true },
+      { name: "数字人直播技巧", discusses: "8.9万讨论" },
+      { name: "TikTok运营经验", discusses: "6.3万讨论" }
+    ],
+
+    circles: [
+      { name: "AI短剧圈", count: "2.1万人加入", joined: false, icon: "video", color: "#6366F1" },
+      { name: "AI漫剧圈", count: "1.8万人加入", joined: false, icon: "image", color: "#A855F7" },
+      { name: "数字人圈", count: "1.2万人加入", joined: false, icon: "digital_human", color: "#8B5CF6" },
+      { name: "TikTok运营圈", count: "3.6万人加入", joined: false, icon: "music", color: "#EC4899" }
+    ],
+
+    nearbyCreators: [
+      { name: "陈林", avatar: "assets/avatars/nearby_1.jpg" },
+      { name: "李雪", avatar: "assets/avatars/nearby_2.jpg" },
+      { name: "张远", avatar: "assets/avatars/nearby_3.jpg" },
+      { name: "王萌", avatar: "assets/avatars/nearby_4.jpg" }
+    ],
+
+    posts: [
+      {
+        id: "P101",
+        author: "小宇同学",
+        school: "南京大学",
+        level: "Lv.4",
+        roleTag: "AI短剧创作者",
+        time: "2小时前",
+        avatar: "assets/avatars/user_header.png",
+        content: "刚完成一个AI科幻短剧《未来信号》，全流程AI制作，分享一些创作心得和提示词模板，希望对大家有帮助！",
+        topicTag: "AI短剧创作",
+        images: [
+          "assets/covers/post1_img1.png",
+          "assets/covers/post1_img2.png",
+          "assets/covers/post1_img3.png",
+          "assets/covers/post1_img4.png"
+        ],
+        extraCount: "+6",
+        likes: 326,
+        liked: false,
+        comments: 128,
+        shares: 56,
+        views: "1.2万",
+        isFollowing: false,
+        category: "推荐"
+      },
+      {
+        id: "P102",
+        author: "AI漫剧小画家",
+        school: "中国美院",
+        level: "Lv.3",
+        roleTag: "AI漫剧创作者",
+        time: "5小时前",
+        avatar: "assets/avatars/rank_user_2.png",
+        content: "用AI制作的校园恋爱漫剧第二集来啦！求点赞求评论～",
+        topicTag: "",
+        images: [
+          "assets/covers/post2_img1.png",
+          "assets/covers/post2_img2.png",
+          "assets/covers/post2_img3.png",
+          "assets/covers/post2_img4.png"
+        ],
+        extraCount: "+4",
+        likes: 268,
+        liked: false,
+        comments: 96,
+        shares: 38,
+        views: "8,652",
+        isFollowing: false,
+        category: "最新"
+      }
+    ],
+
+    activeRanks: {
+      day: [
+        { rank: 1, name: "AI创作小达人", level: "Lv.5", hot: "12.6万", avatar: "assets/avatars/rank_user_1.png" },
+        { rank: 2, name: "漫剧小画家", level: "Lv.4", hot: "9.8万", avatar: "assets/avatars/rank_user_2.png" },
+        { rank: 3, name: "剧本老贼", level: "Lv.4", hot: "7.6万", avatar: "assets/avatars/rank_user_3.png" },
+        { rank: 4, name: "数字人-小美", level: "Lv.4", hot: "6.3万", avatar: "assets/avatars/rank_user_4.png" },
+        { rank: 5, name: "海外运营Tom", level: "Lv.4", hot: "5.2万", avatar: "assets/avatars/rank_user_5.png" }
+      ],
+      week: [
+        { rank: 1, name: "漫剧小画家", level: "Lv.4", hot: "58.4万", avatar: "assets/avatars/rank_user_2.png" },
+        { rank: 2, name: "AI创作小达人", level: "Lv.5", hot: "52.1万", avatar: "assets/avatars/rank_user_1.png" },
+        { rank: 3, name: "海外运营Tom", level: "Lv.4", hot: "41.6万", avatar: "assets/avatars/rank_user_5.png" },
+        { rank: 4, name: "数字人-小美", level: "Lv.4", hot: "36.2万", avatar: "assets/avatars/rank_user_4.png" },
+        { rank: 5, name: "剧本老贼", level: "Lv.4", hot: "32.0万", avatar: "assets/avatars/rank_user_3.png" }
+      ],
+      month: [
+        { rank: 1, name: "AI创作小达人", level: "Lv.5", hot: "198万", avatar: "assets/avatars/rank_user_1.png" },
+        { rank: 2, name: "海外运营Tom", level: "Lv.4", hot: "164万", avatar: "assets/avatars/rank_user_5.png" },
+        { rank: 3, name: "漫剧小画家", level: "Lv.4", hot: "155万", avatar: "assets/avatars/rank_user_2.png" },
+        { rank: 4, name: "剧本老贼", level: "Lv.4", hot: "128万", avatar: "assets/avatars/rank_user_3.png" },
+        { rank: 5, name: "数字人-小美", level: "Lv.4", hot: "112万", avatar: "assets/avatars/rank_user_4.png" }
+      ]
+    },
+
+    announcements: [
+      {
+        title: "社区创作规范与内容管理指南（最新版）",
+        date: "2024-05-18",
+        body: "为保障校园创作者生态健康，平台更新了内容审核与原创声明规范。请在发布前完成作品权属确认；商单交付请全程使用平台托管，避免私下交易。"
+      },
+      {
+        title: "AI短剧创作挑战赛火热进行中！",
+        date: "2024-05-15",
+        body: "参与「未来城市」主题短剧挑战即可赢取现金与创作积分。完成交付后可在作品展厅上架，获得更多定制商机。"
+      },
+      {
+        title: "关于打击搬运与违规内容的公告",
+        date: "2024-05-10",
+        body: "平台将持续清理搬运、侵权与低质内容。一经核实将取消相关收益结算资格，情节严重者限制接单权限。"
+      }
+    ]
+  },
+
+  // 5. 任务广场 (Tasks) - 全生命周期全闭环高仿真业务数据
+  tasks: {
+  "list": [
+    {
+      "id": "TK13",
+      "title": "大疆创新：无人机航拍AI超分辨率与动态光影重构",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 8,000",
+      "rewardAmount": 8000,
+      "rewardPoints": "1,200",
+      "deadline": "报名倒计时 5天",
+      "applyDeadline": "2026-09-22",
+      "deadlineDate": "2026-09-27",
+      "cover": "assets/covers/task_main_1.png",
+      "status": "招募中",
+      "badge": "精选",
+      "badgeColor": "urgent",
+      "acceptMode": "manual",
+      "quota": 1,
+      "applicantCount": 2,
+      "escrow": true,
+      "escrowStatus": "平台已全额托管保障（¥4,500 资金已锁定在招行监管专户）",
+      "invoice": true,
+      "publisherRole": "企业雇主 / 大疆创新影音实验室",
+      "desc": "针对无人机在低光照和复杂气象下的航拍镜头，采用最新 StableVideo / ComfyUI 工作流进行超分辨率重建与动态光影增强。要求画面清晰无重影，帧率平滑稳定，提供商业授权支持。",
+      "deliverables": "1. 4K 60fps增强视频片段3段；\n2. 完整ComfyUI工作流JSON及Lora模型包；\n3. 商业授权书与资产清单。",
+      "tags": [
+        "AI短视频",
+        "无人机",
+        "4K超清",
+        "ComfyUI",
+        "动态光影"
+      ],
+      "publisher": {
+        "name": "大疆影音实验室",
+        "avatar": "assets/avatars/avatar_business.png",
+        "school": "DJI 官方创新团队",
+        "verified": true
+      },
+      "applicants": [
+        {
+          "name": "林工AI",
+          "level": "Lv.4",
+          "school": "同济大学",
+          "avatar": "assets/avatars/rank_user_1.png",
+          "credit": 95,
+          "proposal": "具备3年无人机航拍与后期AI渲染经验，已搭建专属ComfyUI超分流水线。",
+          "appliedAt": "1天前",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "TK01",
+      "title": "未来城市：AI短视频概念预告片",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 5,000",
+      "rewardAmount": 5000,
+      "rewardPoints": "800",
+      "deadline": "报名倒计时 2天",
+      "applyDeadline": "2026-09-20",
+      "deadlineDate": "2026-09-28",
+      "cover": "assets/covers/task_main_1.png",
+      "status": "招募中",
+      "badge": "热门",
+      "badgeColor": "urgent",
+      "acceptMode": "manual",
+      "quota": 1,
+      "applicantCount": 4,
+      "escrow": true,
+      "escrowStatus": "平台已全额托管保障（¥5,000 资金已锁定在工行监管专户）",
+      "invoice": true,
+      "publisherRole": "品牌方 / 蔚来科技设计创新中心",
+      "desc": "针对2027未来智慧城市出行业务，创作一段时长60-90秒的高概念AI短视频预告片。需展现人机共生、磁悬浮城市交通、立体绿化摩天大楼以及全息交互场景。镜头运镜连贯流畅，杜绝肢体变形与画面闪烁撕裂。支持使用Midjourney v6、Runway Gen-3 Alpha或Sora等先进生成工具。",
+      "deliverables": "1. 4K 60fps MP4高清母带成片；\n2. 包含完整分镜提示词 Prompt、Seed 种子值与工作流配置表；\n3. 分轨无损音频工程（BGM + 赛博音效 + 中英配音）；\n4. 品牌全渠道商用版权买断协议（含数字藏品铸造权）。",
+      "tags": [
+        "AI短视频",
+        "概念预告",
+        "赛博朋克",
+        "Runway Gen-3",
+        "4K超高清"
+      ],
+      "attachments": [
+        {
+          "name": "未来出行概念世界观白皮书_v1.4.pdf",
+          "size": 4520000
+        },
+        {
+          "name": "分镜头色彩与光影参考基准.pdf",
+          "size": 6850000
+        },
+        {
+          "name": "BGM配乐参考节奏样本_120BPM.mp3",
+          "size": 8400000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP01",
+          "name": "小宇同学",
+          "avatar": "assets/avatars/user_header.png",
+          "level": "Lv.4 认证创作者",
+          "school": "南京大学 · 软件学院",
+          "credit": 785,
+          "appliedAt": "2026-09-16 14:30",
+          "proposal": "已备齐最新Runway Gen-3光流连贯性调优脚本，结合自身在Sora概念短片获奖经验，保证48小时内输出第一版高质量全动态分镜！附带样片集供审阅。",
+          "portfolio": "作品展厅 #GW00 《未来折叠·南大概念片》",
+          "status": "pending"
+        },
+        {
+          "id": "AP02",
+          "name": "星际造梦师",
+          "avatar": "assets/avatars/rank_user_1.png",
+          "level": "Lv.5 金牌创作者",
+          "school": "清华大学 · 美术学院",
+          "credit": 820,
+          "appliedAt": "2026-09-16 16:15",
+          "proposal": "拥有丰富的大厂科幻先导片交付经验，团队自建LoRA微调模型，可完美呈现复杂机械光影质感。",
+          "portfolio": "作品展厅 #GW01 《数字生命：意识上传纪元》",
+          "status": "pending"
+        },
+        {
+          "id": "AP03",
+          "name": "极光视觉工坊",
+          "avatar": "assets/avatars/rank_user_3.png",
+          "level": "Lv.4 商业工作室",
+          "school": "同济大学 · 创意设计",
+          "credit": 760,
+          "appliedAt": "2026-09-17 09:10",
+          "proposal": "擅长全流程AI视频工作流，配合达芬奇精细调色与杜比全景声音效，支持多轮细节打磨。",
+          "portfolio": "商业案例：某新能源车企概念动态宣传片",
+          "status": "pending"
+        },
+        {
+          "id": "AP04",
+          "name": "青墨数字社",
+          "avatar": "assets/avatars/rank_user_2.png",
+          "level": "Lv.3 新锐创作者",
+          "school": "中国传媒大学 · 动画学院",
+          "credit": 740,
+          "appliedAt": "2026-09-17 11:20",
+          "proposal": "主打新国风与赛博科幻交织的独特视觉风格，分镜节奏感极强。",
+          "portfolio": "B站热门AI动画短片精选集",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "TK02",
+      "title": "未来科技AI概念动画先导片",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 6,500",
+      "rewardAmount": 6500,
+      "rewardPoints": "1,000",
+      "deadline": "履约中 · 剩余 2天",
+      "applyDeadline": "2026-09-14",
+      "deadlineDate": "2026-09-19",
+      "cover": "assets/covers/task_main_2.png",
+      "status": "进行中",
+      "badge": "履约中",
+      "badgeColor": "green",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP01",
+      "selectedCreatorName": "小宇同学",
+      "escrow": true,
+      "escrowStatus": "平台已全额托管保障（¥6,500 履约中）",
+      "invoice": true,
+      "publisherRole": "智能硬件独角兽 / 未来视界Labs",
+      "desc": "开发一段用于全球科技发布会的AI概念开场动画，重点展现量子计算芯片微观世界向宇宙宏观星系的尺度跃迁。需具有强烈的视觉冲击力和未来科技纵深感。",
+      "deliverables": "1. 4K ProRes 422HQ 高清母带成片（90秒）；\n2. 达芬奇调色工程文件与LUT预设；\n3. 商业独占授权书。",
+      "tags": [
+        "AI动画",
+        "发布会开场",
+        "宏观跃迁",
+        "4K母带"
+      ],
+      "attachments": [
+        {
+          "name": "发布会演讲大纲与情绪节奏分段.docx",
+          "size": 1200000
+        },
+        {
+          "name": "量子芯片视觉参考3D切片.zip",
+          "size": 18500000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP01",
+          "name": "小宇同学",
+          "avatar": "assets/avatars/user_header.png",
+          "level": "Lv.4 认证创作者",
+          "school": "南京大学",
+          "credit": 785,
+          "appliedAt": "2026-09-14 10:00",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "小宇同学",
+        "progress": 70,
+        "stage": "阶段 3：4K超分渲染",
+        "dailyReports": [
+          {
+            "id": "RPT-TK02-1",
+            "date": "2026-09-15",
+            "at": "2026-09-15 21:10",
+            "progress": 30,
+            "stage": "阶段 1：分镜与提示词确认",
+            "done": "完成核心量子芯片微观三维资产的 Prompt 生成与多角度连贯镜头抽取，共出 18 组分镜，发布方初审风格确认无误。",
+            "plan": "进入中段尺度跃迁光效合成，锁定相机运动轨迹。",
+            "risk": "",
+            "author": "小宇同学",
+            "role": "creator"
+          },
+          {
+            "id": "RPT-TK02-2",
+            "date": "2026-09-16",
+            "at": "2026-09-16 20:45",
+            "progress": 70,
+            "stage": "阶段 3：4K超分渲染",
+            "done": "完成中段尺度跃迁光效合成，已完成达芬奇色彩空间转换与 LUT 标定，4K 高帧率补帧渲染已跑通首轮。",
+            "plan": "完成整片 4K 补帧与音画同步，明日提报成片初审。",
+            "risk": "补帧渲染单帧耗时略高于预期，若明日显卡排队拥挤，交付可能顺延约 4 小时。",
+            "author": "小宇同学",
+            "role": "creator"
+          }
+        ],
+        "questions": [
+          {
+            "id": "QA-TK02-1",
+            "at": "2026-09-15 10:20",
+            "from": "未来视界Labs",
+            "role": "publisher",
+            "text": "开场 0-6 秒的芯片微观镜头，希望增加一层冷蓝色体积光，与发布会的舞台主色对齐，是否可以调整？",
+            "answer": "可以。已在体积光层增加冷蓝（#2F6BFF）叠加并保留原深空紫为主色，明日日报附对比截图供确认。",
+            "answerAt": "2026-09-15 11:05",
+            "answerBy": "小宇同学",
+            "answerRole": "creator"
+          },
+          {
+            "id": "QA-TK02-2",
+            "at": "2026-09-16 09:40",
+            "from": "未来视界Labs",
+            "role": "publisher",
+            "text": "最终交付是否包含达芬奇调色工程与 LUT 预设？我们需要在年会现场二次剪辑时复用。",
+            "answer": "",
+            "answerAt": "",
+            "answerBy": "",
+            "answerRole": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "TK02B",
+      "title": "AI国风漫画分镜与设定练习单（急单）",
+      "category": "AI漫画",
+      "rewardMoney": "¥ 3,200",
+      "rewardAmount": 3200,
+      "rewardPoints": "400",
+      "deadline": "履约中 · 预计 2026-09-18 交稿",
+      "applyDeadline": "2026-09-14",
+      "deadlineDate": "2026-09-18",
+      "cover": "assets/covers/task_main_4.png",
+      "status": "进行中",
+      "badge": "履约中",
+      "badgeColor": "green",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP-TK02B-1",
+      "selectedCreatorName": "国风水墨侠",
+      "escrow": true,
+      "escrowStatus": "平台已全额托管保障（¥3,200 履约中）",
+      "invoice": false,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "为国风水墨题材漫画作品补齐人物三视图、表情集与 12 组分镜头线稿，要求保持角色一致性并标注镜头运动与对白节奏，用于后续 AI 漫剧批量生产。",
+      "deliverables": "1. 主要角色三视图与 8 组表情集（PSD 分层）；\n2. 12 组分镜头线稿与运镜标注表；\n3. 角色一致性 Prompt 与 Seed 对照表。",
+      "tags": [
+        "AI漫画",
+        "国风水墨",
+        "分镜练习",
+        "角色一致性"
+      ],
+      "applicants": [
+        {
+          "id": "AP-TK02B-1",
+          "name": "国风水墨侠",
+          "avatar": "assets/avatars/rank_user_2.png",
+          "level": "Lv.4 商业创作者",
+          "school": "中国美术学院",
+          "credit": 812,
+          "appliedAt": "2026-09-13 15:20",
+          "proposal": "长期专攻国风水墨漫剧，已沉淀稳定的角色一致性工作流，可保证三视图与分镜风格统一。",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "国风水墨侠",
+        "progress": 65,
+        "stage": "阶段 2：角色设定与分镜线稿",
+        "dailyReports": [
+          {
+            "id": "RPT-TK02B-1",
+            "date": "2026-09-16",
+            "at": "2026-09-16 10:30",
+            "progress": 45,
+            "stage": "阶段 1：风格标定与角色三视图",
+            "done": "完成水墨笔触风格标定与主角三视图定稿，发布方确认人物比例与衣纹走势无误。",
+            "plan": "进入 8 组表情集绘制与一致性锚点固化。",
+            "risk": "",
+            "author": "国风水墨侠",
+            "role": "creator"
+          },
+          {
+            "id": "RPT-TK02B-2",
+            "date": "2026-09-17",
+            "at": "2026-09-17 10:15",
+            "progress": 65,
+            "stage": "阶段 2：角色设定与分镜线稿",
+            "done": "8 组表情集与 7/12 组分镜线稿完成，人物三视图一致性表现优异。",
+            "plan": "明日上午交付剩余 5 组分镜线稿与运镜标注表，随后进入整体校色。",
+            "risk": "",
+            "author": "国风水墨侠",
+            "role": "creator"
+          }
+        ],
+        "questions": [
+          {
+            "id": "QA-TK02B-1",
+            "at": "2026-09-16 14:05",
+            "from": "小宇同学",
+            "role": "publisher",
+            "text": "第二格分镜希望改成低机位仰拍，突出宗门牌匾的压迫感，可以调整吗？",
+            "answer": "可以，已改为低机位仰拍并加宽顶部留白，明日日报附更新版线稿。",
+            "answerAt": "2026-09-16 15:30",
+            "answerBy": "国风水墨侠",
+            "answerRole": "creator"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TK03",
+      "title": "数字人直播带货脚本与分镜设计挑战",
+      "category": "数字人",
+      "rewardMoney": "¥ 800",
+      "rewardAmount": 800,
+      "rewardPoints": "500",
+      "deadline": "名额抢订中 · 剩 1/3",
+      "applyDeadline": "2026-09-22",
+      "deadlineDate": "2026-09-25",
+      "cover": "assets/covers/task_main_3.png",
+      "status": "招募中",
+      "badge": "即接即开工",
+      "badgeColor": "cyan",
+      "acceptMode": "manual",
+      "quota": 3,
+      "applicantCount": 2,
+      "escrow": true,
+      "escrowStatus": "平台全额托管（已锁定 ¥2,400 总奖金池）",
+      "invoice": false,
+      "publisherRole": "MCN机构 / 智选星播互娱",
+      "desc": "设计符合当下年轻人消费偏好的AI数字人带货脚本3套，涵盖美妆护肤、数码科技与校园文创3个类目。每套脚本需包含：主播黄金前3秒吸睛话术、痛点共情、促单利益点、实时互动问答预案及配套分镜指导。",
+      "deliverables": "3套结构完整、可直接导入数字人SaaS系统的带货脚本文档（附赠带分镜动作提示）。",
+      "tags": [
+        "数字人",
+        "带货脚本",
+        "爆款话术",
+        "即接模式"
+      ],
+      "attachments": [
+        {
+          "name": "选品清单及产品卖点核心资料.xlsx",
+          "size": 850000
+        },
+        {
+          "name": "直播间话术违禁词与合规规范.pdf",
+          "size": 1400000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP08",
+          "name": "文案捕手阿飞",
+          "avatar": "assets/avatars/rank_user_5.png",
+          "level": "Lv.3 创作者",
+          "school": "武汉大学",
+          "credit": 720,
+          "appliedAt": "2026-09-16 18:20",
+          "status": "accepted"
+        },
+        {
+          "id": "AP09",
+          "name": "新媒体学姐",
+          "avatar": "assets/avatars/rank_user_4.png",
+          "level": "Lv.3 创作者",
+          "school": "复旦大学",
+          "credit": 750,
+          "appliedAt": "2026-09-17 08:45",
+          "status": "accepted"
+        }
+      ]
+    },
+    {
+      "id": "TK04",
+      "title": "青春校园：AI漫画创作大赛",
+      "category": "AI漫画",
+      "rewardMoney": "¥ 5,000",
+      "rewardAmount": 5000,
+      "rewardPoints": "1,500",
+      "deadline": "已结案 · 成果已入展厅",
+      "applyDeadline": "2026-08-30",
+      "deadlineDate": "2026-09-10",
+      "cover": "assets/covers/task_main_4.png",
+      "status": "已完成",
+      "badge": "已完成",
+      "badgeColor": "green",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP01",
+      "selectedCreatorName": "小宇同学",
+      "escrow": true,
+      "escrowStatus": "赏金已全额结算并代扣代缴个税（结算凭单号：PAY-20260910-8821）",
+      "invoice": true,
+      "publisherRole": "全国高校AI联盟 / 青春共创计划组委会",
+      "desc": "以大学校园青春生活、学科脑洞或科技探索为主题，创作一部不低于16格的完整条漫或多格叙事漫画。要求角色面部与画风严格一致，剧情富有感染力与青春正能量。",
+      "deliverables": "16格高清全彩漫画成稿（300dpi印刷级）+ 角色三视图 LoRA 权重模型 + 原创分镜剧本。",
+      "tags": [
+        "AI漫画",
+        "高校挑战赛",
+        "角色一致性",
+        "大赛一等奖"
+      ],
+      "attachments": [
+        {
+          "name": "全国高校AI漫画大赛参赛章程.pdf",
+          "size": 3100000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP01",
+          "name": "小宇同学",
+          "avatar": "assets/avatars/user_header.png",
+          "level": "Lv.4 认证创作者",
+          "school": "南京大学",
+          "credit": 785,
+          "appliedAt": "2026-08-25",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "小宇同学",
+        "progress": 100,
+        "deliveredAt": "2026-09-08",
+        "acceptedAt": "2026-09-10",
+        "awardInfo": "全国高校AI漫画大赛 · 评委会全票通过荣获全国一等奖",
+        "galleryWorkId": "GW00"
+      }
+    },
+    {
+      "id": "TK05",
+      "title": "开学季品牌种草短视频矩阵",
+      "category": "品牌合作",
+      "rewardMoney": "¥ 8,000",
+      "rewardAmount": 8000,
+      "rewardPoints": "1,200",
+      "deadline": "选拔倒计时 2天",
+      "applyDeadline": "2026-09-19",
+      "deadlineDate": "2026-09-27",
+      "cover": "assets/covers/task_main_1.png",
+      "status": "招募中",
+      "badge": "企业直发",
+      "badgeColor": "urgent",
+      "acceptMode": "manual",
+      "quota": 1,
+      "applicantCount": 4,
+      "escrow": true,
+      "escrowStatus": "平台已全额托管保障（¥8,000 企业商单专户锁定）",
+      "invoice": true,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "为开学季数码新装备制作一组高颜值爆款短视频，包含3条不同产品线的场景化展示（宿舍桌面搭配、图书馆静音办公、户外骑行旅拍）。画风清透通透，AI生成质感细腻逼真，具有极强的小红书/抖音自发传播力。",
+      "deliverables": "3条时长30-45秒 4K 9:16竖屏短视频成片 + 配套可商用封面大图 + 完整提示词工作流清单。",
+      "tags": [
+        "品牌合作",
+        "短视频矩阵",
+        "数码好物",
+        "小红书爆款"
+      ],
+      "attachments": [
+        {
+          "name": "3款产品高清白底图及核心参数表.zip",
+          "size": 14200000
+        },
+        {
+          "name": "小红书爆款视觉对标参考合集.pdf",
+          "size": 9600000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP05",
+          "name": "星芒AI工作室",
+          "avatar": "assets/avatars/rank_user_1.png",
+          "level": "Lv.5 金牌创作者",
+          "school": "清华美院 · 视觉传达",
+          "credit": 810,
+          "appliedAt": "2026-09-16 11:00",
+          "proposal": "拥有成熟的电商短视频落地经验，团队曾多次交付千万级播放种草视频，支持免费微调分镜。",
+          "portfolio": "站酷百万人气作品集《未来数码生活》",
+          "status": "pending"
+        },
+        {
+          "id": "AP06",
+          "name": "极光视觉创意",
+          "avatar": "assets/avatars/rank_user_3.png",
+          "level": "Lv.4 商业工作室",
+          "school": "浙江大学 · 计算机学院",
+          "credit": 790,
+          "appliedAt": "2026-09-16 15:40",
+          "proposal": "自建高算力渲染集群，可在48小时内输出3条4K成片及工程文件，保证色彩与实物完全一致。",
+          "portfolio": "某一线数码品牌开箱概念片",
+          "status": "pending"
+        },
+        {
+          "id": "AP07",
+          "name": "青墨数字漫剧",
+          "avatar": "assets/avatars/rank_user_2.png",
+          "level": "Lv.4 认证创作者",
+          "school": "中国美院 · 影视动画",
+          "credit": 765,
+          "appliedAt": "2026-09-17 10:15",
+          "proposal": "擅长结合微光国潮与极简科技风，使画面极具呼吸感与视觉冲击力。",
+          "portfolio": "小红书爆款笔记视频《桌面美学》",
+          "status": "pending"
+        },
+        {
+          "id": "AP10",
+          "name": "新锐视效工作室",
+          "avatar": "assets/avatars/rank_user_5.png",
+          "level": "Lv.3 创作者",
+          "school": "东南大学 · 工业设计",
+          "credit": 730,
+          "appliedAt": "2026-09-17 12:30",
+          "proposal": "紧贴学生受众心态，脚本趣味性强，画面节奏明快欢脱。",
+          "portfolio": "校园生活日常微短剧",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "TK06",
+      "title": "国家重点实验室开放日 4K 纪实短片",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 7,200",
+      "rewardAmount": 7200,
+      "rewardPoints": "900",
+      "deadline": "待买家质检验收 · 72h倒计时中",
+      "applyDeadline": "2026-09-08",
+      "deadlineDate": "2026-09-16",
+      "cover": "assets/covers/task_main_2.png",
+      "status": "待验收",
+      "badge": "待验收",
+      "badgeColor": "amber",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP01",
+      "selectedCreatorName": "小宇同学",
+      "escrow": true,
+      "escrowStatus": "平台全额托管中（¥7,200 冻结在验收监管池）",
+      "invoice": true,
+      "publisherRole": "高校科研院所 / 国家微纳制造实验室",
+      "desc": "为迎接全国科技周重点实验室公众开放日，结合实地拍摄素材与AI生成微观粒子动画，制作一段3分钟的震撼纪实科普短视频。要求科学原理严谨，视觉特效兼具艺术美感与学术权威感。",
+      "deliverables": "1. 4K 60fps ProRes 母带视频（含中英字幕）；\n2. 百度网盘完整素材与工程归档包（含密码提取）；\n3. 官方出具的科研科普授权背书。",
+      "tags": [
+        "AI短视频",
+        "科研科普",
+        "4K纪实",
+        "国家实验室"
+      ],
+      "attachments": [
+        {
+          "name": "实验室科研成果简介与学术论文图解.pdf",
+          "size": 5800000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP01",
+          "name": "小宇同学",
+          "avatar": "assets/avatars/user_header.png",
+          "level": "Lv.4 认证创作者",
+          "school": "南京大学",
+          "credit": 785,
+          "appliedAt": "2026-09-08",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "小宇同学",
+        "progress": 100,
+        "deliveredAt": "2026-09-16 10:25",
+        "countdownHours": 38,
+        "deliveryNote": "已完成4K全片渲染与杜比全景声音效母带压制，微观粒子特效经实验室导师审核一致认可。工程包及源视频已同步上传至百度网盘，提取码与解压密码已附加在交付记录中，请查验！",
+        "cloudLink": "https://pan.baidu.com/s/1nanolab_4k_master",
+        "cloudCode": "8899",
+        "dailyReports": [
+          {
+            "date": "2026-09-10",
+            "note": "完成脚本分镜与科研数据3D模型转AI提示词校验。"
+          },
+          {
+            "date": "2026-09-13",
+            "note": "完成微观粒子碰撞模拟动画生成与4K分辨率超分。"
+          },
+          {
+            "date": "2026-09-16",
+            "note": "全片最终混音与字幕校对完成，正式提交成片验收。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TK07",
+      "title": "社团招新AI数字人讲解片",
+      "category": "数字人",
+      "rewardMoney": "¥ 1,500",
+      "rewardAmount": 1500,
+      "rewardPoints": "300",
+      "deadline": "返修中 · 剩余2次返修机会",
+      "applyDeadline": "2026-09-10",
+      "deadlineDate": "2026-09-20",
+      "cover": "assets/covers/task_main_3.png",
+      "status": "返修中",
+      "badge": "返修中",
+      "badgeColor": "amber",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP01",
+      "selectedCreatorName": "小宇同学",
+      "escrow": true,
+      "escrowStatus": "平台全额托管保障（¥1,500 履约返修监管中）",
+      "invoice": false,
+      "publisherRole": "校学生会 / 社团联合发展部",
+      "desc": "制作一段时长2分钟的AI数字人主播讲解视频，用于大一新生社团招新巡礼。要求数字人形象青春阳光，口型与配音完全契合，背景融合南大标志性建筑与活动实景。",
+      "deliverables": "1080P MP4横屏视频（带背景音乐与动态花字解说）。",
+      "tags": [
+        "数字人",
+        "招新宣传",
+        "校园生活",
+        "返修中"
+      ],
+      "attachments": [
+        {
+          "name": "各社团招新介绍文案汇总.docx",
+          "size": 890000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP01",
+          "name": "小宇同学",
+          "avatar": "assets/avatars/user_header.png",
+          "level": "Lv.4 认证创作者",
+          "school": "南京大学",
+          "credit": 785,
+          "appliedAt": "2026-09-10",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "小宇同学",
+        "progress": 85,
+        "repairRound": 1,
+        "repairLimit": 3,
+        "rejectReason": "【第1次驳回修改意见】：整体视觉效果很好，但第20秒到35秒处口播音画存在轻微脱节（约0.4秒延迟）；另外希望背景音乐在第40秒社团高潮处换一段更有节奏感的BGM，请创作者进行微调后再次提交！",
+        "rejectTime": "2026-09-17 09:30"
+      }
+    },
+    {
+      "id": "TK08",
+      "title": "长期合作：每周矩阵短视频制作",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 4,800",
+      "rewardAmount": 4800,
+      "rewardPoints": "600",
+      "deadline": "买家待验收 · 72h倒计时",
+      "applyDeadline": "2026-09-05",
+      "deadlineDate": "2026-09-18",
+      "cover": "assets/covers/task_main_1.png",
+      "status": "待验收",
+      "badge": "待验收",
+      "badgeColor": "amber",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP02",
+      "selectedCreatorName": "星际造梦师",
+      "escrow": true,
+      "escrowStatus": "平台全额托管保障（¥4,800 锁定待买家确认打款）",
+      "invoice": true,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "为工作室矩阵账号定制第3期周更AI短片《AI进化简史：从图灵到具身智能》。需具备极高故事深度与知识密度，适合在B站知识区与小红书双端分发。",
+      "deliverables": "1条横屏4K 16:9长视频（3分钟）+ 2条提取自长视频的高光竖屏切片（45秒）+ 配套封面图与文案草稿。",
+      "tags": [
+        "知识科普",
+        "长视频",
+        "高光切片",
+        "待验收"
+      ],
+      "attachments": [
+        {
+          "name": "第3期策划脚本与论据事实核查表.docx",
+          "size": 1400000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP02",
+          "name": "星际造梦师",
+          "avatar": "assets/avatars/rank_user_1.png",
+          "level": "Lv.5 金牌创作者",
+          "school": "清华大学",
+          "credit": 820,
+          "appliedAt": "2026-09-06",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "星际造梦师",
+        "progress": 100,
+        "deliveredAt": "2026-09-17 08:20",
+        "countdownHours": 46,
+        "deliveryNote": "成片已全部调色混音完毕，长视频及两条短视频竖屏切片均已封装入飞书云盘，请买家查验！若72小时内无异议将自动打款结算。",
+        "cloudLink": "https://feishu.cn/drive/folder/ai_evolution_ep3",
+        "cloudCode": "7766"
+      }
+    },
+    {
+      "id": "TK09",
+      "title": "校园OPC品牌微电影后期剪辑与调色",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 3,500",
+      "rewardAmount": 3500,
+      "rewardPoints": "400",
+      "deadline": "纠纷仲裁中 · 官方调处",
+      "applyDeadline": "2026-09-01",
+      "deadlineDate": "2026-09-12",
+      "cover": "assets/covers/task_main_4.png",
+      "status": "仲裁中",
+      "badge": "仲裁调解",
+      "badgeColor": "purple",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP03",
+      "selectedCreatorName": "极光视觉工坊",
+      "escrow": true,
+      "escrowStatus": "争议资金已冻结在平台公证仲裁账户（¥3,500 暂缓结算）",
+      "invoice": true,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "将校园创客微电影的实拍与AI动画素材进行多机位剪辑、配乐和专业级电影调色。双方在交付环节因原工程文件交付格式及商用字体授权范围产生严重异议，已移交平台专员进行法律与技术仲裁。",
+      "deliverables": "达芬奇调色工程 + 4K ProRes成片 + 商业字体合法授权书副本。",
+      "tags": [
+        "微电影",
+        "达芬奇调色",
+        "版权争议",
+        "仲裁中"
+      ],
+      "attachments": [
+        {
+          "name": "微电影剪辑协议与授权补充条款.pdf",
+          "size": 2300000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP03",
+          "name": "极光视觉工坊",
+          "avatar": "assets/avatars/rank_user_3.png",
+          "level": "Lv.4 商业工作室",
+          "school": "同济大学",
+          "credit": 760,
+          "appliedAt": "2026-09-02",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "极光视觉工坊",
+        "progress": 90,
+        "dispute": {
+          "initiator": "发布方",
+          "reason": "创作者交付的调色工程中使用了未获商业授权的付费商用字体与未脱水音频，且拒绝按照原始需求文档导出指定XML序列。",
+          "creatorResponse": "原始PRD中未明确要求购买单价3,000元以上的企业级字体授权，且工程已导出全套ProRes无损母带，超出原商定范围。",
+          "evidenceList": [
+            "原始需求沟通聊天截图.zip",
+            "合同样本与交付物对比报告.pdf"
+          ],
+          "assignedArbitrator": "平台金牌仲裁专员-07（知识产权法务认证）",
+          "status": "调解方案拟定中，预计今日 18:00 前出具裁决建议"
+        }
+      }
+    },
+    {
+      "id": "TK10",
+      "title": "新生手册与文创文具图文排版设计",
+      "category": "AI漫画",
+      "rewardMoney": "¥ 2,000",
+      "rewardAmount": 2000,
+      "rewardPoints": "300",
+      "deadline": "已结单 · 选拔超时自动流标",
+      "applyDeadline": "2026-09-05",
+      "deadlineDate": "2026-09-12",
+      "cover": "assets/covers/task_main_3.png",
+      "status": "未成交",
+      "badge": "已退款",
+      "badgeColor": "muted",
+      "acceptMode": "manual",
+      "quota": 1,
+      "escrow": true,
+      "escrowStatus": "平台选拔超时自动关单，全额托管资金 ¥2,000 已原路全额退还买家钱包",
+      "invoice": false,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "设计2026秋季新生入学指导手册（图文穿插AI漫画小剧场）及配套文创贴纸、书签与帆布袋印花图案。由于发布方选拔期截止时未在候选人中敲定人选，系统已自动关单并全额原路退还资金。",
+      "deliverables": "矢量AI工程源文件 + CMYK印刷级PDF + 效果图渲染包。",
+      "tags": [
+        "文创设计",
+        "新生手册",
+        "已流标",
+        "全额退款"
+      ],
+      "attachments": [],
+      "applicants": [
+        {
+          "id": "AP04",
+          "name": "青墨数字社",
+          "avatar": "assets/avatars/rank_user_2.png",
+          "level": "Lv.3 创作者",
+          "school": "中国传媒大学",
+          "credit": 740,
+          "appliedAt": "2026-09-04",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "TK11",
+      "title": "高校科研成果AI概念可视化动画",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 9,000",
+      "rewardAmount": 9000,
+      "rewardPoints": "1,500",
+      "deadline": "已结案 · 双方互评已上架展厅",
+      "applyDeadline": "2026-08-20",
+      "deadlineDate": "2026-09-01",
+      "cover": "assets/covers/task_main_2.png",
+      "status": "已完成",
+      "badge": "标杆案例",
+      "badgeColor": "green",
+      "acceptMode": "manual",
+      "quota": 1,
+      "selectedCreatorId": "AP05",
+      "selectedCreatorName": "星芒AI工作室",
+      "escrow": true,
+      "escrowStatus": "已结案打款 ¥9,000，双方完成五星双向互评，成果已收录至展厅",
+      "invoice": true,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "为教育部重大前沿科技成果制作高精度AI原理演示动画，成功协助课题组在国际顶刊封面及学术年会展出，获得专家评审极高赞誉。",
+      "deliverables": "4K 60fps 顶级视觉演示动画 + 完整工程模型 + 双语解说音轨。",
+      "tags": [
+        "科研动画",
+        "顶刊封面",
+        "标杆工程",
+        "已入展厅"
+      ],
+      "attachments": [
+        {
+          "name": "成果发表论文及动画需求规格书.pdf",
+          "size": 6100000
+        }
+      ],
+      "applicants": [
+        {
+          "id": "AP05",
+          "name": "星芒AI工作室",
+          "avatar": "assets/avatars/rank_user_1.png",
+          "level": "Lv.5 金牌创作者",
+          "school": "清华美院",
+          "credit": 810,
+          "appliedAt": "2026-08-21",
+          "status": "accepted"
+        }
+      ],
+      "fulfillment": {
+        "creator": "星芒AI工作室",
+        "progress": 100,
+        "deliveredAt": "2026-08-31",
+        "acceptedAt": "2026-09-01",
+        "evaluation": {
+          "score": 5,
+          "stars": 5,
+          "comment": "交付极度专业！概念表达深刻到位，学术细节严谨无误，强烈推荐合作！",
+          "evaluatedAt": "2026-09-02"
+        },
+        "galleryWorkId": "GW04"
+      }
+    },
+    {
+      "id": "TK12",
+      "title": "寒假研学国际宣传短片需求",
+      "category": "AI短视频",
+      "rewardMoney": "¥ 6,000",
+      "rewardAmount": 6000,
+      "rewardPoints": "800",
+      "deadline": "草稿暂存 · 未正式发布",
+      "cover": "assets/covers/task_main_1.png",
+      "status": "草稿",
+      "badge": "草稿箱",
+      "badgeColor": "muted",
+      "acceptMode": "manual",
+      "quota": 1,
+      "isDraft": true,
+      "publisherRole": "我发布的任务（小宇同学 / 星芒视觉工作室）",
+      "desc": "面向海外名校寒假研学营的AI宣传片初步框架构思，计划融入国际化视野与科技感沉浸体验。目前仅保存为草稿，随时可完善要求并支付托管资金发布至大厅。",
+      "deliverables": "4K宣传片 + 社交媒体多语言精剪版本。",
+      "tags": [
+        "研学宣传",
+        "国际视野",
+        "草稿保存"
+      ],
+      "attachments": []
+    }
+  ],
+  "todayRec": [
+    {
+      "id": "TK05",
+      "title": "开学季品牌种草短视频矩阵",
+      "reward": "¥ 8,000",
+      "rewardMoney": "¥ 8,000",
+      "rewardAmount": 8000,
+      "rewardPoints": "1,200",
+      "participants": "4 人报名",
+      "deadlineDate": "2026-09-27",
+      "deadline": "选拔倒计时 2天",
+      "tags": [
+        "品牌合作",
+        "短视频矩阵"
+      ],
+      "cover": "assets/covers/task_main_1.png",
+      "category": "品牌合作",
+      "status": "招募中",
+      "escrow": true
+    },
+    {
+      "id": "TK01",
+      "title": "未来城市：AI短视频概念预告片",
+      "reward": "¥ 5,000",
+      "rewardMoney": "¥ 5,000",
+      "rewardAmount": 5000,
+      "rewardPoints": "800",
+      "participants": "4 人报名",
+      "deadlineDate": "2026-09-28",
+      "deadline": "报名剩 2 天",
+      "tags": [
+        "AI短视频",
+        "概念预告"
+      ],
+      "cover": "assets/covers/task_main_1.png",
+      "category": "AI短视频",
+      "status": "招募中",
+      "escrow": true
+    },
+    {
+      "id": "TK03",
+      "title": "数字人直播带货脚本设计挑战",
+      "reward": "¥ 800",
+      "rewardMoney": "¥ 800",
+      "rewardAmount": 800,
+      "rewardPoints": "500",
+      "participants": "名额 2/3",
+      "deadlineDate": "2026-09-25",
+      "deadline": "名额抢订剩 1/3",
+      "tags": [
+        "数字人",
+        "即接模式"
+      ],
+      "cover": "assets/covers/task_main_3.png",
+      "category": "数字人",
+      "status": "招募中",
+      "escrow": true
+    }
+  ],
+  "ranksWeek": [
+    {
+      "rank": 1,
+      "name": "星际造梦师",
+      "taskCount": 14,
+      "points": 2450,
+      "avatar": "assets/avatars/rank_user_1.png",
+      "school": "清华大学 · 美术学院",
+      "deliveryRate": "100%"
+    },
+    {
+      "rank": 2,
+      "name": "小宇同学",
+      "taskCount": 12,
+      "points": 2280,
+      "avatar": "assets/avatars/user_header.png",
+      "school": "南京大学 · 软件学院",
+      "deliveryRate": "99.4%"
+    },
+    {
+      "rank": 3,
+      "name": "极光视觉工坊",
+      "taskCount": 10,
+      "points": 1980,
+      "avatar": "assets/avatars/rank_user_3.png",
+      "school": "同济大学 · 创意设计",
+      "deliveryRate": "98.5%"
+    },
+    {
+      "rank": 4,
+      "name": "青墨AI漫社",
+      "taskCount": 9,
+      "points": 1720,
+      "avatar": "assets/avatars/rank_user_2.png",
+      "school": "中国美院 · 动画学院",
+      "deliveryRate": "99.0%"
+    },
+    {
+      "rank": 5,
+      "name": "新媒体学姐",
+      "taskCount": 8,
+      "points": 1450,
+      "avatar": "assets/avatars/rank_user_4.png",
+      "school": "复旦大学 · 新闻学院",
+      "deliveryRate": "97.8%"
+    }
+  ],
+  "leaderboard": [
+    {
+      "rank": 1,
+      "name": "星际造梦师",
+      "taskCount": 14,
+      "points": 2450,
+      "avatar": "assets/avatars/rank_user_1.png",
+      "school": "清华大学 · 美术学院",
+      "deliveryRate": "100%"
+    },
+    {
+      "rank": 2,
+      "name": "小宇同学",
+      "taskCount": 12,
+      "points": 2280,
+      "avatar": "assets/avatars/user_header.png",
+      "school": "南京大学 · 软件学院",
+      "deliveryRate": "99.4%"
+    },
+    {
+      "rank": 3,
+      "name": "极光视觉工坊",
+      "taskCount": 10,
+      "points": 1980,
+      "avatar": "assets/avatars/rank_user_3.png",
+      "school": "同济大学 · 创意设计",
+      "deliveryRate": "98.5%"
+    },
+    {
+      "rank": 4,
+      "name": "青墨AI漫社",
+      "taskCount": 9,
+      "points": 1720,
+      "avatar": "assets/avatars/rank_user_2.png",
+      "school": "中国美院 · 动画学院",
+      "deliveryRate": "99.0%"
+    },
+    {
+      "rank": 5,
+      "name": "新媒体学姐",
+      "taskCount": 8,
+      "points": 1450,
+      "avatar": "assets/avatars/rank_user_4.png",
+      "school": "复旦大学 · 新闻学院",
+      "deliveryRate": "97.8%"
+    }
+  ],
+  "gallery": {
+    "tags": [
+      "全部",
+      "概念动画",
+      "国潮漫剧",
+      "科幻短片",
+      "超拟真数字人",
+      "科研科普",
+      "商业视觉"
+    ],
+    "categories": [
+      "全部",
+      "AI短视频",
+      "AI漫画",
+      "数字人",
+      "音频配音",
+      "品牌合作"
+    ],
+    "works": [
+  {
+    "id": "GW00",
+    "title": "未来折叠 · 南大校园赛博概念片",
+    "author": "小宇同学",
+    "authorRole": "校园OPC商业主理人",
+    "authorSchool": "南京大学 · 软件学院",
+    "authorAvatar": "assets/avatars/user_header.png",
+    "cover": "assets/covers/task_main_1.png",
+    "tags": [
+      "概念动画",
+      "科幻短片",
+      "赛博朋克"
+    ],
+    "category": "AI短视频",
+    "basePrice": "¥ 2,800 起",
+    "scheduleStatus": "available",
+    "sourceTask": {
+      "id": "TK04",
+      "title": "青春校园：AI漫画创作大赛",
+      "award": "全国高校AI创作大赛 · 一等奖交付作品"
+    },
+    "servicePackages": [
+      {
+        "name": "轻量概念片",
+        "price": "¥ 2,800",
+        "days": "3天交付",
+        "desc": "30-45秒 1080P概念剪辑，含原创BGM"
+      },
+      {
+        "name": "标准商业版",
+        "price": "¥ 5,000",
+        "days": "7天交付",
+        "desc": "60-90秒 4K 60fps母带，含中英字幕与源工程"
+      },
+      {
+        "name": "深度定制版",
+        "price": "¥ 8,800",
+        "days": "14天交付",
+        "desc": "专属模型微调 + 商业独占版权 + 终身授权"
+      }
+    ],
+    "likes": 486,
+    "views": "5.8万",
+    "ordersCount": 12,
+    "tools": [
+      "Midjourney v6",
+      "Runway Gen-3",
+      "Suno v3.5",
+      "DaVinci 19"
+    ],
+    "creator": {
+      "name": "小宇同学",
+      "avatar": "assets/avatars/user_header.png",
+      "school": "南京大学 · 软件学院",
+      "level": "校园OPC商业主理人"
+    },
+    "priceRange": "¥ 2,800 起",
+    "scene": "概念动画",
+    "source": "科幻短片",
+    "cycle": "3-7天交付",
+    "delivered": 12,
+    "available": true
+  },
+  {
+    "id": "GW01",
+    "title": "数字生命：意识上传纪元",
+    "author": "星际造梦师",
+    "authorRole": "金牌创作者",
+    "authorSchool": "清华大学 · 美术学院",
+    "authorAvatar": "assets/avatars/rank_user_1.png",
+    "cover": "assets/covers/task_main_2.png",
+    "tags": [
+      "科幻短片",
+      "概念动画"
+    ],
+    "category": "AI短视频",
+    "basePrice": "¥ 4,500 起",
+    "scheduleStatus": "busy",
+    "sourceTask": {
+      "id": "TK02",
+      "title": "未来科技AI概念动画先导片",
+      "award": "蔚来科技官方采纳标杆作品"
+    },
+    "servicePackages": [
+      {
+        "name": "标准概念片",
+        "price": "¥ 4,500",
+        "days": "5天交付",
+        "desc": "4K电影级光影质感短片"
+      },
+      {
+        "name": "工业级交付",
+        "price": "¥ 9,800",
+        "days": "10天交付",
+        "desc": "全套三维视效结合AI渲染流程"
+      }
+    ],
+    "likes": 892,
+    "views": "12.4万",
+    "ordersCount": 18,
+    "tools": [
+      "ComfyUI",
+      "Runway Gen-3",
+      "Blender 4.2"
+    ],
+    "creator": {
+      "name": "星际造梦师",
+      "avatar": "assets/avatars/rank_user_1.png",
+      "school": "清华大学 · 美术学院",
+      "level": "金牌创作者"
+    },
+    "priceRange": "¥ 4,500 起",
+    "scene": "科幻短片",
+    "source": "概念动画",
+    "cycle": "3-7天交付",
+    "delivered": 18,
+    "available": true
+  },
+  {
+    "id": "GW02",
+    "title": "新国风百妖夜行录 · 全景漫剧",
+    "author": "青墨AI漫社",
+    "authorRole": "认证创作者",
+    "authorSchool": "中国美院 · 动画学院",
+    "authorAvatar": "assets/avatars/rank_user_2.png",
+    "cover": "assets/covers/task_main_4.png",
+    "tags": [
+      "国潮漫剧",
+      "概念动画"
+    ],
+    "category": "AI漫画",
+    "basePrice": "¥ 1,800 起",
+    "scheduleStatus": "available",
+    "likes": 642,
+    "views": "7.2万",
+    "ordersCount": 15,
+    "tools": [
+      "Stable Diffusion 3.5",
+      "Photoshop",
+      "Topaz Gigapixel"
+    ],
+    "creator": {
+      "name": "青墨AI漫社",
+      "avatar": "assets/avatars/rank_user_2.png",
+      "school": "中国美院 · 动画学院",
+      "level": "认证创作者"
+    },
+    "priceRange": "¥ 1,800 起",
+    "scene": "国潮漫剧",
+    "source": "概念动画",
+    "cycle": "3-7天交付",
+    "delivered": 15,
+    "available": true
+  },
+  {
+    "id": "GW03",
+    "title": "元宇宙超拟真数字员工矩阵",
+    "author": "极光数字工坊",
+    "authorRole": "商业工作室",
+    "authorSchool": "同济大学 · 创意设计",
+    "authorAvatar": "assets/avatars/rank_user_3.png",
+    "cover": "assets/covers/task_main_3.png",
+    "tags": [
+      "超拟真数字人",
+      "商业视觉"
+    ],
+    "category": "数字人",
+    "basePrice": "¥ 3,200 起",
+    "scheduleStatus": "closed",
+    "likes": 512,
+    "views": "6.5万",
+    "ordersCount": 9,
+    "tools": [
+      "HeyGen",
+      "ElevenLabs",
+      "Suno v3.5"
+    ],
+    "creator": {
+      "name": "极光数字工坊",
+      "avatar": "assets/avatars/rank_user_3.png",
+      "school": "同济大学 · 创意设计",
+      "level": "商业工作室"
+    },
+    "priceRange": "¥ 3,200 起",
+    "scene": "超拟真数字人",
+    "source": "商业视觉",
+    "cycle": "3-7天交付",
+    "delivered": 9,
+    "available": false
+  },
+  {
+    "id": "GW04",
+    "title": "高校科研成果AI概念可视化动画",
+    "author": "星芒AI工作室",
+    "authorRole": "金牌创作者",
+    "authorSchool": "清华大学 · 美术学院",
+    "authorAvatar": "assets/avatars/rank_user_1.png",
+    "cover": "assets/covers/task_main_2.png",
+    "tags": [
+      "科研科普",
+      "商业视觉"
+    ],
+    "category": "AI短视频",
+    "basePrice": "¥ 5,000 起",
+    "scheduleStatus": "available",
+    "sourceTask": {
+      "id": "TK11",
+      "title": "高校科研成果AI概念可视化动画",
+      "award": "教育部重点实验室交付成果"
+    },
+    "likes": 720,
+    "views": "8.9万",
+    "ordersCount": 14,
+    "tools": [
+      "Midjourney v6",
+      "Runway Gen-3",
+      "Cinema 4D"
+    ],
+    "creator": {
+      "name": "星芒AI工作室",
+      "avatar": "assets/avatars/rank_user_1.png",
+      "school": "清华大学 · 美术学院",
+      "level": "金牌创作者"
+    },
+    "priceRange": "¥ 5,000 起",
+    "scene": "科研科普",
+    "source": "商业视觉",
+    "cycle": "3-7天交付",
+    "delivered": 14,
+    "available": true
+  },
+  {
+    "id": "GW05",
+    "title": "光影诗篇：古典水墨意境生成录",
+    "author": "青墨AI漫社",
+    "authorRole": "认证创作者",
+    "authorSchool": "中国美院 · 动画学院",
+    "authorAvatar": "assets/avatars/rank_user_2.png",
+    "cover": "assets/covers/task_main_4.png",
+    "tags": [
+      "国潮漫剧",
+      "概念动画"
+    ],
+    "category": "AI短视频",
+    "basePrice": "¥ 2,200 起",
+    "scheduleStatus": "available",
+    "likes": 430,
+    "views": "4.3万",
+    "ordersCount": 8,
+    "tools": [
+      "Midjourney v6",
+      "Kling AI",
+      "Premiere"
+    ],
+    "creator": {
+      "name": "青墨AI漫社",
+      "avatar": "assets/avatars/rank_user_2.png",
+      "school": "中国美院 · 动画学院",
+      "level": "认证创作者"
+    },
+    "priceRange": "¥ 2,200 起",
+    "scene": "国潮漫剧",
+    "source": "概念动画",
+    "cycle": "3-7天交付",
+    "delivered": 8,
+    "available": true
+  },
+  {
+    "id": "GW06",
+    "title": "无人驾驶与智慧城市未来巡礼",
+    "author": "极光数字工坊",
+    "authorRole": "商业工作室",
+    "authorSchool": "同济大学 · 创意设计",
+    "authorAvatar": "assets/avatars/rank_user_3.png",
+    "cover": "assets/covers/task_main_1.png",
+    "tags": [
+      "概念动画",
+      "商业视觉"
+    ],
+    "category": "品牌合作",
+    "basePrice": "¥ 6,000 起",
+    "scheduleStatus": "busy",
+    "likes": 580,
+    "views": "9.1万",
+    "ordersCount": 11,
+    "tools": [
+      "Runway Gen-3",
+      "Unreal Engine 5",
+      "AfterEffects"
+    ],
+    "creator": {
+      "name": "极光数字工坊",
+      "avatar": "assets/avatars/rank_user_3.png",
+      "school": "同济大学 · 创意设计",
+      "level": "商业工作室"
+    },
+    "priceRange": "¥ 6,000 起",
+    "scene": "概念动画",
+    "source": "商业视觉",
+    "cycle": "3-7天交付",
+    "delivered": 11,
+    "available": true
+  },
+  {
+    "id": "GW07",
+    "title": "AI国潮朋克虚拟偶像主视觉",
+    "author": "星际造梦师",
+    "authorRole": "金牌创作者",
+    "authorSchool": "清华大学 · 美术学院",
+    "authorAvatar": "assets/avatars/rank_user_1.png",
+    "cover": "assets/covers/task_main_3.png",
+    "tags": [
+      "超拟真数字人",
+      "商业视觉"
+    ],
+    "category": "数字人",
+    "basePrice": "¥ 3,800 起",
+    "scheduleStatus": "busy",
+    "likes": 770,
+    "views": "11.2万",
+    "ordersCount": 16,
+    "tools": [
+      "ComfyUI",
+      "LivePortrait",
+      "Procreate"
+    ],
+    "creator": {
+      "name": "星际造梦师",
+      "avatar": "assets/avatars/rank_user_1.png",
+      "school": "清华大学 · 美术学院",
+      "level": "金牌创作者"
+    },
+    "priceRange": "¥ 3,800 起",
+    "scene": "超拟真数字人",
+    "source": "商业视觉",
+    "cycle": "3-7天交付",
+    "delivered": 16,
+    "available": true
+  },
+  {
+    "id": "GW08",
+    "title": "深海星云 · 沉浸式声画共生体",
+    "author": "小宇同学",
+    "authorRole": "校园OPC商业主理人",
+    "authorSchool": "南京大学 · 软件学院",
+    "authorAvatar": "assets/avatars/user_header.png",
+    "cover": "assets/covers/task_main_2.png",
+    "tags": [
+      "概念动画",
+      "科幻短片"
+    ],
+    "category": "AI短视频",
+    "basePrice": "¥ 3,000 起",
+    "scheduleStatus": "available",
+    "likes": 390,
+    "views": "4.8万",
+    "ordersCount": 7,
+    "tools": [
+      "Midjourney v6",
+      "Sora Concept",
+      "Logic Pro"
+    ],
+    "creator": {
+      "name": "小宇同学",
+      "avatar": "assets/avatars/user_header.png",
+      "school": "南京大学 · 软件学院",
+      "level": "校园OPC商业主理人"
+    },
+    "priceRange": "¥ 3,000 起",
+    "scene": "概念动画",
+    "source": "科幻短片",
+    "cycle": "3-7天交付",
+    "delivered": 7,
+    "available": true
+  },
+  {
+    "id": "GW09",
+    "title": "校园青春日常纪事 · AI漫剧精选",
+    "author": "小宇同学",
+    "authorRole": "校园OPC商业主理人",
+    "authorSchool": "南京大学 · 软件学院",
+    "authorAvatar": "assets/avatars/user_header.png",
+    "cover": "assets/covers/task_main_4.png",
+    "tags": [
+      "国潮漫剧",
+      "青春校园"
+    ],
+    "category": "AI漫画",
+    "basePrice": "¥ 1,500 起",
+    "scheduleStatus": "available",
+    "likes": 520,
+    "views": "6.9万",
+    "ordersCount": 13,
+    "tools": [
+      "Stable Diffusion XL",
+      "ComfyUI",
+      "Photoshop"
+    ],
+    "creator": {
+      "name": "小宇同学",
+      "avatar": "assets/avatars/user_header.png",
+      "school": "南京大学 · 软件学院",
+      "level": "校园OPC商业主理人"
+    },
+    "priceRange": "¥ 1,500 起",
+    "scene": "国潮漫剧",
+    "source": "青春校园",
+    "cycle": "3-7天交付",
+    "delivered": 13,
+    "available": true
+  }
+]
+  },
+  // 竞标候选人「创作者主页」档案：发布方在选定前查看其执照信息、履约口碑与作品集
+  // 匹配唯一口径 = MockData.tasks.creatorProfiles[].name === applicant.name（见 App.getCreatorProfile）
+  "creatorProfiles": [
+    {
+      "id": "CR01",
+      "name": "小宇同学",
+      "avatar": "assets/avatars/user_header.png",
+      "level": "Lv.4 认证创作者",
+      "school": "南京大学 · 软件学院",
+      "role": "校园OPC商业主理人 / 星芒AI视觉工作室",
+      "credit": 785,
+      "tags": ["AI短视频", "概念动画", "品牌种草", "数字人"],
+      "intro": "南大校园 OPC 主理人，主攻 AI 概念短片与品牌种草矩阵。自建 ComfyUI 超分 + Runway 光流连贯性调优流水线，擅长把抽象技术语言转译为有情绪张力的商业影像。",
+      "stats": { "completed": 28, "rating": "4.9", "onTime": "98%", "response": "2 小时" },
+      "works": [
+        { "id": "GW00", "title": "未来折叠 · 南大校园赛博概念片", "cover": "assets/covers/task_main_1.png", "category": "AI短视频", "price": "¥ 2,800 起", "likes": 486, "views": "5.8万" },
+        { "id": "GW08", "title": "深海星云 · 沉浸式声画共生体", "cover": "assets/covers/gallery/gallery_03.jpg", "category": "AI短视频", "price": "¥ 3,600 起", "likes": 312, "views": "3.2万" },
+        { "id": "GW09", "title": "校园青春日常纪事 · AI漫剧精选", "cover": "assets/covers/gallery/gallery_05.jpg", "category": "AI漫画", "price": "¥ 1,800 起", "likes": 264, "views": "2.6万" }
+      ]
+    },
+    {
+      "id": "CR02",
+      "name": "星际造梦师",
+      "avatar": "assets/avatars/rank_user_1.png",
+      "level": "Lv.5 金牌创作者",
+      "school": "清华大学 · 美术学院",
+      "role": "科幻概念视觉团队主理人",
+      "credit": 820,
+      "tags": ["科幻概念", "数字生命", "LoRA微调", "虚拟偶像"],
+      "intro": "清华美院背景的科幻概念团队，自建 LoRA 微调模型库，擅长复杂机械光影与元宇宙世界观视觉构建，交付过多个大厂先导片项目。",
+      "stats": { "completed": 41, "rating": "5.0", "onTime": "99%", "response": "1 小时" },
+      "works": [
+        { "id": "GW01", "title": "数字生命：意识上传纪元", "cover": "assets/covers/gallery/gallery_01.jpg", "category": "AI短视频", "price": "¥ 6,800 起", "likes": 921, "views": "12.4万" },
+        { "id": "GW07", "title": "AI国潮朋克虚拟偶像主视觉", "cover": "assets/covers/gallery/gallery_07.jpg", "category": "数字人", "price": "¥ 5,200 起", "likes": 733, "views": "9.1万" },
+        { "id": "GW10", "title": "星际折跃：太空歌剧分镜设定集", "cover": "assets/covers/gallery/gallery_04.jpg", "category": "AI漫画", "price": "¥ 4,000 起", "likes": 588, "views": "7.7万" }
+      ]
+    },
+    {
+      "id": "CR03",
+      "name": "极光视觉工坊",
+      "avatar": "assets/avatars/rank_user_3.png",
+      "level": "Lv.4 商业工作室",
+      "school": "同济大学 · 创意设计",
+      "role": "商业动态影像工作室",
+      "credit": 760,
+      "tags": ["商业广告", "全流程工作流", "达芬奇调色", "全景声"],
+      "intro": "同济创意设计团队，主接商业品牌动态影像。习惯用达芬奇做精细调色 + 杜比全景声制作，支持多轮细节打磨，交付标准贴近 4A 广告需求。",
+      "stats": { "completed": 33, "rating": "4.8", "onTime": "96%", "response": "3 小时" },
+      "works": [
+        { "id": "GW03", "title": "元宇宙超拟真数字员工矩阵", "cover": "assets/covers/gallery/gallery_08.jpg", "category": "数字人", "price": "¥ 7,200 起", "likes": 402, "views": "6.3万" },
+        { "id": "GW06", "title": "无人驾驶与智慧城市未来巡礼", "cover": "assets/covers/gallery/gallery_02.jpg", "category": "品牌合作", "price": "¥ 5,800 起", "likes": 355, "views": "5.1万" },
+        { "id": "GW11", "title": "某新能源车企概念动态宣传片", "cover": "assets/covers/gallery/gallery_06.jpg", "category": "品牌合作", "price": "¥ 9,000 起", "likes": 288, "views": "4.4万" }
+      ]
+    },
+    {
+      "id": "CR04",
+      "name": "青墨数字社",
+      "avatar": "assets/avatars/rank_user_2.png",
+      "level": "Lv.3 新锐创作者",
+      "school": "中国传媒大学 · 动画学院",
+      "role": "新国风AI动画社",
+      "credit": 740,
+      "tags": ["新国风", "赛博科幻", "强节奏分镜", "漫剧"],
+      "intro": "中传动画学院社团团队，主打新国风与赛博科幻交织的视觉风格，分镜节奏感强，B站已有多个破十万播放的 AI 动画短片。",
+      "stats": { "completed": 19, "rating": "4.7", "onTime": "95%", "response": "4 小时" },
+      "works": [
+        { "id": "GW02", "title": "新国风百妖夜行录 · 全景漫剧", "cover": "assets/covers/gallery/gallery_05.jpg", "category": "AI漫画", "price": "¥ 2,200 起", "likes": 512, "views": "10.2万" },
+        { "id": "GW05", "title": "光影诗篇：古典水墨意境生成录", "cover": "assets/covers/gallery/gallery_03.jpg", "category": "AI短视频", "price": "¥ 1,600 起", "likes": 407, "views": "6.8万" },
+        { "id": "GW12", "title": "赛博山海经 · 异兽设定集", "cover": "assets/covers/gallery/gallery_01.jpg", "category": "图文创作", "price": "¥ 1,200 起", "likes": 233, "views": "3.5万" }
+      ]
+    },
+    {
+      "id": "CR05",
+      "name": "林工AI",
+      "avatar": "assets/avatars/rank_user_4.png",
+      "level": "Lv.4",
+      "school": "同济大学 · 航空航天学院",
+      "role": "工程向AI影像创作者",
+      "credit": 95,
+      "tags": ["无人机航拍", "超分辨率重建", "动态光影", "工程可视化"],
+      "intro": "工科背景创作者，3 年无人机航拍与后期 AI 渲染经验，自建 ComfyUI 超分流水线，擅长把工程测绘素材转成有商业质感的动态影像。",
+      "stats": { "completed": 17, "rating": "4.8", "onTime": "97%", "response": "5 小时" },
+      "works": [
+        { "id": "GW13", "title": "高空航拍AI超分辨率修复实录", "cover": "assets/covers/gallery/gallery_04.jpg", "category": "AI短视频", "price": "¥ 3,200 起", "likes": 176, "views": "2.9万" },
+        { "id": "GW14", "title": "重工业厂区动态光影重建", "cover": "assets/covers/gallery/gallery_06.jpg", "category": "品牌合作", "price": "¥ 4,600 起", "likes": 142, "views": "2.1万" },
+        { "id": "GW15", "title": "桥梁结构工程可视化演示", "cover": "assets/covers/gallery/gallery_02.jpg", "category": "图文创作", "price": "¥ 2,400 起", "likes": 98, "views": "1.4万" }
+      ]
+    },
+    {
+      "id": "CR06",
+      "name": "星芒AI工作室",
+      "avatar": "assets/avatars/rank_user_5.png",
+      "level": "Lv.5 金牌创作者",
+      "school": "南京大学 · 艺术学院",
+      "role": "数码生活内容工作室",
+      "credit": 812,
+      "tags": ["数码开箱", "产品种草", "矩阵短视频", "桌面美学"],
+      "intro": "南大艺术学院背景的内容团队，站酷百万人气作品集作者。擅长数码 3C 与生活方式赛道的种草短视频矩阵，单月可稳定产出 20 条以上。",
+      "stats": { "completed": 46, "rating": "4.9", "onTime": "99%", "response": "1 小时" },
+      "works": [
+        { "id": "GW04", "title": "高校科研成果AI概念可视化动画", "cover": "assets/covers/gallery/gallery_07.jpg", "category": "AI短视频", "price": "¥ 5,000 起", "likes": 688, "views": "11.6万" },
+        { "id": "GW16", "title": "未来数码生活 · 桌面美学生态", "cover": "assets/covers/task_main_2.png", "category": "品牌合作", "price": "¥ 3,800 起", "likes": 441, "views": "8.3万" },
+        { "id": "GW17", "title": "开学季数码装备种草合集", "cover": "assets/covers/task_main_3.png", "category": "品牌合作", "price": "¥ 3,200 起", "likes": 379, "views": "6.5万" }
+      ]
+    },
+    {
+      "id": "CR07",
+      "name": "极光视觉创意",
+      "avatar": "assets/avatars/rank_user_3.png",
+      "level": "Lv.4 商业工作室",
+      "school": "同济大学 · 创意设计",
+      "role": "商业产品影像工作室",
+      "credit": 742,
+      "tags": ["产品概念片", "动态质感", "品牌视觉", "调色"],
+      "intro": "专注数码与消费电子品牌的开箱概念片与产品动态质感呈现，擅用微距光影与流体模拟强化产品科技感。",
+      "stats": { "completed": 26, "rating": "4.8", "onTime": "95%", "response": "3 小时" },
+      "works": [
+        { "id": "GW18", "title": "一线数码品牌开箱概念片", "cover": "assets/covers/task_main_4.png", "category": "品牌合作", "price": "¥ 4,200 起", "likes": 297, "views": "5.6万" },
+        { "id": "GW19", "title": "流体模拟产品质感实验室", "cover": "assets/covers/gallery/gallery_06.jpg", "category": "AI短视频", "price": "¥ 3,600 起", "likes": 214, "views": "3.9万" },
+        { "id": "GW20", "title": "智能硬件动态拆解演示", "cover": "assets/covers/rec_task_1.png", "category": "品牌合作", "price": "¥ 5,100 起", "likes": 165, "views": "2.8万" }
+      ]
+    },
+    {
+      "id": "CR08",
+      "name": "青墨数字漫剧",
+      "avatar": "assets/avatars/rank_user_2.png",
+      "level": "Lv.3 新锐创作者",
+      "school": "中国传媒大学 · 动画学院",
+      "role": "竖屏漫剧内容社",
+      "credit": 726,
+      "tags": ["竖屏漫剧", "小红书爆款", "日常叙事", "文案设计"],
+      "intro": "主打小红书与抖音竖屏漫剧内容，擅长把生活细节写成有共鸣的小剧本，画面色彩干净、节奏轻快，已孵化多个爆款笔记。",
+      "stats": { "completed": 22, "rating": "4.7", "onTime": "94%", "response": "6 小时" },
+      "works": [
+        { "id": "GW21", "title": "桌面美学 · 小红书爆款笔记视频", "cover": "assets/covers/gallery/gallery_05.jpg", "category": "AI漫画", "price": "¥ 1,900 起", "likes": 534, "views": "9.8万" },
+        { "id": "GW22", "title": "宿舍变身日记 · 竖屏漫剧第一季", "cover": "assets/covers/rec_task_2.png", "category": "AI漫画", "price": "¥ 2,600 起", "likes": 388, "views": "7.2万" },
+        { "id": "GW23", "title": "通勤十分钟美学脚本集", "cover": "assets/covers/gallery/gallery_03.jpg", "category": "图文创作", "price": "¥ 1,400 起", "likes": 201, "views": "3.1万" }
+      ]
+    },
+    {
+      "id": "CR09",
+      "name": "新锐视效工作室",
+      "avatar": "assets/avatars/rank_user_4.png",
+      "level": "Lv.4 商业工作室",
+      "school": "北京电影学院 · 摄影系",
+      "role": "校园微短剧视效团队",
+      "credit": 758,
+      "tags": ["微短剧", "剧情向", "视效合成", "校园题材"],
+      "intro": "北电摄影系背景的微短剧视效团队，擅长大光圈质感与自然光叙事，承接校园题材剧情短片的全流程拍摄与后期合成。",
+      "stats": { "completed": 29, "rating": "4.8", "onTime": "96%", "response": "2 小时" },
+      "works": [
+        { "id": "GW24", "title": "校园生活日常微短剧", "cover": "assets/covers/rec_task_3.png", "category": "AI短视频", "price": "¥ 3,400 起", "likes": 342, "views": "6.1万" },
+        { "id": "GW25", "title": "操场黄昏 · 青春群像预告", "cover": "assets/covers/gallery/gallery_02.jpg", "category": "AI短视频", "price": "¥ 2,900 起", "likes": 268, "views": "4.7万" },
+        { "id": "GW26", "title": "社团招新剧情短片合集", "cover": "assets/covers/gallery/gallery_08.jpg", "category": "品牌合作", "price": "¥ 3,800 起", "likes": 189, "views": "3.3万" }
+      ]
+    }
+  ],
+  "myOrders": [
+    {
+      "id": "MO-T1",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK01",
+      "title": "未来城市：AI短视频概念预告片",
+      "desc": "已提交竞标方案（赛博朋克融合江南水乡建筑风格），报价 ¥5,000，附送3版动态分镜。发布方已查阅方案，当前共4位候选人，选拔进入最后冲刺。",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 5,000",
+      "rewardAmount": 5000,
+      "rewardPoints": "800",
+      "status": "待选定",
+      "acceptMode": "manual",
+      "tags": [
+        "AI短视频",
+        "创意挑战",
+        "人工选拔"
+      ],
+      "deadline": "选拔倒计时 2天",
+      "counterpart": "品牌方 / 蔚来科技设计创新中心",
+      "createdAt": "2026-09-16 14:30",
+      "applicationStatus": "pending",
+      "coreInfo": "已报名竞标 · 候选人 4 位 · 等待发布方选拔敲定"
+    },
+    {
+      "id": "MO-T9",
+      "role": "creator",
+      "type": "custom",
+      "sourceId": "GW09",
+      "title": "定向定制 · 校园青春日常纪事 续集",
+      "desc": "来自南京大学校友企业的定向委托：期望在展厅作品风格基础上，定制一套6篇连载的校园创业AI漫剧故事。预算已全额托管至平台，等待创作者接单确认。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 3,600",
+      "rewardAmount": 3600,
+      "rewardPoints": "600",
+      "status": "待接单",
+      "acceptMode": "custom",
+      "tags": [
+        "展厅定制",
+        "AI漫画",
+        "待我确认"
+      ],
+      "deadline": "确认剩余 24小时",
+      "counterpart": "委托方 / 南大创客工场",
+      "createdAt": "2026-09-17 11:20",
+      "coreInfo": "定向商单 · 赏金已托管 · 等待您确认接单或婉拒"
+    },
+    {
+      "id": "MO-T2",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK02",
+      "title": "未来科技AI概念动画先导片",
+      "desc": "我已成功入选合作创作者。当前处于第一阶段关键帧生成与微观粒子转场渲染中，日报已按时提交2期，进度 70%，准备提报成片初审。",
+      "cover": "assets/covers/task_main_2.png",
+      "rewardMoney": "¥ 6,500",
+      "rewardAmount": 6500,
+      "rewardPoints": "1,000",
+      "status": "进行中",
+      "acceptMode": "manual",
+      "tags": [
+        "AI短视频",
+        "概念动画",
+        "正常履约"
+      ],
+      "deadline": "交付截止 2026-09-19",
+      "counterpart": "智能硬件独角兽 / 未来视界Labs",
+      "createdAt": "2026-09-14 10:00",
+      "progress": 70,
+      "coreInfo": "履约中 · 进度 70% · 今日日报已填报 · 剩余2天交付"
+    },
+    {
+      "id": "MO-T2B",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK07",
+      "title": "社团招新AI数字人讲解片",
+      "desc": "发布方提出了第1次修改意见：要求将第20秒处口播声画微调同步，并更换一段更欢快的校园背景音乐。剩余返修次数 2 次，请尽快修改后重新提交交付物。",
+      "cover": "assets/covers/task_main_3.png",
+      "rewardMoney": "¥ 1,500",
+      "rewardAmount": 1500,
+      "rewardPoints": "300",
+      "status": "返修中",
+      "acceptMode": "manual",
+      "tags": [
+        "数字人",
+        "返修中",
+        "限3次修改"
+      ],
+      "deadline": "返修倒计时 48小时",
+      "counterpart": "校学生会 / 社联部",
+      "createdAt": "2026-09-10",
+      "repairRound": 1,
+      "repairLimit": 3,
+      "rejectReason": "【第1次驳回修改意见】：第20-35秒处口播音画存在约0.4秒延迟；希望背景音乐换一段更有节奏感的BGM，请微调后重新提交！",
+      "coreInfo": "第 1/3 次返修中 · 请查看买家修改意见并重新上传"
+    },
+    {
+      "id": "MO-T3",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK06",
+      "title": "国家重点实验室开放日 4K 纪实短片",
+      "desc": "已于今日上午完成4K ProRes母带渲染，提取码及百度网盘链接已交付。平台已启动「72小时无异议自动打款」倒计时保护机制，若买家超时未验收将自动全额结算到账！",
+      "cover": "assets/covers/task_main_2.png",
+      "rewardMoney": "¥ 7,200",
+      "rewardAmount": 7200,
+      "rewardPoints": "900",
+      "status": "待验收",
+      "acceptMode": "manual",
+      "tags": [
+        "4K纪实",
+        "待验收",
+        "72h保护倒计时"
+      ],
+      "deadline": "自动打款倒计时 38:15:20",
+      "counterpart": "国家微纳制造重点实验室",
+      "createdAt": "2026-09-08",
+      "deliveryCloudLink": "https://pan.baidu.com/s/1nanolab_4k_master",
+      "deliveryCloudCode": "8899",
+      "autoAcceptCountdown": "38小时15分",
+      "coreInfo": "已提交交付 · 72h超时自动打款倒计时中 · 可催促验收"
+    },
+    {
+      "id": "MO-T4",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK04",
+      "title": "青春校园：AI漫画创作大赛",
+      "desc": "全国高校AI创作大赛一等奖获奖作品！¥5,000 奖金与 1,500 积分已全额结算入账。交付作品《未来折叠·南大概念片》已荣誉上架至官方作品展厅（GW00）。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 5,000",
+      "rewardAmount": 5000,
+      "rewardPoints": "1,500",
+      "status": "已完成",
+      "acceptMode": "manual",
+      "tags": [
+        "全国一等奖",
+        "已入展厅",
+        "款项已到账"
+      ],
+      "deadline": "2026-09-10 结案",
+      "counterpart": "全国高校AI联盟组委会",
+      "createdAt": "2026-08-25",
+      "listedToGallery": true,
+      "galleryWorkId": "GW00",
+      "evaluation": {
+        "score": 5,
+        "comment": "令人惊叹的角色一致性与视觉美感，毫无争议的评委会全票一等奖！"
+      },
+      "coreInfo": "已圆满完成 · 赏金已结算 · 已作为标杆上架作品展厅"
+    },
+    {
+      "id": "MO-T4B",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK04B",
+      "title": "高校OPC品牌形象AI插画系列",
+      "desc": "为校友创客工场设计的系列主视觉插画已顺利验收通过，¥4,000 款项已到账。双方已完成五星互评，符合平台展厅收录标准，支持一键申请上架展厅。",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 4,000",
+      "rewardAmount": 4000,
+      "rewardPoints": "600",
+      "status": "已完成",
+      "acceptMode": "manual",
+      "tags": [
+        "高质完成",
+        "五星互评",
+        "可申请展厅"
+      ],
+      "deadline": "2026-09-12 结案",
+      "counterpart": "南京大学国家大学科技园",
+      "createdAt": "2026-08-28",
+      "listedToGallery": false,
+      "galleryApplyPending": false,
+      "evaluation": {
+        "score": 5,
+        "comment": "非常高效，风格完全契合南大百年名校与现代创客融合的氛围！"
+      },
+      "coreInfo": "已完成 · 双方已互评 · 点击可申请上架官方展厅"
+    },
+    {
+      "id": "MO-T4C",
+      "role": "creator",
+      "type": "custom",
+      "sourceId": "GW09",
+      "title": "AI漫画 · 校园青春日常纪事 首发版",
+      "desc": "客户定制商单已高分交付结案。创作者已提交上架展厅申请，平台内容质检专员正在对工程清晰度与商用授权证明进行核验中。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 2,800",
+      "rewardAmount": 2800,
+      "rewardPoints": "450",
+      "status": "已完成",
+      "acceptMode": "custom",
+      "tags": [
+        "展厅审核中",
+        "商单结案"
+      ],
+      "deadline": "2026-09-15 结案",
+      "counterpart": "校园文创投资人",
+      "createdAt": "2026-09-02",
+      "listedToGallery": false,
+      "galleryApplyPending": true,
+      "galleryStatus": "pending",
+      "coreInfo": "已完成 · 展厅上架申请审核中 · 预计24h内完成公示"
+    },
+    {
+      "id": "MO-T8",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK09",
+      "title": "校园社团招新主视觉海报设计",
+      "desc": "买家在验收阶段超出初始需求文档范围，要求无偿提供全套3D建模源工程与商用字体。我已提交聊天沟通记录与原始交付清单，平台知识产权调解专员已受理仲裁。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 2,200",
+      "rewardAmount": 2200,
+      "rewardPoints": "350",
+      "status": "仲裁中",
+      "acceptMode": "manual",
+      "tags": [
+        "争议调处",
+        "举证已提交",
+        "仲裁中"
+      ],
+      "deadline": "仲裁处理中",
+      "counterpart": "某外校联谊社团",
+      "createdAt": "2026-09-02",
+      "disputeStatus": "平台调解专员已介入，举证材料审核中，预计今日出具调解意见",
+      "coreInfo": "平台仲裁调解中 · 争议资金由平台托管 · 双方举证已齐备"
+    },
+    {
+      "id": "MO-T5",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK05B",
+      "title": "社团迎新晚会全套视觉海报",
+      "desc": "发布方综合考虑选拔了另一位具备3D舞美经验的创作者。虽未入选，但竞标提案获得发布方好评，已为您发放「优质竞标」创作信用积分 +5 分。",
+      "cover": "assets/covers/task_main_3.png",
+      "rewardMoney": "¥ 1,800",
+      "rewardAmount": 1800,
+      "rewardPoints": "200",
+      "status": "未入选",
+      "acceptMode": "manual",
+      "tags": [
+        "竞标结束",
+        "未入选",
+        "信用+5分"
+      ],
+      "deadline": "2026-09-14 选拔截止",
+      "counterpart": "院系文艺部",
+      "createdAt": "2026-09-11",
+      "applicationStatus": "rejected",
+      "coreInfo": "未入选 · 发布方已选定其他创作者 · 信用分已补偿"
+    },
+    {
+      "id": "MO-T7",
+      "role": "creator",
+      "type": "plaza",
+      "sourceId": "TK10B",
+      "title": "秋季招新宣讲 PPT 动效与美化",
+      "desc": "该任务招募到期后，发布方超时未在候选人中敲定合作人选，系统已自动判定任务未成交并关单退款。您的排期已自动解除锁定，可自由承接新任务。",
+      "cover": "assets/covers/task_main_2.png",
+      "rewardMoney": "¥ 1,200",
+      "rewardAmount": 1200,
+      "rewardPoints": "150",
+      "status": "未成交",
+      "acceptMode": "manual",
+      "tags": [
+        "选拔超时",
+        "自动流标",
+        "排期已释放"
+      ],
+      "deadline": "2026-09-12 已关单",
+      "counterpart": "校创客俱乐部",
+      "createdAt": "2026-09-08",
+      "applicationStatus": "expired",
+      "coreInfo": "未成交 · 发布方超时未选人 · 任务流标并释放排期"
+    },
+    {
+      "id": "MO-P0",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK12",
+      "title": "【草稿】寒假研学国际宣传短片需求",
+      "desc": "面向海外名校寒假研学营的AI宣传片初步需求已暂存于草稿箱中。预算规划 ¥6,000，尚未支付托管保证金，点击可一键继续编辑并完成正式发布。",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 6,000",
+      "rewardAmount": 6000,
+      "rewardPoints": "800",
+      "status": "草稿",
+      "isDraft": true,
+      "acceptMode": "manual",
+      "tags": [
+        "草稿暂存",
+        "随时发布"
+      ],
+      "deadline": "草稿随时可编辑",
+      "counterpart": "待发布",
+      "createdAt": "2026-09-17 10:15",
+      "coreInfo": "草稿箱 · 未付保证金 · 点击继续完善需求或发布"
+    },
+    {
+      "id": "MO-P1",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK05",
+      "title": "开学季品牌种草短视频矩阵",
+      "desc": "我发起的品牌短视频招募任务正在火热进行中！预算 ¥8,000 资金已锁定在工行监管专户。当前已有 4 位高校高信用创作者报名并提交作品集，请及时前往选拔合作人选！",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 8,000",
+      "rewardAmount": 8000,
+      "rewardPoints": "1,200",
+      "status": "招募中",
+      "acceptMode": "manual",
+      "tags": [
+        "品牌商单",
+        "4人竞标",
+        "待我选人"
+      ],
+      "deadline": "选拔倒计时 2天",
+      "counterpart": "报名创作者 4人（星芒、极光、青墨等）",
+      "createdAt": "2026-09-16 11:00",
+      "applicantCount": 4,
+      "coreInfo": "招募中 · 已有 4 位创作者投递方案 · 点击立即选人"
+    },
+    {
+      "id": "MO-P1B",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK03",
+      "title": "数字人直播带货脚本设计挑战",
+      "desc": "即接即开工模式：总名额 3 人，已有 2 人接单锁定开始创作，当前剩余 1 个名额。创作者提交成果后将按先后顺序进入验收打款流程。",
+      "cover": "assets/covers/task_main_3.png",
+      "rewardMoney": "¥ 800",
+      "rewardAmount": 800,
+      "rewardPoints": "500",
+      "status": "招募中",
+      "acceptMode": "manual",
+      "tags": [
+        "即接模式",
+        "名额抢订",
+        "剩1席"
+      ],
+      "deadline": "名额抢订剩 1/3",
+      "counterpart": "已有2位创作者接单",
+      "createdAt": "2026-09-16 18:00",
+      "applicantCount": 2,
+      "quota": 3,
+      "coreInfo": "抢单进行中 · 名额已锁 2/3 · 还剩 1 个名额"
+    },
+    {
+      "id": "MO-P2",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK02B",
+      "title": "AI国风漫画分镜与设定练习单（急单）",
+      "desc": "已选定创作者「国风水墨侠」正在履约中。创作者今日 10:30 已按时填报日报，进度达 65%，人物三视图一致性表现优异，预计明日上午交付完整线稿。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 3,200",
+      "rewardAmount": 3200,
+      "rewardPoints": "400",
+      "status": "进行中",
+      "acceptMode": "manual",
+      "tags": [
+        "AI漫画",
+        "履约正常",
+        "日报已更"
+      ],
+      "deadline": "预计交付 2026-09-18",
+      "counterpart": "创作者 / 国风水墨侠",
+      "createdAt": "2026-09-15",
+      "progress": 65,
+      "coreInfo": "履约中 · 进度 65% · 今日日报正常 · 预计明日交稿"
+    },
+    {
+      "id": "MO-P5",
+      "role": "publisher",
+      "type": "custom",
+      "sourceId": "GW00",
+      "title": "定向定制 · AI短剧《未来信号》",
+      "desc": "从作品展厅向创作者「小宇同学」发起的定向商单，对方已确认接单！目前正根据委托PRD进行第一幕分镜头提示词调优，资金 ¥4,200 平台全程托管。",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 4,200",
+      "rewardAmount": 4200,
+      "rewardPoints": "600",
+      "status": "进行中",
+      "acceptMode": "custom",
+      "tags": [
+        "展厅定制",
+        "已接单",
+        "履约中"
+      ],
+      "deadline": "交付截止 2026-09-22",
+      "counterpart": "创作者 / 小宇同学",
+      "createdAt": "2026-09-16",
+      "progress": 40,
+      "coreInfo": "定制单履约中 · 创作者已开工 · 进度 40%"
+    },
+    {
+      "id": "MO-P2B",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK07",
+      "title": "社团招新AI数字人讲解片",
+      "desc": "我已针对创作者提交的初稿提出第1次驳回返修意见（要求微调第20秒音画同步率并替换BGM）。创作者剩余 2 次返修机会，目前正在加急修改中。",
+      "cover": "assets/covers/task_main_3.png",
+      "rewardMoney": "¥ 1,500",
+      "rewardAmount": 1500,
+      "rewardPoints": "300",
+      "status": "返修中",
+      "acceptMode": "manual",
+      "tags": [
+        "返修中",
+        "已提意见",
+        "限改3次"
+      ],
+      "deadline": "等待创作者重新提交",
+      "counterpart": "创作者 / 小宇同学",
+      "createdAt": "2026-09-10",
+      "repairRound": 1,
+      "repairLimit": 3,
+      "coreInfo": "已驳回第 1 次 · 等待创作者按修改意见重新上传"
+    },
+    {
+      "id": "MO-P3",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK08",
+      "title": "长期合作：每周矩阵短视频制作",
+      "desc": "创作者「星际造梦师」已提交最终交付物（4K长视频+2条短视频切片）。平台已启动「72小时自动验收倒计时（剩余 46:32:10）」，您可在线查验并点击验收或驳回！",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 4,800",
+      "rewardAmount": 4800,
+      "rewardPoints": "600",
+      "status": "待验收",
+      "acceptMode": "manual",
+      "tags": [
+        "成片已交",
+        "待我验收",
+        "72h倒计时"
+      ],
+      "deadline": "自动打款倒计时 46:32:10",
+      "counterpart": "创作者 / 星际造梦师",
+      "createdAt": "2026-09-05",
+      "deliveryCloudLink": "https://feishu.cn/drive/folder/ai_evolution_ep3",
+      "deliveryCloudCode": "7766",
+      "autoAcceptCountdown": "46小时32分",
+      "coreInfo": "创作者已交付 · 72h倒计时中 · 请及时查验打款或驳回"
+    },
+    {
+      "id": "MO-P6",
+      "role": "publisher",
+      "type": "custom",
+      "sourceId": "GW02",
+      "title": "定向定制 · 校园漫剧同款风格",
+      "desc": "展厅定向委托的插画定制商单已交付初稿及印刷级大图。创作者已完成全部12幅插画排版，等待您质检验收通过打款。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 3,000",
+      "rewardAmount": 3000,
+      "rewardPoints": "500",
+      "status": "待验收",
+      "acceptMode": "custom",
+      "tags": [
+        "定制成片",
+        "待验收"
+      ],
+      "deadline": "自动打款倒计时 52:10:00",
+      "counterpart": "创作者 / 青墨AI漫社",
+      "createdAt": "2026-09-09",
+      "coreInfo": "成稿已提交 · 待您确认验收打款"
+    },
+    {
+      "id": "MO-P4",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK04C",
+      "title": "毕业季青春纪念短片合集",
+      "desc": "任务已顺利验收结案！¥6,000 托管赏金已全额结算打款至创作者账户。当前处于【待互评】状态，双方尚未互相评价，赶快为创作者留下中肯评语吧！",
+      "cover": "assets/covers/task_main_1.png",
+      "rewardMoney": "¥ 6,000",
+      "rewardAmount": 6000,
+      "rewardPoints": "800",
+      "status": "已完成",
+      "acceptMode": "manual",
+      "tags": [
+        "已结案",
+        "款已打",
+        "待我评价"
+      ],
+      "deadline": "2026-09-14 结案",
+      "counterpart": "创作者 / 极光视觉工坊",
+      "createdAt": "2026-08-30",
+      "evaluation": null,
+      "coreInfo": "款项已打款结算 · 双方尚未评价 · 点击立即互评"
+    },
+    {
+      "id": "MO-P4B",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK11",
+      "title": "高校科研成果AI概念可视化动画",
+      "desc": "标杆示范案例！双方已完成五星双向互评，创作者交付质量达到国际顶刊封面标准，作品已由平台审核专员认证并荣誉上架官方作品展厅。",
+      "cover": "assets/covers/task_main_2.png",
+      "rewardMoney": "¥ 9,000",
+      "rewardAmount": 9000,
+      "rewardPoints": "1,500",
+      "status": "已完成",
+      "acceptMode": "manual",
+      "tags": [
+        "标杆案例",
+        "已互评",
+        "已入展厅"
+      ],
+      "deadline": "2026-09-02 结案",
+      "counterpart": "创作者 / 星芒AI工作室",
+      "createdAt": "2026-08-20",
+      "evaluation": {
+        "score": 5,
+        "stars": 5,
+        "comment": "交付极度专业！概念表达深刻到位，学术细节严谨无误，强烈推荐合作！",
+        "evaluatedAt": "2026-09-02"
+      },
+      "listedToGallery": true,
+      "galleryWorkId": "GW04",
+      "coreInfo": "结案互评完成 · 5.0满分好评 · 成果已入展厅"
+    },
+    {
+      "id": "MO-P8",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK09",
+      "title": "校园OPC品牌微电影后期剪辑",
+      "desc": "因创作者交付格式及商用字体授权范围与PRD存在重大分歧，我方已向平台申请小二介入调解。平台调解专员已受理，资金处于冻结仲裁期。",
+      "cover": "assets/covers/task_main_4.png",
+      "rewardMoney": "¥ 3,500",
+      "rewardAmount": 3500,
+      "rewardPoints": "400",
+      "status": "仲裁中",
+      "acceptMode": "manual",
+      "tags": [
+        "平台调解",
+        "资金已冻结",
+        "专员受理"
+      ],
+      "deadline": "仲裁处理中",
+      "counterpart": "创作者 / 极光视觉工坊",
+      "createdAt": "2026-09-02",
+      "disputeStatus": "平台调解专员介入中，双方聊天凭据与PRD核对中",
+      "coreInfo": "平台仲裁处理中 · 争议资金安全冻结 · 等待官方裁定"
+    },
+    {
+      "id": "MO-P7",
+      "role": "publisher",
+      "type": "plaza",
+      "sourceId": "TK10",
+      "title": "新生手册与文创文具图文排版设计",
+      "desc": "由于在招募选拔期内未选定创作者，系统已于选拔截止时自动流标关单。全额托管资金 ¥2,000 已全额原路退还至您的账户钱包，无任何手续费。",
+      "cover": "assets/covers/task_main_3.png",
+      "rewardMoney": "¥ 2,000",
+      "rewardAmount": 2000,
+      "rewardPoints": "300",
+      "status": "未成交",
+      "acceptMode": "manual",
+      "tags": [
+        "选拔超时",
+        "已流标",
+        "全额已退款"
+      ],
+      "deadline": "2026-09-12 自动关单",
+      "counterpart": "无合作人选",
+      "createdAt": "2026-09-05",
+      "coreInfo": "未成交 · 选拔超时流标 · 托管资金 ¥2,000 已原路退回"
+    }
+  ]
+},
+  analytics: {
+    overviewStats: {
+      "30d": {
+        views: "128.6万", viewsChange: "↑ 18.6%",
+        likes: "12.6万", likesChange: "↑ 12.4%",
+        comments: "2.8万", commentsChange: "↑ 12.7%",
+        shares: "8,632", sharesChange: "↑ 15.3%",
+        fans: "3.2万", fansChange: "↑ 20.1%",
+        income: "¥ 6,820", incomeChange: "↑ 16.2%"
+      },
+      "7d": {
+        views: "42.8万", viewsChange: "↑ 8.2%",
+        likes: "4.1万", likesChange: "↑ 6.5%",
+        comments: "9,420", commentsChange: "↑ 5.1%",
+        shares: "2,180", sharesChange: "↑ 9.0%",
+        fans: "8,560", fansChange: "↑ 11.3%",
+        income: "¥ 2,140", incomeChange: "↑ 7.4%"
+      },
+      "90d": {
+        views: "1,680万", viewsChange: "↑ 45.0%",
+        likes: "142万", likesChange: "↑ 36.8%",
+        comments: "31.2万", commentsChange: "↑ 28.5%",
+        shares: "95,400", sharesChange: "↑ 34.2%",
+        fans: "34.8万", fansChange: "↑ 41.6%",
+        income: "¥ 86,200", incomeChange: "↑ 38.0%"
+      }
+    },
+
+    trendChart: {
+      dates: ["04-18", "04-21", "04-24", "04-27", "04-30", "05-03", "05-06", "05-09", "05-12", "05-15", "05-18"],
+      series: {
+        views: [21, 23, 20, 26, 25, 22, 36, 38, 32, 28, 34], // 单位 万
+        likes: [12, 14, 11, 15, 16, 14, 21, 22, 18, 16, 20],
+        comments: [7, 8, 6, 8, 9, 8, 12, 11, 10, 9, 11],
+        shares: [5, 6, 4, 6, 7, 6, 9, 8, 7, 7, 8]
+      }
+    },
+
+    demographics: {
+      ages: [
+        { label: "18-24岁", pct: 28.6, color: "#6366F1" },
+        { label: "25-34岁", pct: 41.2, color: "#10B981" },
+        { label: "35-44岁", pct: 19.8, color: "#8B5CF6" },
+        { label: "45岁以上", pct: 10.4, color: "#F59E0B" }
+      ],
+      regions: [
+        { name: "广东省", pct: 18.6 },
+        { name: "江苏省", pct: 12.3 },
+        { name: "浙江省", pct: 9.8 },
+        { name: "山东省", pct: 7.6 },
+        { name: "四川省", pct: 5.4 }
+      ],
+      devices: [
+        { label: "移动端", pct: 78.6, color: "#3B82F6" },
+        { label: "PC端", pct: 18.2, color: "#8B5CF6" },
+        { label: "平板", pct: 3.2, color: "#06B6D4" }
+      ]
+    },
+
+    realtime24h: {
+      views: "12,875",
+      likes: "1,268",
+      comments: "286",
+      shares: "532",
+      points: [18, 22, 28, 24, 20, 26, 32, 28, 35, 30, 38, 48]
+    },
+
+    top5Works: [
+      { rank: 1, title: "AI短剧 | 未来信号", date: "2024-05-15", views: "12.6万", likes: "1.2万", cover: "assets/covers/top5_1.png" },
+      { rank: 2, title: "数字人直播实战技巧", date: "2024-05-12", views: "9.8万", likes: "9,856", cover: "assets/covers/top5_2.png" },
+      { rank: 3, title: "AI绘画 | 城市幻想", date: "2024-05-10", views: "7.6万", likes: "8,632", cover: "assets/covers/top5_3.png" },
+      { rank: 4, title: "TikTok运营经验分享", date: "2024-05-08", views: "6.3万", likes: "7,254", cover: "assets/covers/top5_4.png" },
+      { rank: 5, title: "漫剧创作全流程解析", date: "2024-05-05", views: "5.2万", likes: "6,328", cover: "assets/covers/top5_5.png" }
+    ],
+
+    insights: [
+      {
+        tag: "发布建议",
+        highlight: "05-12",
+        highlightLabel: "峰值日",
+        text: "播放量在当日达到峰值，建议在高峰时段多发内容",
+        icon: "sparkles",
+        color: "#6366F1"
+      },
+      {
+        tag: "内容偏好",
+        highlight: "+35%",
+        highlightLabel: "短剧优势",
+        text: "AI 短剧类平均播放量高于你的其他内容",
+        icon: "video",
+        color: "#3B82F6"
+      },
+      {
+        tag: "粉丝活跃",
+        highlight: "周末",
+        highlightLabel: "高活跃",
+        text: "粉丝活跃度更高，建议周六日多与粉丝互动",
+        icon: "users",
+        color: "#10B981"
+      },
+      {
+        tag: "分享表现",
+        highlight: "优于均值",
+        highlightLabel: "分享率",
+        text: "内容分享率高于平台平均，继续保持优质输出",
+        icon: "share-2",
+        color: "#0EA5E9"
+      }
+    ],
+
+    // 矩阵分发回流数据
+    matrixDistribution: {
+      summary: {
+        totalViews: "108.7万",
+        totalLikes: "15.1万",
+        totalComments: "3.1万",
+        totalIncome: "¥ 12,860"
+      },
+      platforms: [
+        {
+          key: "native",
+          name: "社区大本营",
+          isNative: true,
+          badge: "官方阵地",
+          icon: "assets/decorations/logo_icon.png",
+          views: "5.8万",
+          likes: "1.5万",
+          comments: "3,860",
+          shares: "1,420",
+          income: "¥ 2,480",
+          fans: "+3,680",
+          change: "↑ 28.6%",
+          color: "#6366F1",
+          extraCapability: {
+            bounties: "4 笔商单",
+            certificates: "8 份版权",
+            growthScore: "+420 经验"
+          }
+        },
+        {
+          key: "douyin",
+          name: "抖音",
+          icon: "assets/icons/douyin.png",
+          views: "12.6万",
+          likes: "1.8万",
+          comments: "4,260",
+          shares: "2,180",
+          income: "¥ 1,280",
+          fans: "+6,820",
+          change: "↑ 18.2%",
+          color: "#111827"
+        },
+        {
+          key: "kuaishou",
+          name: "快手",
+          icon: "assets/icons/kuaishou.png",
+          views: "11.2万",
+          likes: "1.6万",
+          comments: "3,680",
+          shares: "1,940",
+          income: "¥ 1,160",
+          fans: "+5,240",
+          change: "↑ 19.3%",
+          color: "#FF5000"
+        },
+        {
+          key: "bilibili",
+          name: "哔哩哔哩",
+          icon: "assets/icons/bilibili.png",
+          views: "14.5万",
+          likes: "2.3万",
+          comments: "4,820",
+          shares: "3,160",
+          income: "¥ 1,420",
+          fans: "+7,680",
+          change: "↑ 26.8%",
+          color: "#23ADE5"
+        },
+        {
+          key: "xiaohongshu",
+          name: "小红书",
+          icon: "assets/icons/xiaohongshu.png",
+          views: "6.3万",
+          likes: "1.2万",
+          comments: "3,150",
+          shares: "980",
+          income: "¥ 860",
+          fans: "+2,460",
+          change: "↑ 12.6%",
+          color: "#EF4444"
+        },
+        {
+          key: "shipinhao",
+          name: "视频号",
+          icon: "assets/icons/shipinhao.png",
+          views: "8.2万",
+          likes: "1.1万",
+          comments: "2,460",
+          shares: "1,890",
+          income: "¥ 920",
+          fans: "+4,150",
+          change: "↑ 21.4%",
+          color: "#EA580C"
+        },
+        {
+          key: "tiktok",
+          name: "TikTok",
+          icon: "assets/icons/tiktok.png",
+          views: "18.7万",
+          likes: "2.1万",
+          comments: "3,420",
+          shares: "4,560",
+          income: "¥ 1,920",
+          fans: "+9,340",
+          change: "↑ 24.5%",
+          color: "#0F172A"
+        },
+        {
+          key: "youtube",
+          name: "YouTube",
+          icon: "assets/icons/youtube.png",
+          views: "9.4万",
+          likes: "7,200",
+          comments: "1,680",
+          shares: "1,240",
+          income: "¥ 800",
+          fans: "+3,120",
+          change: "↑ 9.8%",
+          color: "#DC2626"
+        },
+        {
+          key: "facebook",
+          name: "Facebook",
+          icon: "assets/icons/facebook.png",
+          views: "7.8万",
+          likes: "8,900",
+          comments: "1,450",
+          shares: "2,120",
+          income: "¥ 680",
+          fans: "+3,180",
+          change: "↑ 14.2%",
+          color: "#1877F2"
+        },
+        {
+          key: "instagram",
+          name: "Instagram",
+          icon: "assets/icons/instagram.png",
+          views: "9.6万",
+          likes: "1.4万",
+          comments: "2,160",
+          shares: "2,840",
+          income: "¥ 890",
+          fans: "+4,350",
+          change: "↑ 17.5%",
+          color: "#E1306C"
+        },
+        {
+          key: "twitter",
+          name: "推特 (X)",
+          icon: "assets/icons/twitter.png",
+          views: "4.6万",
+          likes: "5,400",
+          comments: "1,120",
+          shares: "2,350",
+          income: "¥ 450",
+          fans: "+2,180",
+          change: "↑ 16.8%",
+          color: "#000000"
+        }
+      ],
+      workMatrix: [
+        {
+          title: "AI短剧 | 未来信号",
+          cover: "assets/covers/top5_1.png",
+          native: { views: "2.8万", likes: "6,200", note: "商单履约" },
+          douyin: { views: "4.8万", likes: "6,820" },
+          kuaishou: { views: "3.9万", likes: "5,640" },
+          bilibili: { views: "5.2万", likes: "8,120" },
+          xiaohongshu: { views: "1.2万", likes: "2,160" },
+          shipinhao: { views: "2.4万", likes: "3,180" },
+          tiktok: { views: "6.4万", likes: "8,240" },
+          youtube: { views: "2.1万", likes: "1,860" },
+          facebook: { views: "1.9万", likes: "2,350" },
+          instagram: { views: "2.6万", likes: "3,890" },
+          twitter: { views: "1.6万", likes: "1,940" }
+        },
+        {
+          title: "数字人直播实战技巧",
+          cover: "assets/covers/top5_2.png",
+          native: { views: "1.6万", likes: "3,840", note: "精选版权" },
+          douyin: { views: "3.2万", likes: "4,120" },
+          kuaishou: { views: "2.8万", likes: "3,650" },
+          bilibili: { views: "3.6万", likes: "4,920" },
+          xiaohongshu: { views: "2.6万", likes: "3,580" },
+          shipinhao: { views: "1.8万", likes: "2,420" },
+          tiktok: { views: "2.8万", likes: "3,020" },
+          youtube: { views: "1.6万", likes: "980" },
+          facebook: { views: "1.2万", likes: "1,420" },
+          instagram: { views: "1.8万", likes: "2,680" },
+          twitter: { views: "0.9万", likes: "920" }
+        },
+        {
+          title: "AI绘画 | 城市幻想",
+          cover: "assets/covers/top5_3.png",
+          native: { views: "1.2万", likes: "2,950", note: "社区金奖" },
+          douyin: { views: "2.1万", likes: "2,860" },
+          kuaishou: { views: "1.9万", likes: "2,410" },
+          bilibili: { views: "2.8万", likes: "4,150" },
+          xiaohongshu: { views: "1.8万", likes: "3,420" },
+          shipinhao: { views: "1.5万", likes: "1,860" },
+          tiktok: { views: "3.6万", likes: "4,180" },
+          youtube: { views: "2.4万", likes: "1,520" },
+          facebook: { views: "1.5万", likes: "1,890" },
+          instagram: { views: "3.2万", likes: "4,560" },
+          twitter: { views: "1.2万", likes: "1,450" }
+        },
+        {
+          title: "TikTok运营经验分享",
+          cover: "assets/covers/top5_4.png",
+          native: { views: "0.8万", likes: "1,860", note: "学院专栏" },
+          douyin: { views: "1.6万", likes: "1,920" },
+          kuaishou: { views: "1.4万", likes: "1,680" },
+          bilibili: { views: "2.1万", likes: "3,120" },
+          xiaohongshu: { views: "0.9万", likes: "1,080" },
+          shipinhao: { views: "1.2万", likes: "1,520" },
+          tiktok: { views: "4.2万", likes: "5,640" },
+          youtube: { views: "1.8万", likes: "1,260" },
+          facebook: { views: "1.1万", likes: "1,240" },
+          instagram: { views: "1.4万", likes: "1,980" },
+          twitter: { views: "0.5万", likes: "640" }
+        },
+        {
+          title: "漫剧创作全流程解析",
+          cover: "assets/covers/top5_5.png",
+          native: { views: "0.7万", likes: "1,620", note: "校友热议" },
+          douyin: { views: "0.9万", likes: "1,080" },
+          kuaishou: { views: "1.1万", likes: "1,350" },
+          bilibili: { views: "1.8万", likes: "2,460" },
+          xiaohongshu: { views: "0.8万", likes: "960" },
+          shipinhao: { views: "1.3万", likes: "1,680" },
+          tiktok: { views: "1.7万", likes: "2,020" },
+          youtube: { views: "1.5万", likes: "1,580" },
+          facebook: { views: "0.8万", likes: "920" },
+          instagram: { views: "1.1万", likes: "1,450" },
+          twitter: { views: "0.4万", likes: "450" }
+        }
+      ],
+      insights: [
+        { tag: "大本营沉淀", highlight: "社区大本营", text: "站内私域互动率高达 25.8%，商单履约与版权分成贡献显著，是创作者深度变现与品牌合作的核心底座", color: "#6366F1" },
+        { tag: "出海红利", highlight: "TikTok", text: "近 30 日海外播放与收益增长强劲，建议持续拓展多语种短剧出海矩阵", color: "#0F172A" },
+        { tag: "深度种草", highlight: "小红书", text: "图文笔记长尾收藏与互动率表现突出，适合分发创作实战与经验心得", color: "#EF4444" },
+        { tag: "公域流量", highlight: "抖音", text: "短剧爆款传播与粉丝拉新效率高，是公域拓客沉淀至大本营的最佳入口", color: "#111827" }
+      ]
+    },
+
+    // 内容分析：作品类型与表现
+    contentAnalysis: {
+      summary: [
+        { label: "发布作品", val: "48", sub: "较上期 ↑ 6" },
+        { label: "完播率", val: "42.6%", sub: "较上期 ↑ 3.2%" },
+        { label: "平均互动率", val: "6.8%", sub: "高于均值 1.4%" },
+        { label: "爆款作品", val: "5", sub: "播放 > 10万" }
+      ],
+      categories: [
+        { name: "AI短剧", works: 18, views: "68.2万", share: 42, color: "#6366F1" },
+        { name: "AI漫画", works: 12, views: "28.4万", share: 22, color: "#A855F7" },
+        { name: "数字人", works: 8, views: "18.6万", share: 16, color: "#3B82F6" },
+        { name: "图文教程", works: 10, views: "13.4万", share: 20, color: "#10B981" }
+      ],
+      ranking: [
+        { title: "AI短剧 | 未来信号", type: "AI短剧", views: "12.6万", likes: "1.2万", rate: "8.4%" },
+        { title: "数字人直播实战技巧", type: "数字人", views: "9.8万", likes: "9,856", rate: "7.1%" },
+        { title: "AI绘画 | 城市幻想", type: "图文教程", views: "7.6万", likes: "8,632", rate: "6.9%" },
+        { title: "校园漫剧创作日记", type: "AI漫画", views: "6.1万", likes: "7,120", rate: "6.2%" }
+      ],
+      tips: [
+        { tag: "类型建议", highlight: "AI短剧", text: "贡献近半播放，建议保持周更节奏并强化开头 3 秒钩子" },
+        { tag: "弱项提醒", highlight: "数字人", text: "发布量偏低但互动稳定，可结合任务广场商单做系列化" }
+      ]
+    },
+
+    // 用户分析：粉丝与受众（校园场景）
+    userAnalysis: {
+      summary: [
+        { label: "粉丝总量", val: "18.6万", sub: "较上期 ↑ 8.2%" },
+        { label: "活跃粉丝", val: "42.3%", sub: "近 7 日有互动" },
+        { label: "高校用户", val: "61.8%", sub: "校园创作者为主" },
+        { label: "回访率", val: "36.5%", sub: "较上期 ↑ 2.1%" }
+      ],
+      ages: [
+        { label: "18-22 岁", pct: 46.2, color: "#6366F1" },
+        { label: "23-26 岁", pct: 28.4, color: "#8B5CF6" },
+        { label: "27-34 岁", pct: 18.6, color: "#3B82F6" },
+        { label: "35 岁以上", pct: 6.8, color: "#94A3B8" }
+      ],
+      campuses: [
+        { name: "南京大学", pct: 12.6 },
+        { name: "东南大学", pct: 9.8 },
+        { name: "南京师范大学", pct: 7.4 },
+        { name: "河海大学", pct: 5.9 },
+        { name: "其他高校", pct: 26.1 }
+      ],
+      interests: [
+        { name: "AI短剧", pct: 38 },
+        { name: "数字人", pct: 24 },
+        { name: "漫剧创作", pct: 21 },
+        { name: "出海运营", pct: 17 }
+      ],
+      tips: [
+        { tag: "受众洞察", highlight: "本科在校", text: "核心受众集中在高校，适合发校园故事与学习向干货" },
+        { tag: "活跃时段", highlight: "20:00-22:00", text: "晚间互动峰值明显，建议重要内容安排在该时段发布" }
+      ]
+    },
+
+    // 收益分析：与资产/任务联动
+    incomeAnalysis: {
+      summary: [
+        { label: "本期收益", val: "¥ 6,820", sub: "较上期 ↑ 16.2%" },
+        { label: "商单收入", val: "¥ 3,260", sub: "占比 47.8%" },
+        { label: "内容分成", val: "¥ 2,180", sub: "占比 32.0%" },
+        { label: "AI 积分兑付", val: "¥ 1,380", sub: "占比 20.2%" }
+      ],
+      sources: [
+        { name: "品牌商单", value: 3260, amount: "¥ 3,260", pct: 47.8, color: "#6366F1" },
+        { name: "平台分成", value: 2180, amount: "¥ 2,180", pct: 32.0, color: "#3B82F6" },
+        { name: "任务奖励", value: 860, amount: "¥ 860", pct: 12.6, color: "#10B981" },
+        { name: "AI 积分兑付", value: 520, amount: "¥ 520", pct: 7.6, color: "#F59E0B" }
+      ],
+      topEarners: [
+        { title: "青春校园：AI漫画创作大赛", type: "任务广场", amount: "¥ 3,000", status: "已结算" },
+        { title: "AI短剧 | 未来信号 · 分成", type: "内容分成", amount: "¥ 1,280", status: "已到账" },
+        { title: "未来城市：AI短视频创作挑战", type: "任务广场", amount: "¥ 5,000", status: "进行中" },
+        { title: "数字人直播脚本设计任务", type: "任务广场", amount: "¥ 2,000", status: "进行中" },
+        { title: "小红书种草合作 · 尾款", type: "品牌商单", amount: "¥ 1,600", status: "已到账" }
+      ],
+      tips: [
+        { tag: "收益结构", highlight: "商单为主", text: "商单占比近半，建议同步提升矩阵分成与 AI 积分兑换效率" },
+        { tag: "闭环提醒", highlight: "任务广场", text: "高赏金任务贡献显著，可优先承接与自身内容类型匹配的商单" }
+      ]
+    },
+
+    // 创作表现：工具 / 学院 / 发布习惯
+    creationPerformance: {
+      summary: [
+        { label: "本月发布", val: "16", sub: "周均 4 篇" },
+        { label: "工具使用", val: "86 次", sub: "较上期 ↑ 12%" },
+        { label: "学院学习", val: "12.5h", sub: "完成 3 门课" },
+        { label: "任务完成", val: "8", sub: "进行中 3 个" }
+      ],
+      tools: [
+        { name: "AI 图片生成", count: 28, pct: 32, color: "#8B5CF6" },
+        { name: "智能剪辑", count: 22, pct: 26, color: "#6366F1" },
+        { name: "AI 文案助手", count: 18, pct: 21, color: "#3B82F6" },
+        { name: "配音合成", count: 12, pct: 14, color: "#06B6D4" },
+        { name: "其他工具", count: 6, pct: 7, color: "#94A3B8" }
+      ],
+      habits: [
+        { label: "最佳发布日", val: "周四 / 周六" },
+        { label: "平均制作时长", val: "3.2 小时/篇" },
+        { label: "草稿转化率", val: "58%" },
+        { label: "成长路径", val: "Lv.4 商业创作者" }
+      ],
+      tips: [
+        { tag: "效率建议", highlight: "智能剪辑", text: "使用频次高且与完播率正相关，可固化为短剧生产流水线" },
+        { tag: "成长联动", highlight: "学院课程", text: "完成商业变现课包后，商单承接成功率预计可再提升 15%" }
+      ]
+    }
+  },
+
+  // 7. 我的资产 (Assets)
+  assets: {
+    cards: {
+      balance: "6,820.50",
+      withdrawable: "5,320.50",
+      monthlyEarnings: "12,680.30",
+      forecastEarnings: "2,680.30",
+      totalIncome: "38,560.80",
+      totalWithdrawn: "31,740.30",
+      // AI 积分按「算力类型」分账：tokensAC = tokensSelf + tokensIntegrated 恒成立
+      tokensSelf: "1,640.00",
+      tokensIntegrated: "700.00",
+      tokensAC: "2,340.00",
+      tokenRMB: "2,340.00"
+    },
+
+    breakdown: {
+      total: "21,840.80",
+      items: [
+        { label: "可提现余额", value: 5320.50, amount: "¥ 5,320.50", color: "#3B82F6" },
+        { label: "冻结金额", value: 1500.00, amount: "¥ 1,500.00", color: "#8B5CF6" },
+        { label: "创作收益", value: 12680.30, amount: "¥ 12,680.30", color: "#6366F1" },
+        { label: "AI 积分", value: 2340.00, amount: "2,340.00", color: "#F59E0B" }
+      ]
+    },
+
+    transactions: [
+      {
+        id: "TX1",
+        type: "收入",
+        name: "AI 视频作品收益",
+        amount: "+ ¥ 326.80",
+        rawAmount: 326.80,
+        status: "已到账",
+        statusType: "success",
+        time: "2024-05-20 14:30",
+        category: "收入"
+      },
+      {
+        id: "TX2",
+        type: "收入",
+        name: "课程分销佣金",
+        amount: "+ ¥ 168.50",
+        rawAmount: 168.50,
+        status: "已到账",
+        statusType: "success",
+        time: "2024-05-19 10:15",
+        category: "收入"
+      },
+      {
+        id: "TX3",
+        type: "支出",
+        name: "Pro 会员月费",
+        amount: "- ¥ 98.00",
+        rawAmount: -98.00,
+        status: "已完成",
+        statusType: "done",
+        time: "2024-05-18 09:00",
+        category: "支出"
+      },
+      {
+        id: "TX4",
+        type: "提现",
+        name: "提现到银行卡 (尾号 1234)",
+        amount: "- ¥ 2,000.00",
+        rawAmount: -2000.00,
+        status: "已完成",
+        statusType: "done",
+        time: "2024-05-17 16:45",
+        category: "提现"
+      },
+      {
+        id: "TX0",
+        type: "支出",
+        name: "定制商单资金托管冻结 · AI短剧 | 未来信号 同款",
+        amount: "- ¥ 600.00",
+        rawAmount: -600.00,
+        status: "托管中",
+        statusType: "escrow",
+        time: "2024-05-16 15:20",
+        category: "支出"
+      },
+      {
+        id: "TX0B",
+        type: "支出",
+        name: "商单资金托管冻结 · 校园 AI 宣传片分镜设计与成片剪辑",
+        amount: "- ¥ 420.00",
+        rawAmount: -420.00,
+        status: "托管中",
+        statusType: "escrow",
+        time: "2024-05-14 10:05",
+        category: "支出"
+      },
+      {
+        id: "TX0C",
+        type: "支出",
+        name: "商单资金托管冻结 · 品牌 AI 主视觉海报套组",
+        amount: "- ¥ 300.00",
+        rawAmount: -300.00,
+        status: "托管中",
+        statusType: "escrow",
+        time: "2024-05-09 09:40",
+        category: "支出"
+      },
+      {
+        id: "TX0D",
+        type: "支出",
+        name: "商单资金托管冻结 · 寒假研学营 AI 宣传片预告剪辑",
+        amount: "- ¥ 180.00",
+        rawAmount: -180.00,
+        status: "托管中",
+        statusType: "escrow",
+        time: "2024-04-28 17:15",
+        category: "支出"
+      },
+      {
+        id: "TX5",
+        type: "收入",
+        name: "平台活动奖励",
+        amount: "+ ¥ 500.00",
+        rawAmount: 500.00,
+        status: "已到账",
+        statusType: "success",
+        time: "2024-05-16 11:20",
+        category: "收入"
+      },
+      {
+        id: "TX6",
+        type: "AI积分",
+        name: "任务奖励 AI 积分发放",
+        amount: "+ 200 AI 积分",
+        rawAmount: 200.00,
+        status: "已到账",
+        statusType: "success",
+        time: "2024-05-15 17:00",
+        category: "AI积分"
+      },
+      {
+        id: "TX7",
+        type: "创作积分",
+        name: "完成课节 · Prompt 结构工程解析",
+        amount: "+ 50 创作积分",
+        rawAmount: 50,
+        status: "已到账",
+        statusType: "success",
+        time: "今天 09:20",
+        category: "创作积分"
+      },
+      {
+        id: "TX8",
+        type: "创作积分",
+        name: "发布任务附赠冻结 · 开学季品牌种草",
+        amount: "- 1,200 创作积分",
+        rawAmount: -1200,
+        status: "已冻结",
+        statusType: "escrow",
+        time: "2026-09-15 11:00",
+        category: "创作积分"
+      },
+      {
+        id: "TX9",
+        type: "收入",
+        name: "人民币账户充值 (微信支付)",
+        amount: "+ ¥ 1,000.00",
+        rawAmount: 1000,
+        status: "已到账",
+        statusType: "success",
+        time: "2026-09-18 20:10",
+        category: "收入"
+      },
+      {
+        id: "TX10",
+        type: "收入",
+        name: "人民币账户充值 (支付宝)",
+        amount: "+ ¥ 5,000.00",
+        rawAmount: 5000,
+        status: "已到账",
+        statusType: "success",
+        time: "2026-09-08 11:05",
+        category: "收入"
+      }
+    ],
+
+    // 商单资金托管库 · 托管项目进度台账（当前商户名下全部托管项目）
+    // 真源口径：进行中项目（statusKey = active）的冻结金额之和 === 资产卡「冻结金额」，且每条与 transactions 的托管中流水通过 txId 一一对应
+    // frozenAtTs 仅用于「按冻结时间倒序」排序，frozenAt 为界面展示文本
+    escrowProjects: [
+      {
+        id: "ESC1",
+        txId: "TX0",
+        orderNo: "MO-20240516-018",
+        title: "AI 短剧《未来信号》同款风格定制",
+        counterpart: "南京大学校友企业 · 创想文化",
+        role: "发包方",
+        amount: 600.00,
+        frozenAt: "2024-05-16 15:20",
+        frozenAtTs: 1715844000000,
+        status: "履约中",
+        statusKey: "active",
+        stage: "创作者交付中 · 第 3 幕分镜生成",
+        progress: 65,
+        settleRule: "验收通过后 T+0 划转创作者，72h 未验收自动结算"
+      },
+      {
+        id: "ESC2",
+        txId: "TX0B",
+        orderNo: "MO-20240514-011",
+        title: "校园 AI 宣传片分镜设计与成片剪辑",
+        counterpart: "校团委 · 新媒体中心",
+        role: "发包方",
+        amount: 420.00,
+        frozenAt: "2024-05-14 10:05",
+        frozenAtTs: 1715652300000,
+        status: "待验收",
+        statusKey: "active",
+        stage: "创作者已交付 · 等待我方确认验收",
+        progress: 90,
+        settleRule: "确认验收后划转，或 72 小时超时自动结算"
+      },
+      {
+        id: "ESC3",
+        txId: "TX0C",
+        orderNo: "MO-20240509-007",
+        title: "品牌 AI 主视觉海报套组（6 张）",
+        counterpart: "星河文创工作室",
+        role: "发包方",
+        amount: 300.00,
+        frozenAt: "2024-05-09 09:40",
+        frozenAtTs: 1715218800000,
+        status: "招募选拔中",
+        statusKey: "active",
+        stage: "已收到 12 份报名 · 待选定创作者",
+        progress: 20,
+        settleRule: "选拔截止未选定则全额原路退回账户余额"
+      },
+      {
+        id: "ESC4",
+        txId: "TX0D",
+        orderNo: "MO-20240428-003",
+        title: "寒假研学营 AI 宣传片预告剪辑",
+        counterpart: "海外研学项目组",
+        role: "发包方",
+        amount: 180.00,
+        frozenAt: "2024-04-28 17:15",
+        frozenAtTs: 1714295700000,
+        status: "返修中",
+        statusKey: "active",
+        stage: "第 2 次返修 · 创作者重新交付中",
+        progress: 45,
+        settleRule: "返修期间赏金继续冻结，验收通过后划转"
+      },
+      {
+        id: "ESC5",
+        txId: null,
+        orderNo: "MO-20240418-002",
+        title: "校园创业 AI 漫剧连载（6 篇）",
+        counterpart: "南大科技园孵化企业",
+        role: "发包方",
+        amount: 4200.00,
+        frozenAt: "2024-04-18 14:50",
+        frozenAtTs: 1713423000000,
+        status: "已结算",
+        statusKey: "settled",
+        stage: "验收通过 · 赏金已划转创作者",
+        progress: 100,
+        settleRule: "已于 2024-04-25 完成结算划转"
+      },
+      {
+        id: "ESC6",
+        txId: null,
+        orderNo: "MO-20240402-001",
+        title: "社团招新 AI 数字人讲解片",
+        counterpart: "校学生会 · 社团联合发展部",
+        role: "发包方",
+        amount: 1500.00,
+        frozenAt: "2024-04-02 09:15",
+        frozenAtTs: 1712020500000,
+        status: "已退还",
+        statusKey: "settled",
+        stage: "选拔超时流标 · 全额原路退回账户余额",
+        progress: 0,
+        settleRule: "流标关单，托管资金 100% 原路退回，零手续费"
+      }
+    ],
+
+    // 提现合规规则（唯一真源：资金来源 / 实名前置 / 同名提现 / 单笔上限 / 仅限借记卡）
+    // ⚠️ 资金来源红线：只有「创作收益」可提现；「账户余额」只能充值、只能用于平台内消费，不可提现
+    withdrawRules: {
+      maxPerTx: 10000,        // 单笔提现上限（元）
+      requireIdVerified: true, // 必须已完成实名认证
+      sameNameOnly: true,      // 收款人必须与实名认证姓名一致
+      debitOnly: true,         // 仅支持银行借记卡（信用卡不支持提现）
+      arrivalNote: "T+0 实时到账 · 免手续费",
+      sourceLabel: "创作收益",      // 唯一可提现资金来源（显示名）
+      sourceCardKey: "monthlyEarnings", // 资金来源对应 MockData.assets.cards 的键（唯一口径）
+      sourceNote: "账户余额为平台充值钱包，仅用于算力充值与付费课程等平台内消费，不可提现"
+    },
+
+    // 人民币账户充值规则（唯一真源）：仅支持微信支付 / 支付宝官方收款二维码扫码入金
+    // 2026-09-24 改口径：银行卡（本人同名借记卡）协议代扣充值通道**整体下线**
+    rechargeRules: {
+      qrOnly: true,            // 只能通过官方收款二维码扫码入金（不再支持银行卡代扣 / 临时输入卡号）
+      channels: [
+        { id: "wechat", name: "微信支付", shortName: "微信", icon: "💚", color: "#07C160", hint: "打开微信「扫一扫」" },
+        { id: "alipay", name: "支付宝", shortName: "支付宝", icon: "💙", color: "#1677FF", hint: "打开支付宝「扫一扫」" }
+      ],
+      defaultChannel: "wechat",
+      requireIdVerified: true, // 必须已完成实名认证方可发起充值
+      minPerTx: 1,             // 单笔最小充值金额（元）
+      maxPerTx: 50000,         // 单笔充值上限（元）
+      qrExpireSec: 900,        // 二维码有效期（秒）：15 分钟未支付自动失效
+      arrivalNote: "扫码支付成功即时到账 · 免手续费",
+      note: "仅支持通过微信支付 / 支付宝官方收款二维码充值，不再支持银行卡代扣与临时输入卡号"
+    },
+
+    // 银行卡绑定规则（唯一真源：实名前置 + 仅限本人同名借记卡 + 张数上限）
+    bankBindRules: {
+      requireIdVerified: true, // 必须已完成实名认证后方可绑定
+      debitOnly: true,         // 仅支持绑定银行借记卡（储蓄卡），信用卡不支持绑定
+      sameNameOnly: true,      // 持卡人必须与实名认证姓名一致（仅支持本人卡）
+      unionPayOnly: true,      // 仅支持境内银联卡（Visa / MasterCard 等国际卡组织号段不支持）
+      codeRequired: true,      // 需短信验证码校验持卡人手机号
+      maxCards: 2,             // 单个账户最多绑定张数（暂定 2 张；按在册卡位计，换绑为卡位复用，不占新名额）
+      note: "仅支持绑定本人同名境内银联借记卡（储蓄卡）"
+    },
+
+    // 银行卡 BIN 号段表（离线识别发卡行与卡种；取最长前缀匹配）
+    bankBinTable: [
+      { prefix: "622588", bank: "招商银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622575", bank: "招商银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "621483", bank: "招商银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "621700", bank: "中国建设银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622280", bank: "中国建设银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622202", bank: "中国工商银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "621226", bank: "中国工商银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622848", bank: "中国农业银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "621661", bank: "中国银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622262", bank: "交通银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622188", bank: "中国邮政储蓄银行", cardType: "debit", cardTypeLabel: "储蓄卡（借记卡）" },
+      { prefix: "622760", bank: "中国银行", cardType: "credit", cardTypeLabel: "信用卡" },
+      { prefix: "436742", bank: "中国建设银行", cardType: "credit", cardTypeLabel: "信用卡（Visa）" },
+      { prefix: "524011", bank: "招商银行", cardType: "credit", cardTypeLabel: "信用卡（MasterCard）" }
+    ],
+
+    // 绑卡弹窗的演示卡号（含一张会被「仅限借记卡」拦下的信用卡样本）
+    bankCardDemos: [
+      { key: "debit", label: "招行借记卡", cardNo: "6225881234567898" },
+      { key: "debit2", label: "工行借记卡", cardNo: "6222023456789016" },
+      { key: "credit", label: "信用卡（会被拦截）", cardNo: "4367421234567896" }
+    ],
+
+    // 银行卡台账（来源：常用功能「银行卡管理」；演示台账固定 2 张本人同名银联借记卡）
+    // ⚠️ 可用性不落库，由 App.getBankCardStatus() 依据 bankBindRules + 卡事实实时推导
+    // ⚠️ 台账只放合规借记卡：不合规样本（信用卡 / 异名卡）由 bankCardDemos 的演示卡号与
+    //    持卡人输入在「绑定 / 换绑」弹窗内现场演示，避免污染已绑定列表
+    bankCards: [
+      {
+        id: "BC1",
+        bank: "招商银行",
+        cardNo: "6225881234521234",
+        tail: "1234",
+        cardType: "debit",
+        cardTypeLabel: "储蓄卡（借记卡）",
+        holder: "黄*彬",
+        branch: "南京分行营业部",
+        boundAt: "2024-03-12",
+        isDefault: true
+      },
+      {
+        id: "BC2",
+        bank: "建设银行",
+        cardNo: "6217004567865678",
+        tail: "5678",
+        cardType: "debit",
+        cardTypeLabel: "储蓄卡（借记卡）",
+        holder: "黄*彬",
+        branch: "南京鼓楼支行",
+        boundAt: "2024-04-08",
+        isDefault: false
+      }
+    ],
+
+    // 算力类型（充值必选其一）：pointsRatio 为相对「基准点数」的到账折算比，为两种算力账本的唯一真源
+    computeTypes: [
+      {
+        id: "self",
+        name: "自有算力",
+        shortName: "自建集群",
+        provider: "星芒 AI 自建 GPU 集群（校园普惠池）",
+        desc: "平台自有 GPU 资源直供，单价最低，稳定合规可做校内结算；高峰期需排队调度。",
+        pointsRatio: 1,
+        unitNote: "1 元 = 2.5 点（基准）",
+        sla: "独享通道 · 高峰期排队",
+        color: "#6366F1",
+        icon: "⚡",
+        tags: ["单价最低", "仅校内结算", "发票可开"]
+      },
+      {
+        id: "integrated",
+        name: "集成算力",
+        shortName: "第三方聚合",
+        provider: "第三方算力市场聚合调度（弹性接入）",
+        desc: "接入外部算力市场统一调度，高峰期自动扩容不排队，适合赶商单交付期使用。",
+        pointsRatio: 0.8,
+        unitNote: "1 元 = 2.0 点（折算 80%）",
+        sla: "弹性扩容 · 不排队",
+        color: "#8B5CF6",
+        icon: "🔗",
+        tags: ["高峰期不排队", "弹性扩容", "跨区可用"]
+      }
+    ],
+
+    // 算力充值的「扣款资金来源」三选一（唯一真源）
+    // balance = 账户余额（只可充值、不可提现）/ earnings = 创作收益（全站唯一可提现来源）/ mix = 两者组合
+    // 组合扣款顺序为契约：先扣账户余额，余额不足部分再从创作收益扣
+    computeFundSources: [
+      {
+        id: "balance",
+        name: "账户余额",
+        cardKey: "withdrawable",
+        availNote: "只可充值 · 不可提现",
+        desc: "从现金账户的可消费余额扣款，不足时引导人民币充值",
+        tag: "现金账户"
+      },
+      {
+        id: "earnings",
+        name: "创作收益",
+        cardKey: "monthlyEarnings",
+        availNote: "全站唯一可提现来源",
+        desc: "从商单变现收益扣款，用于把收益直接转成算力生产力",
+        tag: "收益账户"
+      },
+      {
+        id: "mix",
+        name: "账户余额 + 创作收益",
+        cardKey: "mixed",
+        availNote: "先扣账户余额 · 不足部分扣创作收益",
+        desc: "组合支付：优先扣尽账户余额，差额再由创作收益补足",
+        tag: "组合扣款"
+      }
+    ],
+    // 组合扣款的扣款顺序与提示口径（唯一真源）
+    computeFundRules: {
+      mixOrder: ["balance", "earnings"],
+      mixNote: "组合扣款按「先账户余额、后创作收益」顺序扣减，任一来源不足时自动向下一来源补足",
+      earningsNoRecharge: "创作收益不可充值，只能通过承接商单、带教分润等创作行为累积"
+    },
+
+    // 专属普惠算力特权充值档位（账户余额 / 创作收益 / 两者组合 三选一扣款 · 4 折普惠价）
+    // tokens 为「自有算力」基准到账点数；其他算力类型按 pointsRatio 折算
+    computePacks: [
+      { id: "CP1", price: 40, tokens: 100, label: "入门包" },
+      { id: "CP2", price: 200, tokens: 500, label: "常用包" },
+      { id: "CP3", price: 400, tokens: 1000, label: "进阶包" },
+      { id: "CP4", price: 2000, tokens: 5000, label: "工作室包" }
+    ],
+
+    // AI 积分流水台账（按算力类型分账，type 取自 MockData.assets.computeTypes.id）
+    // kind: recharge = 充值到账 / consume = 工具消耗 / reward = 任务或活动奖励
+    aiPointLedger: [
+      { id: "AP1", type: "self", kind: "recharge", name: "算力充值 · 常用包（自有算力）", amount: 800, time: "2026-09-02 10:12" },
+      { id: "AP2", type: "self", kind: "consume", name: "AI 视频生成消耗 · 《未来信号》成片", amount: -320, time: "2026-09-06 15:40" },
+      { id: "AP3", type: "self", kind: "recharge", name: "算力充值 · 进阶包（自有算力）", amount: 1200, time: "2026-09-11 09:08" },
+      { id: "AP4", type: "self", kind: "consume", name: "数字人口播生成消耗 · 品牌口播稿", amount: -240, time: "2026-09-15 20:26" },
+      { id: "AP5", type: "self", kind: "reward", name: "任务结算奖励 AI 积分", amount: 200, time: "2026-09-16 17:00" },
+      { id: "AP6", type: "integrated", kind: "recharge", name: "集成算力接入 · 测试资源包", amount: 400, time: "2026-09-05 14:05" },
+      { id: "AP7", type: "integrated", kind: "consume", name: "高峰期弹性调用消耗 · 批量主视觉", amount: -150, time: "2026-09-12 21:33" },
+      { id: "AP8", type: "integrated", kind: "recharge", name: "算力充值 · 常用包（集成算力）", amount: 600, time: "2026-09-18 11:20" },
+      { id: "AP9", type: "integrated", kind: "consume", name: "批量图片生成消耗 · 海报套组", amount: -150, time: "2026-09-20 19:02" }
+    ],
+
+    // 发票开具记录（对应「人民币账户充值」流水，txId 关联）
+    invoiceRecords: [
+      {
+        id: "INV1",
+        txId: "TX10",
+        amount: 5000.00,
+        time: "2026-09-09 10:20",
+        invoiceType: "增值税专用发票",
+        titleType: "company",
+        titleName: "南京星芒视觉科技有限公司",
+        taxNo: "91320100MA1X9K2L7Q",
+        email: "finance@xingmang.tech",
+        status: "已开票"
+      }
+    ],
+
+    nfts: [
+      { id: "NFT01", name: "未来之城 #001", tag: "稀有", color: "blue", img: "assets/nfts/nft_1.png" },
+      { id: "NFT02", name: "星际探索者 #042", tag: "珍稀", color: "pink", img: "assets/nfts/nft_2.png" },
+      { id: "NFT03", name: "赛博纪元 #089", tag: "稀有", color: "blue", img: "assets/nfts/nft_3.png" },
+      { id: "NFT04", name: "AI 创意之光 #015", tag: "普通", color: "gray", img: "assets/nfts/nft_4.png" },
+      { id: "NFT05", name: "数字艺术·流动 #007", tag: "珍稀", color: "pink", img: "assets/nfts/nft_5.png", moreCount: "+12" }
+    ],
+
+    security: [
+      { name: "实名认证", state: "已认证", icon: "shield-check", color: "#3B82F6" },
+      { name: "绑定手机", state: "已绑定", icon: "smartphone", color: "#3B82F6" },
+      { name: "登录保护", state: "已开启", icon: "shield", color: "#3B82F6" },
+      { name: "资金密码", state: "已设置", icon: "lock", color: "#3B82F6" }
+    ],
+
+    // 我的权益与特权 = 个人勋章 / 荣耀墙（点击图片打开 modal-honor-detail 查看该勋章对应的权益详细说明）
+    // status: owned 已获得 / locked 未解锁；perks 为该勋章实际赋予的权益条目
+    honors: [
+      {
+        id: "H1", name: "校园 OPC 主理人", tier: "传说", tierColor: "#F59E0B",
+        icon: "assets/decorations/trophy.png", category: "身份荣耀",
+        gotAt: "2026-03-18", status: "owned",
+        desc: "通过校园一人公司（OPC）商业孵化认证，具备以个人主体独立承接品牌商单的资格。",
+        unlock: "完成 Lv.4 商业创作者认证 + 累计完成 10 单商单交付",
+        perks: [
+          { title: "高赏金商单准入", detail: "¥5,000 以上的品牌商单免资质复核，可直接报名。" },
+          { title: "OPC 孵化绿色通道", detail: "工商注册、对公开户与代账服务由平台一站式代办。" },
+          { title: "增值税专票代开", detail: "无对公资质也能为品牌方开具增值税专用发票。" },
+          { title: "专属孵化顾问", detail: "配备 1 对 1 商业顾问，提供报价与谈判策略支持。" }
+        ]
+      },
+      {
+        id: "H2", name: "商业创作者 Lv.4", tier: "史诗", tierColor: "#7C3AED",
+        icon: "assets/decorations/badge_1.png", category: "等级荣耀",
+        gotAt: "2026-05-01", status: "owned",
+        desc: "创作者成长等级达到 Lv.4，解锁商业变现全链路能力。",
+        unlock: "累计创作积分达到 2,680 分（Lv.4 门槛 2,400）",
+        perks: [
+          { title: "商单接单资格", detail: "解锁全站商业商单报名与履约权限。" },
+          { title: "展厅加权推荐", detail: "作品在展厅与发现页获得额外曝光权重。" },
+          { title: "定制邀约优先", detail: "品牌方「找 TA 定制」列表中排序靠前。" }
+        ]
+      },
+      {
+        id: "H3", name: "AI 创作达人", tier: "黄金", tierColor: "#D97706",
+        icon: "assets/decorations/achievement_medal_gold.png", category: "学习成就",
+        gotAt: "2024-05-20", status: "owned",
+        desc: "在成长学院完成 10 门以上课程，系统掌握 AI 创作工作流。",
+        unlock: "累计完成 10 门课程结业",
+        perks: [
+          { title: "课程 9 折", detail: "成长学院全部付费课程享 9 折专属价。" },
+          { title: "结业证书直领", detail: "完成路径后免审核直接领取结业证书与微学分凭证。" },
+          { title: "学习积分加成", detail: "完成课节的创作积分奖励 +10%。" }
+        ]
+      },
+      {
+        id: "H4", name: "内容创作专家", tier: "白银", tierColor: "#F97316",
+        icon: "assets/decorations/achievement_medal_orange.png", category: "创作成就",
+        gotAt: "2024-04-15", status: "owned",
+        desc: "累计发布 50 个以上原创作品，形成稳定的内容产出能力。",
+        unlock: "累计发布 50 个原创作品",
+        perks: [
+          { title: "发布免审", detail: "作品发布免人工审核，秒级上线。" },
+          { title: "矩阵分发配额翻倍", detail: "每日全平台矩阵分发配额提升至 2 倍。" },
+          { title: "数据中心高级看板", detail: "解锁粉丝画像与竞品对比等高级分析模块。" }
+        ]
+      },
+      {
+        id: "H5", name: "商业变现新星", tier: "青铜", tierColor: "#3B82F6",
+        icon: "assets/decorations/achievement_medal_blue.png", category: "变现成就",
+        gotAt: "2024-03-10", status: "owned",
+        desc: "完成首笔商单交付并成功变现，商业闭环正式跑通。",
+        unlock: "完成首笔商单交付并通过验收",
+        perks: [
+          { title: "提现手续费全免", detail: "创作收益提现长期免手续费、T+0 到账。" },
+          { title: "托管保障", detail: "商单赏金 100% 平台托管，验收后自动结算。" },
+          { title: "变现诊断报告", detail: "每月生成一份个人变现能力诊断与提价建议。" }
+        ]
+      },
+      {
+        id: "H6", name: "连续创作 7 日", tier: "黄金", tierColor: "#10B981",
+        icon: "assets/decorations/streak_gold_medal.png", category: "习惯成就",
+        gotAt: "2026-09-22", status: "owned",
+        desc: "连续 7 天保持创作打卡，产出节奏稳定可预期。",
+        unlock: "连续 7 天完成创作或学习打卡",
+        perks: [
+          { title: "打卡积分翻倍", detail: "连续打卡期间每日创作积分奖励翻倍。" },
+          { title: "断卡保护 1 次", detail: "每月可享 1 次断卡保护，连续天数不清零。" },
+          { title: "勤奋标签展示", detail: "个人主页展示「勤奋创作者」标签，提升品牌信任。" }
+        ]
+      },
+      {
+        id: "H7", name: "版权存证守护者", tier: "稀有", tierColor: "#6366F1",
+        icon: "assets/decorations/badge_2.png", category: "权益成就",
+        gotAt: "2026-06-08", status: "owned",
+        desc: "累计为 12 件作品完成区块链版权存证，知识产权意识完备。",
+        unlock: "累计完成 10 件作品区块链版权存证",
+        perks: [
+          { title: "免费存证额度", detail: "每月赠送 5 次免费区块链版权存证。" },
+          { title: "侵权监测预警", detail: "全网相似度扫描，发现疑似侵权即时推送预警。" },
+          { title: "维权律师支持", detail: "存证作品遭遇侵权可申请平台法援律师介入。" }
+        ]
+      },
+      {
+        id: "H8", name: "校园影响力创作者", tier: "传说", tierColor: "#EC4899",
+        icon: "assets/decorations/badge_3.png", category: "影响力荣耀",
+        gotAt: "", status: "locked",
+        desc: "在校园圈层形成广泛影响力，成为品牌校园营销的首选合作对象。",
+        unlock: "全站粉丝数达到 50,000（当前 28,000）",
+        perks: [
+          { title: "品牌直客通道", detail: "解锁品牌方直客邀约，跳过平台撮合直接谈单。" },
+          { title: "校园大使资格", detail: "可申请本校校园大使，享生态分润激励。" },
+          { title: "官方活动免审入选", detail: "平台官方营销活动免筛选直接入选。" }
+        ]
+      }
+    ],
+
+    // 优惠券卡包（modal-coupon）：status = unused / used / expired
+    coupons: [
+      { id: "CP1", name: "算力充值满减券", value: "¥ 40", valueNum: 40, threshold: "满 ¥200 可用", scope: "算力充值", expire: "2026-10-31", status: "unused", go: "compute" },
+      { id: "CP2", name: "成长学院课程券", value: "¥ 60", valueNum: 60, threshold: "满 ¥199 可用", scope: "付费课程", expire: "2026-11-15", status: "unused", go: "course" },
+      { id: "CP3", name: "商单服务费抵扣券", value: "¥ 30", valueNum: 30, threshold: "发布商单可用", scope: "任务发布", expire: "2026-09-30", status: "unused", go: "task" },
+      { id: "CP4", name: "会员订阅立减券", value: "¥ 50", valueNum: 50, threshold: "年费会员可用", scope: "Pro 会员", expire: "2026-12-01", status: "unused", go: "pro" },
+      { id: "CP5", name: "新人首充券", value: "¥ 20", valueNum: 20, threshold: "无门槛", scope: "账户充值", expire: "2026-05-20", status: "used", go: "recharge", usedAt: "2026-05-06" },
+      { id: "CP6", name: "展厅定制券", value: "¥ 100", valueNum: 100, threshold: "满 ¥1,500 可用", scope: "找 TA 定制", expire: "2026-07-31", status: "expired", go: "gallery" }
+    ],
+
+    // 常用功能 5 项（3 列）：合作账单 / 更多功能 / 礼品卡 / 积分兑换 已于 2026-09-24 下线
+    commonTools: [
+      { name: "提现管理", icon: "credit-card" },
+      { name: "发票管理", icon: "file-text" },
+      { name: "银行卡管理", icon: "bank" },
+      { name: "优惠券", icon: "tag" },
+      { name: "赞赏记录", icon: "heart" }
+    ]
+  },
+
+  helpFaq: [
+    { q: "如何提升创作者等级？", a: "在成长学院完成课节可推进路径；Lv.3 可接基础任务，Lv.4 可接高赏金商单并享展厅加权。" },
+    { q: "定制商单资金如何托管？", a: "发起定制时从可提现余额冻结对应金额，验收通过后划转给创作者；冻结资金不可提现。" },
+    { q: "发布后如何看矩阵回流？", a: "发布时勾选平台分发，随后可在数据中心「矩阵分发」查看各平台浏览、点赞与收益。" },
+    { q: "作品如何上架展厅？", a: "任务验收完成后，可在「我的任务」点击「申请上架」。展厅主要由平台审核精选上架，通过后会出现在作品展厅。" },
+    { q: "个人中心在哪里？", a: "点击顶栏头像或侧栏「我的」，进入资产页顶部的个人资料区，可查看作品与证书。" }
+  ],
+
+  // 8. 系统管理与治理底座 (System Admin & RBAC)
+  systemAdmin: {
+    currentRole: "creator", // 当前激活角色
+    roles: [
+      { key: "creator", name: "高校学员 / 自由创作者", tag: "当前视角", desc: "学视频领积分、使用工具箱、承接Lv.1~Lv.4商单、提现钱包", badgeColor: "#6366F1", active: true },
+      { key: "mentor", name: "签约导师 / 教学机构", tag: "带教视角", desc: "教案立项、班期学员名册、作业评分量规批改、课酬分润", badgeColor: "#0EA5E9", active: false },
+      { key: "buyer", name: "发包企业 / 商业买家", tag: "发包视角", desc: "发布竞标单、展厅找TA定制、银行专户资金托管、开具专票", badgeColor: "#F59E0B", active: false },
+      { key: "academic", name: "平台教务审核专员", tag: "教务视角", desc: "课程上架审核、微学分真实性链上核验、优秀大作业送展", badgeColor: "#10B981", active: false },
+      { key: "arbitrator", name: "商业仲裁调解专员", tag: "法务视角", desc: "介入3次返修熔断争议、调取无损工程证据链、执行分账指令", badgeColor: "#EC4899", active: false },
+      { key: "superadmin", name: "超级管理员 / 财务总监", tag: "全控视角", desc: "全局RBAC权限配置、全网积分经济调控、大额提现终审", badgeColor: "#8B5CF6", active: false }
+    ],
+    membership: {
+      currentTier: "free", // pro / free / enterprise（演示账号初始未开通，便于完整走通「扫码支付 → 打标 Pro」闭环）
+      tierName: "免费版创作者",
+      plan: null, // year / month / null
+      planLabel: "",
+      expireDate: null, // Pro 到期日 (YYYY-MM-DD)，开通 / 续费成功后写入
+      activatedAt: null, // 最近一次开通或续费日期
+      isAutoRenew: false,
+      lastOrderNo: null,
+      orders: [], // Pro 订阅订单簿（独立结算通道，不进入账户余额流水）
+      // Pro 订阅定价策略真源：供 modal-pro 渲染与下单金额 / 到期日计算
+      plans: {
+        year: { key: "year", label: "年费会员", amount: 699, days: 365, autoRenew: false, priceText: "¥ 699 / 年", note: "立省 ¥ 477，送 50000 创作算力" },
+        month: { key: "month", label: "月度订阅", amount: 98, days: 30, autoRenew: true, priceText: "¥ 98 / 月", note: "按月扣费，随时取消" }
+      },
+      privileges: [
+        { icon: "⚡", title: "GPU VIP 极速渲染通道", desc: "无需排队，生成提速 300%" },
+        { icon: "💎", title: "商单免保证金接单特权", desc: "最高可承接 ¥20,000 大额商单" },
+        { icon: "🎬", title: "4K 60FPS 超清母带导出", desc: "支持 ProRes 与无损工程源文件" },
+        { icon: "👑", title: "平台尊贵 Pro 认证标识", desc: "发现页与任务广场享有 1.2x 权重加权" }
+      ]
+    },
+    riskControl: {
+      healthScore: 99.8,
+      contentAuditCount: 14205,
+      fraudBlockedCount: 18,
+      watchdogActiveTasks: 42, // 当前正在守护 72h 超时自动放款的任务数
+      lastCheckTime: "10 秒前"
+    },
+    economy: {
+      totalPointsIssued: "2,840,000",
+      totalPointsBurned: "2,190,000",
+      burnRate: "77.1%",
+      ratio: "10 积分 = 1 算力点",
+      status: "健康低通胀"
+    }
+  }
+};
+
+window.MockData = MockData;

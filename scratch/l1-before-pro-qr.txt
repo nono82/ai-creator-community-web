@@ -1,0 +1,71 @@
+
+------------------------------------------------------------------------
+ 设计契约一致性校验 · L1 门禁
+ 真源目录：design/（已跳过 _ 开头的元文档）
+------------------------------------------------------------------------
+
+【各文档契约声明量】
+  文档                       id   fn    字段    素材    类名   ERROR
+  任务广场设计.md               0    3     0     0     0       0
+  创作工具设计.md               0    7     0     0     0       1
+  发现页设计.md                0    0     0     0     0       0
+  成长学院设计.md               0    2     0     0     0       0
+  我的资产设计.md               4   28     1     0     0       0
+  数据中心设计.md               0    1     0     1     0       0
+  整体设计.md                19   23     0     0     3       7
+  用户管理设计.md               9    8     0     1     2       2
+  社区中心设计.md               0    1     1     0     0       0
+
+------------------------------------------------------------------------
+ L1 未通过：36 个 ERROR（这就是本轮待实现/待修复清单）
+------------------------------------------------------------------------
+
+  ▸ 创作工具设计.md
+      ✗ 缺少 App 函数：App.applyTemplateToWorkspace()
+
+  ▸ 整体设计.md
+      ✗ 缺少 App 函数：App.showAcademyCoursesPage()
+      ✗ 缺少 App 函数：App.openMyCerts()
+      ✗ 缺少 App 函数：App.openStudioModal()
+      ✗ 缺少 App 函数：App.showTaskPublishPage()
+      ✗ 缺少 App 函数：App.openTaskDetail()
+      ✗ 缺少 App 函数：App.openWithdrawModal()
+      ✗ 缺少 App 函数：App.openConfirmModal()
+
+  ▸ 用户管理设计.md
+      ✗ 缺少 App 函数：App.openMyCerts()
+      ✗ 缺少 App 函数：App.openConfirmModal()
+
+  ▸ js/app.js（结构自检）
+      ✗ 方法被重复定义，2363 / 7207 行，实际生效的是最后一个：App.toggleGalleryWorkLike
+      ✗ 方法被重复定义，3296 / 6406 行，实际生效的是最后一个：App.openRejectTaskModal
+      ✗ 方法被重复定义，3319 / 6429 行，实际生效的是最后一个：App.submitTaskRejection
+      ✗ 方法被重复定义，3356 / 6466 行，实际生效的是最后一个：App.openSubmitDeliveryModal
+      ✗ 方法被重复定义，3362 / 6472 行，实际生效的是最后一个：App.doSubmitDelivery
+      ✗ 方法被重复定义，3399 / 6509 行，实际生效的是最后一个：App.remindTaskAcceptance
+      ✗ 方法被重复定义，3403 / 6513 行，实际生效的是最后一个：App.simulateAutoAccept
+      ✗ 方法被重复定义，3409 / 6519 行，实际生效的是最后一个：App.openTaskEvaluateModal
+      ✗ 方法被重复定义，3477 / 6587 行，实际生效的是最后一个：App.setEvalStar
+      ✗ 方法被重复定义，3488 / 6598 行，实际生效的是最后一个：App.submitTaskEvaluation
+      ✗ 方法被重复定义，3520 / 6630 行，实际生效的是最后一个：App.openDisputeModal
+      ✗ 方法被重复定义，3528 / 6638 行，实际生效的是最后一个：App.submitTaskDispute
+      ✗ 方法被重复定义，3563 / 6673 行，实际生效的是最后一个：App.openMyGalleryManageModal
+      ✗ 方法被重复定义，3616 / 6726 行，实际生效的是最后一个：App.setCreatorSchedule
+      ✗ 方法被重复定义，3633 / 6743 行，实际生效的是最后一个：App.simulateApproveGalleryListing
+      ✗ 方法被重复定义，3677 / 6787 行，实际生效的是最后一个：App.openCustomConfirmModal
+      ✗ 方法被重复定义，3700 / 6810 行，实际生效的是最后一个：App.confirmCustomOrder
+      ✗ 方法被重复定义，3711 / 6821 行，实际生效的是最后一个：App.declineCustomOrder
+      ✗ 方法被重复定义，3722 / 6832 行，实际生效的是最后一个：App.republishTask
+      ✗ 方法被重复定义，4072 / 6299 行，实际生效的是最后一个：App.openTasksLeaderboardModal
+      ✗ 方法被重复定义，5392 / 6954 行，实际生效的是最后一个：App.simulateGenerate
+      ✗ 方法被重复定义，5422 / 7050 行，实际生效的是最后一个：App.publishFromStudio
+      ✗ 方法被重复定义，5442 / 7190 行，实际生效的是最后一个：App.handleUpgradePro
+      ✗ 方法被重复定义，6152 / 7528 行，实际生效的是最后一个：App.openMyCertsModal
+      ✗ 方法被重复定义，7073 / 7514 行，实际生效的是最后一个：App.openSystemAdminModal
+      ✗ 方法被重复定义，7079 / 7518 行，实际生效的是最后一个：App.switchSystemAdminTab
+
+------------------------------------------------------------------------
+ ERROR 36 ｜ WARN 0 ｜ 文档 9 份
+ 结论：请按上方清单补齐后重跑，禁止跳过 ERROR。
+------------------------------------------------------------------------
+

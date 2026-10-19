@@ -1,0 +1,982 @@
+# 我的资产（全域资产总金库、OPC 后勤基础设施与版权确权）全业务架构设计方案
+
+## 一、 用户故事
+
+### 1. 本模块解决了什么问题？
+在青年创作者向商业化迈进的过程中，普遍面临“资产分散易丢、无对公资质无法开票、在途资金缺乏托管感知、双轨积分混淆”四大痛点：
+- **大学生/个人创作者无对公资质开票难**：B 端企业客户采购必须报销增值税发票，个人创作者由于无法办税易错失大单机会；
+- **商单在途资金缺乏安全托管感知**：创作者对“哪些钱还在平台托管库中、何时能提现”缺乏透明可视的展示；
+- **双轨积分混淆与算力成本不可控**：平台需要将“创作者升级成长值（创作积分）”与“工具 GPU 算力点（AI 积分）”明确划分，避免消耗混乱；
+- **数字版权与荣誉缺乏统一陈列**：商单交付版权确权书、高校赛事荣誉与培训证书分散，缺乏一站式数字藏品陈列与验真。
+
+### 2. 实现了什么目标？
+我的资产（My Assets & Portfolio Hub）定位为创作者的**全域数字资产总金库、校园 OPC 商业合规后勤中枢与版权凭据中心**：
+- **校园 OPC 商业合规与后勤基础设施 4 大中枢**：平台统一提供【增值税专票代开】（解决无资质痛点，直达 `modal-invoice` 发票管理）、【商单资金托管库】（专户锁定 ¥1,500.00 安全款项，点击查看名下全部托管项目进度）、【专属普惠算力特权】（剩余 12,500 Tflops 额度，经**账户余额** 4 折普惠充值）与【学徒带教生态分润】（带教 3 位学弟学妹分成 ¥620）；
+- **全站唯一现金支付源（统一支付口径）**：账户余额是**平台购买类行为**的**唯一支付来源**——算力特权充值、学院付费课程选购等一律从账户余额扣减，**这些购买入口都不直连微信 / 支付宝 / 银联**；余额不足时统一引导前往 `modal-account-recharge` 充值后再试。**Pro 会员订阅为例外**：会员订阅走独立订阅结算通道（`modal-pro-pay-qr` 扫码支付），不占用账户余额、不产生冻结额、不写入资产流水，详见【用户管理设计.md】；
+- **4 大核心资产卡片与严谨双轨积分架构**：明确划分【账户余额】（展示总额 ¥6,820.50 与可提现余额 ¥5,320.50，支持唤起 `modal-withdraw` 秒级提现）、【创作收益】（历史变现 ¥12,680.30）、【创作积分（可用）】（2,680 积分，严格用于创作者 Lv.1~Lv.5 等级认证）与【AI 积分】（2,340.00 积分，严格用于工具 GPU 算力消耗）；
+- **资产明细流水穿透与数字藏品展柜**：6 大分类 Tab（全部/收入/支出/提现/创作积分/AI积分）与时间周期下拉筛选，5 宫格数字藏品展柜支持全屏查看与【我的证书与成就 (`modal-my-certs`)】全览；
+- **右侧多功能安全与常用面板**：资产概览总资产估值面板、100% 满格绿色安全防御舱（直达 `modal-security-settings` 安全设置）、Pro 权益特权展位（直达 `modal-pro`）及 8 宫格常用功能便捷操作面板。
+
+### 3. 涵盖哪些核心功能？
+- **Banner 区域**：主标【我的资产】，副标“个人中心 · 管理数字资产与创作收益”；
+- **个人中心资料条（assets-profile-hub）**：展示当前登录创作者头像、姓名、认证身份（南京大学 ｜ 商业创作者）、创作等级 Lv.4 与账户概览；
+- **校园 OPC 商业合规与后勤基础设施 4 大中枢（opc-infrastructure-grid）**：
+  - **1. 增值税专票代开**：解决大学生无对公资质难题，平台统筹合规开具专票，卡片与底部操作均唤起点击【发票管理 >】（`App.openInvoiceModal()` → `modal-invoice`），可对人民币账户充值记录申请开具增值税普通发票 / 专用发票；
+  - **2. 商单资金托管库**：展示已安全托管未结算商单款项 **¥1,500.00**（**恒等于资产卡「冻结金额」**），完工立即到账；点击卡片或【查看托管进度 >】唤起**托管进度弹窗**（`App.openEscrowProgressModal()` → `modal-escrow-progress`），按**冻结时间倒序**展示当前商户名下**全部托管项目及每个项目冻结的金额**；
+  - **3. 专属普惠算力特权**：展示剩余 12,500 Tflops 高性能 GPU 额度，**经账户余额 4 折普惠充值**（`App.openComputeRechargeModal()` → `modal-compute-recharge`），不直连微信 / 支付宝 / 银联等任何外部支付通道；
+  - **4. 学徒带教生态分润**：展示已签约带教 3 位低年级学弟学妹，本月分润 ¥620.00，点击查看带教管理说明；
+- **4 大核心资产卡片（assets-overview-cards-4）**：
+  - **账户余额 (元)**：展示总额 ¥6,820.50，标明“可提现余额 ¥5,320.50”与“冻结金额 ¥1,500.00（进行中商单托管款，不可提现）”，内置【去充值 >】按钮（唤起 `modal-account-recharge` 人民币账户充值弹窗，`App.openAccountRechargeModal()`）与【去提现 >】按钮（唤起 `modal-withdraw` 提现弹窗）；
+  - **创作收益 (元)**：展示累计变现 ¥12,680.30，标明“本月预估 ¥2,680.30”，内置【收益明细 >】过滤定位；
+  - **创作积分（可用）**：展示可用 2,680 积分，标明“累计获得 4,120 积分”，副标明确标注用于等级晋升，内置【积分明细 >】过滤定位；
+  - **AI 积分**：展示算力池储备 2,340.00，副标明确标注用于工具算力消耗，内置【积分明细 >】过滤定位；
+- **人民币账户充值（modal-account-recharge）**：
+  - **业务定位**：面向**个人创作者与发包企业均可使用**的**通用现金入金通道**，独立于任务发布等任何业务流程，不构成发布任务的前置条件；
+  - **入口位置**：唯一入口位于【我的资产】「账户余额 (元)」卡片副行的【去充值 >】链接（与【去提现 >】并列排布，绑定 `App.openAccountRechargeModal()`），点击唤起 `modal-account-recharge` 充值弹窗；
+  - **充值通道（硬口径 · 2026-09-22 收敛）**：**只能经「已在【安全设置】绑定的本人同名借记卡」协议代扣入金**——原「充值渠道」下拉（微信支付 / 支付宝 / 银联对公转账）**已整体下线**，改为**「充值银行卡」下拉**，选项**只来自银行卡台账 `MockData.assets.bankCards`**；**不接受临时输入卡号，也不接受任何第三方钱包**；
+  - **充值三闸校验链（`App.validateRechargeCard()`，与提现四道闸共用同一份银行卡台账）**：闸一 必须已实名（未实名时提交被拦截并自动跳转【安全设置】实名认证 `App.openSecuritySettings('实名认证')`）/ 闸二 **必须已绑定银行卡**（未绑卡时下拉给出「暂无已绑定银行卡，请先绑卡」并就地提供绑卡入口）/ 闸三 仅限借记卡（信用卡与异名卡在下拉中**置灰不可选**并标注不可用原因，使口径在界面上可见）；
+  - **就近绑卡闭环**：弹窗内提供「没有可用的本人借记卡？【+ 绑定银行卡 >】」（`App.openBankCardBindModal('bind')`）；绑卡成功后经 `App.refreshBankCardViews()` 联动 `App.refreshRechargePanel()`，**充值下拉与可用卡数同源刷新**，形成「未绑卡 → 就地绑卡 → 返回充值」的闭环；
+  - **合规口径可视（`#recharge-rule-row`）**：弹窗顶部以 chips 固定展示「必须已实名 / 仅限已绑定银行卡 / 仅限借记卡 / 单笔上限 ¥50,000」四条口径，未实名时首条转红；
+  - **充值档位与自定义金额**：快捷档位 ¥500 / ¥1,000 / ¥5,000 / ¥10,000，同时支持自定义输入任意金额（单笔上限 ¥50,000，唯一真源 `MockData.assets.rechargeRules.maxPerTx`）；
+  - **到账时效**：绑定借记卡协议代扣，**T+0 实时到账 · 免手续费**；
+  - **账户余额构成口径（唯一真源公式）**：**账户总额 = 可提现余额 + 冻结金额**；冻结金额为进行中商单托管款，**不允许提现**；
+  - **账本联动**：充值成功即时增加账户总额与可提现余额，并在资产明细「收入」Tab 生成一条「人民币账户充值」流水；**流水名格式为 `人民币账户充值 (发卡行 借记卡 尾号 XXXX)`**，发票管理的「充值渠道」字段直接取该括号内文本，故充值凭据可追溯到具体扣款卡；
+  - **与 AI 积分解耦**：人民币充值只进人民币现金账户，不产生任何 AI 积分或创作积分，不触碰双轨积分体系；
+  - **与业务解耦**：充值只改变现金账户余额，不影响任务发布资格、接单资格或创作等级；
+- **商单资金托管库 · 托管进度明细（modal-escrow-progress）**：
+  - **业务定位**：以**当前商户（登录账号主体）**为口径，汇总展示其名下**全部托管项目**的进度与资金状态，解决「哪些钱还在平台托管库中、何时能提现」的透明化诉求；
+  - **入口位置**：唯一入口位于【我的资产】OPC 基础设施「商单资金托管库」卡片（整卡与底部【查看托管进度 >】均绑定 `App.openEscrowProgressModal()`）；
+  - **排序规则（硬约束）**：项目列表**一律按冻结时间倒序排列**（最新冻结的排在最上方），排序键为 `MockData.assets.escrowProjects[].frozenAtTs`，`frozenAt` 仅作界面展示文本；
+  - **列表字段**：每个托管项目展示 **项目名称 / 商单号 / 交易对手 / 本商户角色 / 冻结金额 / 冻结时间 / 托管状态 / 履约进度条 / 阶段说明 / 结算规则**；
+  - **冻结金额口径（唯一真源）**：所有**进行中项目**（`statusKey = active`）的冻结金额之和**恒等于资产卡「冻结金额」**（当前 ¥1,500.00），并与 `MockData.assets.transactions` 中 `status = 托管中` 的流水通过 `txId` 一一对应；已结算 / 已退还项目展示「原冻结金额」且**不计入**冻结合计；
+  - **汇总条三格**：托管中金额（进行中项目冻结合计）/ 进行中项目数 / 累计已结算金额，由 `App.getEscrowSummary()` 统一计算；
+  - **筛选维度**：`App.filterEscrowProjects('all' | 'active' | 'settled')` 三档胶囊筛选——全部 / 进行中（`statusKey = active`）/ 已结算 · 已退还（`statusKey = settled`）；
+  - **状态取值**：进行中可为 `招募选拔中` / `履约中` / `待验收` / `返修中`；终态为 `已结算` / `已退还`；
+  - **与发布 / 结算联动**：发布商单全额托管（`App.freezeEscrow()`）时自动在托管库新增一条进行中项目（`frozenAt = 刚刚`）；验收解冻结算（`App.releaseEscrow()`）时按金额匹配冻结最早的进行中项目，自动转为「已结算 · 进度 100%」；
+  - **卡片文案同源**：托管库卡片描述（`#escrow-library-desc`）由 `App.renderEscrowLibraryCard()` 按上述冻结合计动态渲染，杜绝卡片数字与列表、资产卡三处漂移；
+- **全站统一余额支付口径（购买类支付唯一来源）**：
+  - **业务定位**：账户余额是平台内**购买类行为**的唯一支付来源，由 `App.payFromAccountBalance(amount, name)` 统一承担扣款与记账，杜绝各业务模块各自对接外部支付通道；
+  - **适用范围**：专属普惠算力特权充值、成长学院付费课程选购（¥49 / ¥59 / ¥69 / ¥79 / ¥99），以及后续新增的购买类付费能力；**不含 Pro 会员订阅**（会员订阅为独立订阅结算通道，见下方「支付边界划分」）；
+  - **唯一入金通道（2026-09-22 收敛）**：账户余额的**唯一入金方式是 `modal-account-recharge` 内的「已绑定本人同名借记卡协议代扣」**——聚合支付（微信 / 支付宝）与银联对公转账渠道**已从充值弹窗整体移除**，全站不再存在以 `<option>` 陈列外部支付通道的入口；Pro 会员订阅虽同样走外部扫码支付，但属于**独立结算通道**（`modal-pro-pay-qr` 内以渠道按钮而非下拉形式呈现），与账户余额互不影响；
+  - **扣款口径**：购买直接扣减**可提现余额**（不产生冻结额），账户总额与可提现余额同步减少，并写入一条「支出」流水，状态 `已完成`；
+  - **余额不足统一引导**：当 `可用余额 < 应付金额` 时，统一唤起 `modal-balance-insufficient` 余额不足引导弹窗（`App.openInsufficientBalanceModal()`），展示「应付金额 / 当前可用余额 / 尚缺金额」三项，并提供【去充值 >】直达 `modal-account-recharge`；**充值成功后返回原购买弹窗可重试**；
+  - **免费能力不拦截**：免费课程、课节打卡、证书领取等不产生费用的能力不经过支付校验；
+- **支付边界划分（余额支付 vs 会员订阅独立结算）**：
+  - **余额支付**：算力特权充值、学院付费课程选购 → 扣账户余额 → 写「支出」资产流水 → 余额不足唤起 `modal-balance-insufficient`；
+  - **会员订阅独立结算**：Pro 会员开通 / 续费 → 扫码支付（`modal-pro-pay-qr`）→ **完全不动账户余额、不产生冻结额、不写入资产流水**，仅在 `MockData.systemAdmin.membership.orders` 登记订阅订单，并回写会员有效期至；
+  - **判定依据**：会员订阅是**账号级服务订购**，与账户现金钱包解耦，避免订阅支出污染资金台账与「总额 = 可提现 + 冻结」恒等式；
+- **申请提现（modal-withdraw · 合规四道闸）**：
+  - **业务定位**：账户余额的**出金通道**，**仅支持提现至本人同名的银行借记卡**——四道合规闸门全部通过才允许扣款出金，任一未过即拦截且余额与流水零变动；
+  - **闸一 · 必须已实名**：当前账号 `MockData.currentUser.idVerified` 必须为 `true`（判定入口 `App.isIdVerified()`）；未实名时弹窗顶部实名状态条转红、提交按钮置灰，提交被拦截并自动跳转【安全设置】实名认证（`App.openSecuritySettings('实名认证')`）；
+  - **闸二 · 必须同名提现**：收款卡持卡人姓名必须**逐字等于**实名认证姓名（当前「黄*彬」），由 `App.validateWithdrawAccount()` 校验；持卡人与实名不一致的卡在下拉中置灰不可选并标注原因；
+  - **闸三 · 单笔上限 ¥10,000**：单笔提现金额不得超过 **¥10,000.00**（唯一真源 `MockData.assets.withdrawRules.maxPerTx`），超限时输入框下方实时提示并引导拆分为多笔提现；
+  - **闸四 · 仅限借记卡**：信用卡（如中国银行尾号 6608）在下拉中置灰不可选，提示「仅支持提现至银行借记卡」；**非银行卡渠道（微信零钱等）一律不出现在提现入口**；
+  - **可提现余额校验**：四道闸全部通过后，仍须校验 `提现金额 ≤ 可提现余额`——冻结金额为进行中商单托管款，**不可提现**；
+  - **收款账户下拉口径**：不可用的卡**保留展示但置灰并标注不可用原因**（由 `App.renderWithdrawAccounts()` 渲染），让四条合规规则在界面上可被用户直接看见；
+  - **金额实时提示**：`App.onWithdrawAmountInput()` 在输入过程中即时反馈「本次扣减金额 / 提现后剩余可提现余额」或超限、超额原因；
+  - **扣款与流水**：四闸全过才扣减**可提现余额与账户总额**（冻结额不动，「总额 = 可提现 + 冻结」恒等式保持），并写入一条「提现到 XX 银行借记卡 (尾号 NNNN)」流水，状态 `处理中`、分类 `提现`；
+  - **入口收敛**：余额卡片【去提现 >】与常用功能「提现管理」统一走 `App.openWithdrawModal()`，不再裸开弹窗；
+  - **到账时效**：T+0 实时到账 · 免手续费；
+- **专属普惠算力特权充值（modal-compute-recharge）**：
+  - **业务定位**：校园普惠算力池的**账户余额扣款式充值**，用现金余额换取工具算力点（AI 积分），**不直连微信 / 支付宝 / 银联**；
+  - **算力包档位（4 折普惠价）**：¥40 → 100 算力点（原价 ¥100）、¥200 → 500 算力点（原价 ¥500）、¥400 → 1,000 算力点（原价 ¥1,000）、¥2,000 → 5,000 算力点（原价 ¥5,000）；
+  - **Pro 加成**：Pro 会员在 4 折基础上额外赠 10% 算力点（档位副标实时体现），非 Pro 会员可经 `modal-pro` 开通后返回；
+  - **扣款与入账**：确认后用 `App.payFromAccountBalance()` 扣减账户余额，算力池 `tokensAC` 与卡片「AI 积分」同步增加，并写入「算力充值-账户余额扣款」支出流水，category 归入「支出」Tab；
+  - **余额不足**：余额不足以支付所选档位时唤起 `modal-balance-insufficient`，引导充值后返回重试；
+- **发票管理（modal-invoice）**：
+  - **业务定位**：人民币账户**充值完成后的开票中心**，个人创作者与发包企业均可对充值记录申请开具增值税发票；
+  - **入口位置**：① 常用功能 8 宫格「发票管理」；② OPC 基础设施「增值税专票代开」卡片与【发票管理 >】；③ `modal-account-recharge` 充值成功后的 Toast 引导；
+  - **可开票记录列表**：按时间倒序列出每一笔「人民币账户充值」流水，字段含充值时间、充值渠道、金额、开票状态（`未开票` / `已开票`）与开票金额；
+  - **发票类型**：增值税普通发票（个人 / 企业抬头均可）与增值税专用发票（**仅企业抬头**，须填写纳税人识别号）；
+  - **开票申请表单**：发票类型、抬头类型（个人 / 企业）、发票抬头、纳税人识别号、接收邮箱、备注；
+  - **校验规则**：开票金额不得大于所选充值记录金额；选择专票时抬头类型必须为企业且纳税人识别号必填；
+  - **提交结果**：所选记录状态更新为 `已开票`，写入一条开票记录并提示「发票申请已提交，电子发票将于 3 个工作日内推送至预留邮箱」；
+- **资产明细流水账本（transactions-table）**：
+  - **6 大分类 Tab**：`全部`、`收入`、`支出`、`提现`、`创作积分`、`AI 积分`；
+  - **时间范围下拉筛选**：`全部时间`、`近 1 个月`、`近 3 个月`、`近 1 年`；
+  - **明细字段**：类型、名称、金额 (元/积分)、状态（已入账/扣减成功/处理中等）、时间；
+  - 底部操作：【查看更多明细 >】（增量动态加载历史数据）；
+- **我的数字藏品库（NFT / 版权证明）**：
+  - **5 宫格藏品展柜**：展示数字艺术藏品与纪念卡片（如：未来之城 #001、星际探索者 #042 等稀有/珍稀藏品），支持点击灯箱全屏预览（`modal-preview-lightbox`）；
+  - 支持点击【查看全部 >】唤起【我的证书与成就 (`modal-my-certs`)】；
+- **右侧辅助功能侧边栏（col-side）**：
+  - **1. 资产概览**：展示总资产估值（¥21,840.80）与资产构成占比列表；
+  - **2. 资产安全中心**：
+    - 账户安全等级：高（100% 满格绿色安全进度条）；
+    - 3 大安全要素：实名认证 (已认证)、支付密码 (已设置)、绑定手机 (已绑定)；
+    - **银行卡绑定与换绑（2026-09-22 新增）**：
+      - **两条硬性口径（本功能的要求来源）**：①「**只支持借记卡绑定**」——信用卡、以及 Visa / MasterCard 等国际卡组织卡号段一律不许绑定；②「**必须完成实名认证后方可绑定**」——未实名时绑定入口置灰、提交被拦截并自动跳转安全设置实名认证页；
+      - **入口收敛（唯一陈列位）**：资产安全中心主面板**不再陈列已绑定银行卡明细**，只保留账户安全等级、3 大安全要素与【前往安全设置 >】入口；银行卡的查看与操作**全部收敛到安全设置弹窗的「银行卡管理（仅支持本人同名借记卡）」分区**——分区内为**已绑定银行卡列表**（卡号掩码 / 发卡行 / 卡种 / 持卡人 / 绑定日期 / 可用状态标签）+ 【+ 绑定新银行卡】按钮，**每张卡提供【换绑】**，并配套【设为默认】与【解绑】（**默认结算卡不可解绑**）；
+      - **绑卡表单校验链**：闸一 必须已实名 → 闸二 持卡人须与实名姓名一致 → 闸三 卡号 16-19 位且通过 Luhn 校验 → 闸四 **仅限借记卡**（按银联 BIN 号段离线识别发卡行与卡种）→ 闸五 短信验证码（发送至实名预留手机号）；
+      - **换绑语义**：换绑 = 「**用一张合规借记卡替换原卡**」，原卡即刻解绑、**卡位复用（不新增卡位）**、默认结算标记保留；台账中存量不合规卡（信用卡 / 异名卡）标记为**待整改**并给出【去换绑】主操作；
+      - **与提现的闭环**：新绑定的借记卡**立即可用于提现收款**（提现弹窗的收款账户下拉同步出现该卡）；提现弹窗内也提供快捷绑卡入口，形成「提现无可用卡 → 就地绑卡 → 返回提现」的闭环；
+      - **资金隔离红线**：绑定、换绑、解绑、设为默认**均不触碰账户余额、不产生冻结额、不写入资产流水**，「总额 = 可提现 + 冻结」恒等式始终成立；
+      - **张数上限**：单个账户最多绑定 5 张；绑定规则唯一真源为 `MockData.assets.bankBindRules`，卡号识别依据为 `MockData.assets.bankBinTable`，演示卡号为 `MockData.assets.bankCardDemos`，卡台账为 `MockData.assets.bankCards`；
+    - 【前往安全设置 >】入口（唤起 `modal-security-settings` 安全设置弹窗）是银行卡能力的**唯一入口**：配置在「银行卡管理（仅支持本人同名借记卡）」分区内，完成绑卡、换绑、设为默认与解绑；主面板不再提供银行卡列表与绑卡按钮；
+  - **3. 我的权益与特权**：Pro 会员 4 大专属特权网格（算力8折、免质保金、专属客服、绿色通道），点击查看全部直达 `modal-pro`；
+  - **4. 常用功能 8 宫格快捷面板（common-functions-grid）**：
+    - `提现管理`（直达提现弹窗 `modal-withdraw`）；
+    - `积分兑换`（快速定位资产明细 `AI积分` Tab）；
+    - `赞赏记录` / `合作账单`（快速定位资产明细 `收入` Tab 并提示说明）；
+    - `发票管理`（唤起发票管理弹窗 `modal-invoice`，`App.openInvoiceModal()`，可对人民币账户充值记录申请开票）；
+    - `礼品卡` / `优惠券`（唤起帮助中心 FAQ 弹窗 `modal-help-faq` 查阅卡券兑换指南）；
+    - `更多功能`（唤起等级特权弹窗 `modal-level-perks`）。
+
+---
+
+## 二、 多方角色业务交互时序图
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Creator as 创作者 / OPC主理人
+    actor Buyer as 发包企业 / 买家
+    participant AssetCenter as 我的资产系统前端
+    participant WithdrawModal as 申请提现弹窗 (modal-withdraw)
+    participant SecurityModal as 安全设置弹窗 (modal-security-settings)
+    participant CertsModal as 我的证书弹窗 (modal-my-certs)
+    participant Lightbox as 作品灯箱 (modal-preview-lightbox)
+    participant TaskMarket as 任务广场
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景一：商单验收完成，托管赏金解冻入账与资产实时穿透
+    Note over Buyer, AssetCenter: 场景一：商单验收通过、托管资金解冻入账
+    Buyer->>TaskMarket: 在【任务广场】点击「确认验收通过」
+    TaskMarket->>Ledger: 将商单冻结赏金解冻划拨至【账户余额】(转化为可提现余额)
+    TaskMarket->>Ledger: 产生一条「商单结算收入」流水记录，并奖励 +200 创作积分
+    AssetCenter-->>Creator: 账户余额卡片秒级更新，可提现余额增加，提示款项已入账
+
+    %% 场景二：合规申请提现全流程交互 (modal-withdraw)
+    Note over Creator, WithdrawModal: 场景二：发起提现、四道合规闸校验与流水结清
+    Creator->>AssetCenter: 点击余额卡片中【去提现 >】(或常用功能「提现管理」)
+    AssetCenter->>WithdrawModal: 唤起申请提现弹窗 (modal-withdraw)
+    WithdrawModal->>WithdrawModal: 闸一 校验当前账号实名认证状态
+    WithdrawModal->>Ledger: 读取收款卡台账，逐张校验持卡人与实名一致性、卡类型是否为借记卡
+    WithdrawModal-->>Creator: 下拉仅本人同名借记卡可选；信用卡与异名借记卡置灰并标注不可用原因
+    Creator->>WithdrawModal: 选择本人同名借记卡，输入提现金额 (例如 ¥1,000)
+    WithdrawModal->>WithdrawModal: 闸三 校验单笔上限 ¥10,000；校验金额未超可提现余额
+    Creator->>WithdrawModal: 点击「确认提现」
+    WithdrawModal->>Ledger: 四闸全过：扣减可提现余额 ¥1,000，新增「提现-处理中」账本流水
+    WithdrawModal-->>Creator: 弹出 Toast:「提现申请已提交，T+0 实时到账 · 免手续费」
+    WithdrawModal->>AssetCenter: 自动关闭弹窗并刷新资产余额与明细列表
+    Note over WithdrawModal, Ledger: 四道闸任一未过即拦截出金，可提现余额与流水保持零变动（逐闸细节见场景十三）
+
+    %% 场景三：资产安全中心核验与个人安全设置 (modal-security-settings)
+    Note over Creator, SecurityModal: 场景三：安全中心评级核验与安全设置
+    Creator->>AssetCenter: 在右侧【资产安全中心】点击「前往安全设置 >」（主面板不陈列银行卡明细，仅此一个入口）
+    AssetCenter->>SecurityModal: 唤起安全设置弹窗 (modal-security-settings)
+    SecurityModal-->>Creator: 展现个人信息（姓名小宇、南大商业创作者、实名认证状态、手机号、邮箱、学号认证）
+    Creator->>SecurityModal: 点击手机号右侧「更换」
+    SecurityModal-->>Creator: 弹出 Toast:「更换手机号：验证码已发送至当前绑定号码」
+    Creator->>SecurityModal: 在「银行卡管理（仅支持本人同名借记卡）」分区点击【+ 绑定新银行卡】，或某张卡的【换绑】
+    SecurityModal->>AssetCenter: 唤起绑定 / 换绑银行卡弹窗 (modal-bank-card-bind)
+    AssetCenter-->>Creator: 弹窗内展示实名状态条、四条口径 chips（必须已实名 / 仅限本人卡 / 仅限借记卡 / 仅限银联卡）与演示卡号
+    Creator->>AssetCenter: 填写持卡人姓名与卡号，系统即时按银联 BIN 号段识别发卡行与卡种
+    AssetCenter->>AssetCenter: 依次校验 已实名 → 持卡人同名 → 卡号 Luhn → 仅限借记卡 → 短信验证码
+    AssetCenter-->>Creator: 校验通过后写入银行卡台账，安全设置「银行卡管理」列表与提现收款账户下拉同步刷新（逐段细节见场景十四）
+    Creator->>SecurityModal: 点击完成，返回资产主页
+
+    %% 场景四：资产明细 6 大 Tab 切换、时间筛选与更多流水加载
+    Note over Creator, Ledger: 场景四：明细分类筛选、时间过滤与增量加载
+    Creator->>AssetCenter: 点击下划线 Tab「提现」
+    AssetCenter->>Ledger: 过滤分类为「提现」的交易记录
+    AssetCenter-->>Creator: 表格实时呈现提现流水、金额与结清状态
+    Creator->>AssetCenter: 时间下拉选择「近 1 个月」
+    AssetCenter-->>Creator: 重新过滤近 1 个月内发生的收支记录
+    Creator->>AssetCenter: 点击底部「查看更多明细 >」
+    AssetCenter-->>Creator: 增量追加历史流水数据，弹出「已加载更多历史明细」Toast
+
+    %% 场景五：数字藏品灯箱大图预览与证书全景弹窗穿透
+    Note over Creator, CertsModal: 场景五：数字藏品灯箱预览与证书全景
+    Creator->>AssetCenter: 在【我的数字藏品】点击某张 NFT 藏品卡片
+    AssetCenter->>Lightbox: 唤起全屏图片预览灯箱 (modal-preview-lightbox)，高清大图展示
+    Creator->>AssetCenter: 点击【我的数字藏品】标题栏「查看全部 >」
+    AssetCenter->>CertsModal: 唤起【我的证书与成就 (`modal-my-certs`)】
+    CertsModal-->>Creator: 一站式陈列官方/学院证书（支持点击直达学院证书详情）、成就勋章与数字藏品
+
+    %% 场景六：常用功能 8 宫格快捷面板业务响应
+    Note over Creator, AssetCenter: 场景六：常用功能 8 宫格快捷分发调度
+    alt 点击「积分兑换」
+        Creator->>AssetCenter: 点击常用功能「积分兑换」
+        AssetCenter-->>Creator: 自动平滑切换至资产明细「AI积分」Tab，提示「已定位 AI 积分明细」
+    else 点击「赞赏记录」/「合作账单」/「发票管理」
+        Creator->>AssetCenter: 点击常用功能「发票管理」
+        AssetCenter-->>Creator: 自动切换至「收入」Tab，提示「已打开收入明细 · 发票管理」
+    else 点击「礼品卡」/「优惠券」
+        Creator->>AssetCenter: 点击常用功能「礼品卡」
+        AssetCenter-->>Creator: 呼出帮助中心 FAQ 弹窗 (modal-help-faq)，展示卡券说明
+    else 点击「更多功能」
+        Creator->>AssetCenter: 点击常用功能「更多功能」
+        AssetCenter-->>Creator: 呼出等级特权弹窗 (modal-level-perks)
+    end
+```
+
+### 专属普惠算力特权充值专项时序图（账户余额扣款 · 场景七）
+
+> 本场景对应 §一「专属普惠算力特权充值」与「全站统一余额支付口径」。核心约束：**算力充值一律从账户余额扣款，不直连微信 / 支付宝 / 银联**——账户余额的唯一入金口 `modal-account-recharge` 亦已收敛为「已绑定本人同名借记卡协议代扣」，全站现仅 Pro 会员订阅保留 `modal-pro-pay-qr` 扫码通道；余额不足时统一经 `modal-balance-insufficient` 引导充值后重试。
+> 遵循全局「双轨积分解耦飞轮」：算力充值只进 AI 积分算力池（消费型），创作积分成长池（信用型）只增不减、严禁任何形式充值。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Creator as 创作者 / OPC主理人
+    participant AssetCenter as 我的资产系统前端
+    participant ComputeModal as 算力充值弹窗 (modal-compute-recharge)
+    participant InsufficientModal as 余额不足引导弹窗 (modal-balance-insufficient)
+    participant RechargeModal as 人民币账户充值弹窗 (modal-account-recharge)
+    participant ProModal as 开通 Pro 弹窗 (modal-pro)
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景七 A：账户余额扣款式算力充值
+    Note over Creator, Ledger: 场景七 A：算力特权充值 —— 仅由账户余额扣款
+    Creator->>AssetCenter: 在【专属普惠算力特权】中枢点击「充值算力 >」
+    AssetCenter->>ComputeModal: 唤起算力充值弹窗 (modal-compute-recharge)
+    ComputeModal->>Ledger: 读取可用余额 (¥5,320.50) 与算力池储备 (2,340.00 AI 积分)
+    Ledger-->>ComputeModal: 返回余额与算力池现状，以及 Pro 会员折扣资格
+    ComputeModal-->>Creator: 展示 4 折算力包 (¥40·100点 / ¥200·500点 / ¥400·1,000点 / ¥2,000·5,000点)
+    Note over ComputeModal, Creator: 弹窗内不出现微信 / 支付宝 / 银联等外部支付通道
+
+    %% 场景七 B：余额充足时的扣款与入账
+    Note over Creator, Ledger: 场景七 B：余额充足 —— 直接扣减账户余额并注入算力池
+    alt 应付金额 ≤ 可用余额
+        Creator->>ComputeModal: 选择 ¥40 档位 (4 折 100 算力点) 并确认充值
+        ComputeModal->>Ledger: 扣减可提现余额 ¥40.00，账户总额同步减少
+        ComputeModal->>Ledger: 算力池储备增至 2,440.00，写入「算力充值-账户余额扣款」支出流水
+        Ledger-->>AssetCenter: 账户余额卡片与「AI 积分」卡片、明细 Tab 实时刷新
+        ComputeModal-->>Creator: 弹出 Toast:「充值成功，100 算力点已到账（账户余额扣款 ¥40.00）」
+    %% 场景七 C：余额不足时的统一引导
+    else 应付金额 > 可用余额
+        ComputeModal->>InsufficientModal: 唤起余额不足引导弹窗 (modal-balance-insufficient)
+        InsufficientModal-->>Creator: 展示应付金额 / 当前可用余额 / 尚缺金额，提示充值后再试
+        Creator->>InsufficientModal: 点击「去充值 >」
+        InsufficientModal->>RechargeModal: 唤起人民币账户充值弹窗 (modal-account-recharge)
+        Creator->>RechargeModal: 选择渠道与金额完成入金
+        RechargeModal-->>ComputeModal: 充值到账，返回算力充值弹窗并刷新可用余额
+        Creator->>ComputeModal: 余额充足后重新确认充值
+    end
+
+    %% 场景七 D：非 Pro 会员的折扣提升引导
+    Note over Creator, ProModal: 场景七 D：Pro 会员折扣提升引导
+    Creator->>ComputeModal: 非 Pro 会员查看档位价目
+    ComputeModal-->>Creator: 展示「开通 Pro 会员享额外 10% 算力加赠，年费 ¥699 立省 ¥477」
+    Creator->>ComputeModal: 点击「立即开通 Pro」
+    ComputeModal->>ProModal: 唤起开通 Pro 弹窗 (modal-pro)
+    Note over ProModal, Ledger: Pro 开通同样走账户余额支付口径，开通成功后返回算力弹窗刷新折扣
+
+    %% 场景七 E：双轨积分红线
+    Note over Creator, Ledger: 场景七 E：双轨积分红线 —— 创作积分严禁充值
+    Creator->>AssetCenter: 在【创作积分（可用）】卡片寻找充值入口
+    AssetCenter-->>Creator: 明确提示:「创作积分只能通过课节打卡 (+30)、证书领取 (+100)、商单五星好评等正面行为累积，只增不减，不支持任何形式充值」
+    Note over AssetCenter, Ledger: 充值通道只对接 AI 积分算力池 (消费型生产资料)，与创作积分成长池 (信用型等级资产) 严格解耦
+```
+
+### 人民币账户充值专项时序图（仅限已绑定的本人同名借记卡 · 场景八）
+
+> 本场景对应 §一「人民币账户充值」，定位为**独立于任务发布的通用现金入金通道**：个人创作者与发包企业均可将人民币充入账户余额，充值即时提升账户总额与可提现余额，不绑定任何发布动作。
+> **硬口径（2026-09-22 收敛）**：充值**只能经「已在【安全设置】绑定的本人同名借记卡」协议代扣**完成——聚合支付（微信 / 支付宝）与银联对公转账渠道已整体下线，**不接受临时输入卡号**。
+> 代码现状备注：`modal-account-recharge` **已实现**（入口为【账户余额】卡片副行的【去充值 >】）；扫码型外部支付通道现仅存于 Pro 会员订阅的 `modal-pro-pay-qr`。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 个人创作者 / 发包企业
+    participant AssetCenter as 我的资产系统前端
+    participant RechargeModal as 人民币账户充值弹窗 (modal-account-recharge)
+    participant CardLedger as 银行卡台账 (bankCards)
+    participant BankChannel as 银行借记卡代扣通道
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景八 A：个人创作者发起人民币账户充值
+    Note over User, Ledger: 场景八 A：个人创作者发起人民币账户充值
+    User->>AssetCenter: 在【账户余额】卡片点击「去充值 >」
+    AssetCenter->>RechargeModal: 唤起人民币账户充值弹窗 (modal-account-recharge)
+    RechargeModal->>Ledger: 读取账户总额 (¥6,820.50) 与可提现余额 (¥5,320.50)
+    Ledger-->>RechargeModal: 返回账户余额构成 (总额 = 可提现余额 + 冻结金额 ¥1,500.00)
+    RechargeModal->>CardLedger: 读取已绑定银行卡并逐张核验可用性
+    CardLedger-->>RechargeModal: 返回卡列表；信用卡与异名卡置灰并标注不可用原因
+    RechargeModal-->>User: 展示合规口径 chips、充值银行卡下拉、快捷档位与自定义金额
+    User->>RechargeModal: 选择 ¥1,000 档位，选定已绑定的本人同名借记卡并确认充值
+    RechargeModal->>BankChannel: 经该借记卡发起协议代扣
+    BankChannel-->>RechargeModal: 扣款成功回调，T+0 实时到账
+    RechargeModal->>Ledger: 账户总额增至 ¥7,820.50，可提现余额增至 ¥6,320.50
+    RechargeModal->>Ledger: 写入「人民币账户充值 (发卡行 借记卡 尾号 XXXX)」收入流水 (category 归入「收入」Tab)
+    Ledger-->>AssetCenter: 账户余额卡片与资产明细列表实时刷新
+    RechargeModal-->>User: 弹出 Toast:「充值成功，¥1,000.00 已由该借记卡扣款入账」
+
+    %% 场景八 B：未绑定可用借记卡时就地绑卡后充值
+    Note over User, CardLedger: 场景八 B：未绑卡时就地绑卡再充值
+    User->>RechargeModal: 名下暂无已绑定借记卡，点击「+ 绑定银行卡 >」
+    RechargeModal->>CardLedger: 唤起绑定银行卡弹窗，经实名与借记卡校验链后写入台账
+    CardLedger-->>RechargeModal: 绑卡成功，充值银行卡下拉与可用卡数同源刷新
+    User->>RechargeModal: 选定新绑定的借记卡并确认充值
+    RechargeModal->>BankChannel: 经新卡发起协议代扣
+    BankChannel-->>RechargeModal: 扣款成功回调，T+0 实时到账
+    RechargeModal->>Ledger: 账户总额与可提现余额同步增加，写入「人民币账户充值」流水
+    Ledger-->>AssetCenter: 刷新账户余额卡片，同步至「发票管理」记录
+
+    %% 场景八 C：账户余额构成与提现口径
+    Note over User, Ledger: 场景八 C：账户余额构成与提现口径
+    User->>AssetCenter: 查看【账户余额】卡片
+    AssetCenter-->>User: 展示总额 ¥7,820.50 / 可提现余额 ¥6,320.50 / 冻结金额 ¥1,500.00
+    Note over AssetCenter, Ledger: 冻结金额为进行中商单托管款，不允许提现；充值入金实时计入可提现余额
+
+    %% 场景八 D：与业务动作及双轨积分解耦
+    Note over User, Ledger: 场景八 D：充值独立于业务流程与双轨积分
+    User->>RechargeModal: 询问充值是否附带积分或影响发布 / 接单资格
+    RechargeModal-->>User: 明确提示:「人民币充值为纯现金账户入金，不产生任何 AI 积分或创作积分，也不改变任务发布与接单资格」
+```
+
+### 全站统一余额支付与余额不足引导专项时序图（场景九）
+
+> 本场景对应 §一「全站统一余额支付口径（购买类行为唯一支付源）」。适用于**全部购买类行为**：算力特权充值、学院付费课程选购。
+> **边界**：**【Pro 会员】订阅已从本口径中剥离**（改由独立订阅扫码通道承接，见场景十一），本图不含订阅业务。
+> **铁律**：账户余额的唯一入金口是 `modal-account-recharge` 的**「已绑定本人同名借记卡协议代扣」**——全站已不存在任何以 `<option>` 下拉形式陈列外部支付通道的入口；扫码型外部通道仅保留在 Pro 会员订阅的 `modal-pro-pay-qr`，任何购买入口均不得出现。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 创作者 / 发包企业
+    participant Page as 业务页面 (算力充值弹窗 / 课程详情页)
+    participant PayEngine as 统一余额支付引擎 (App.payFromAccountBalance)
+    participant InsufficientModal as 余额不足引导弹窗 (modal-balance-insufficient)
+    participant RechargeModal as 人民币账户充值弹窗 (modal-account-recharge)
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景九 A：统一支付入口与余额比对
+    Note over User, Ledger: 场景九 A：任何购买行为统一进入余额支付引擎
+    User->>Page: 在任一购买入口点击确认 (算力充值 / 开通 Pro / 选购课程)
+    Page->>PayEngine: 提交应付金额与订单名称
+    PayEngine->>Ledger: 读取可用余额 (可提现余额 ¥5,320.50)
+    Ledger-->>PayEngine: 返回可用余额
+
+    %% 场景九 B：余额充足 —— 扣款记账
+    Note over User, Ledger: 场景九 B：余额充足 —— 直接扣款并写入支出流水
+    alt 可用余额 ≥ 应付金额
+        PayEngine->>Ledger: 扣减可提现余额与账户总额，不产生冻结额
+        PayEngine->>Ledger: 写入「支出」流水，状态标记为 已完成
+        Ledger-->>Page: 刷新余额卡片与明细账本
+        PayEngine-->>User: 弹出 Toast 提示支付成功与剩余余额
+    %% 场景九 C：余额不足 —— 统一引导充值
+    else 可用余额 < 应付金额
+        PayEngine->>InsufficientModal: 唤起余额不足引导弹窗 (modal-balance-insufficient)
+        InsufficientModal-->>User: 展示应付金额 / 当前可用余额 / 尚缺金额三项
+        alt 用户选择去充值
+            User->>InsufficientModal: 点击「去充值 >」
+            InsufficientModal->>RechargeModal: 唤起人民币账户充值弹窗 (modal-account-recharge)
+            User->>RechargeModal: 完成入金，账户余额提升
+            RechargeModal-->>Page: 返回业务页面并刷新可用余额，可重新发起购买
+        else 用户暂不充值
+            User->>InsufficientModal: 点击「稍后再说」
+            InsufficientModal-->>User: 关闭引导弹窗，业务页面保持原状态不做任何扣款
+        end
+    end
+
+    %% 场景九 D：支付口径一致性约束
+    Note over Page, Ledger: 场景九 D：支付口径约束 —— 所有购买入口均不得直连外部支付通道
+```
+
+### 发票管理专项时序图（充值后开票 · 场景十）
+
+> 本场景对应 §一「发票管理」：人民币账户**充值完成后**，个人创作者与发包企业均可对充值记录申请开具增值税发票。
+> 入口有三处：常用功能「发票管理」、OPC 基础设施「增值税专票代开」、充值成功后的 Toast 引导。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 个人创作者 / 发包企业
+    participant AssetCenter as 我的资产系统前端
+    participant InvoiceModal as 发票管理弹窗 (modal-invoice)
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景十 A：进入发票管理并查看可开票充值记录
+    Note over User, Ledger: 场景十 A：进入发票管理，查看可开票充值记录
+    User->>AssetCenter: 点击常用功能「发票管理」或【增值税专票代开】卡片
+    AssetCenter->>InvoiceModal: 唤起发票管理弹窗 (modal-invoice)
+    InvoiceModal->>Ledger: 读取「人民币账户充值」流水与开票记录
+    Ledger-->>InvoiceModal: 返回可开票记录 (充值时间 / 渠道 / 金额 / 开票状态)
+    InvoiceModal-->>User: 按时间倒序展示记录，未开票金额与已开票金额分别汇总
+
+    %% 场景十 B：选择发票类型与抬头
+    Note over User, InvoiceModal: 场景十 B：选择发票类型、填写抬头信息
+    User->>InvoiceModal: 选择发票类型「增值税普通发票」或「增值税专用发票」
+    InvoiceModal-->>User: 选择专票时自动将抬头类型锁定为企业并展开纳税人识别号输入
+    User->>InvoiceModal: 选择待开票充值记录，填写抬头、税号与接收邮箱
+    InvoiceModal->>InvoiceModal: 校验开票金额 ≤ 所选记录金额，专票须填写企业与税号
+
+    %% 场景十 C：提交开票申请
+    Note over User, Ledger: 场景十 C：提交开票申请并回写开票状态
+    User->>InvoiceModal: 点击「提交开票申请」
+    InvoiceModal->>Ledger: 所选记录状态由 未开票 更新为 已开票，写入开票记录
+    Ledger-->>AssetCenter: 刷新发票管理记录列表与汇总金额
+    InvoiceModal-->>User: 提示「发票申请已提交，电子发票将于 3 个工作日内推送至预留邮箱」
+
+    %% 场景十 D：充值成功后的开票引导
+    Note over AssetCenter, InvoiceModal: 场景十 D：充值成功后的开票引导
+    AssetCenter-->>User: 人民币账户充值成功 Toast 追加「可在【发票管理】开具发票」指引
+    User->>InvoiceModal: 顺着指引进入发票管理，完成当月充值统一开票
+```
+
+### Pro 会员开通与续费专项时序图（独立订阅结算 · 场景十一）
+
+> 本场景对应 §一「支付边界划分（余额支付 vs 会员订阅独立结算）」与 §五 第 7 条联动。核心约束：**Pro 会员订阅是与账户余额完全解耦的独立结算通道**——开通与续费全程**不扣账户余额、不产生冻结金额、不写入资产交易明细账本**，订阅订单仅登记在 `MockData.systemAdmin.membership.orders`。
+> 付费业务的归属方是【用户管理】（业务定义见 `用户管理设计.md` §二 场景四）；本图只描述**从我的资产侧发起的入口、会员信息回显口径与资金结算边界**。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Creator as 创作者 / OPC主理人
+    participant AssetCenter as 我的资产系统前端
+    participant ProModal as 开通 Pro 弹窗 (modal-pro)
+    participant PayQrModal as 订阅扫码支付弹窗 (modal-pro-pay-qr)
+    participant PayChannel as 扫码支付通道 (微信支付 / 支付宝)
+    participant Membership as 会员信息仓 (MockData.systemAdmin.membership)
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景十一 A：从我的资产侧发起 Pro 会员开通
+    Note over Creator, ProModal: 场景十一 A：从我的资产侧发起 Pro 会员开通
+    Creator->>AssetCenter: 点击侧栏 Pro 入口卡 (pro-widget-card) 的「立即开通」
+    AssetCenter->>ProModal: 唤起开通 Pro 弹窗 (modal-pro)
+    AssetCenter->>ProModal: 渲染会员状态条 (pro-subscribe-strip) 与结算边界说明
+    ProModal-->>Creator: 展示「未开通 · 会员订阅为独立结算通道，扫码支付成功后 Pro 特权即时生效」
+
+    %% 场景十一 B：订阅方案二选一
+    Note over Creator, ProModal: 场景十一 B：订阅方案二选一（年费会员 / 月度订阅）
+    Creator->>ProModal: 选择【年费会员 ¥699 / 年】或【月度订阅 ¥98 / 月】
+    ProModal->>ProModal: 高亮所选方案卡片 (pro-plan-year / pro-plan-month)
+    Note over ProModal, Creator: 弹窗内不出现账户余额读数，也不出现任何外部支付通道下拉
+
+    %% 场景十一 C：生成订阅订单并唤起付款二维码
+    Note over Creator, PayChannel: 场景十一 C：生成订阅订单，唤起付款二维码
+    Creator->>ProModal: 点击「立即开通 Pro 会员」
+    ProModal->>Membership: 读取当前会员等级与到期日，判断本次是开通还是续费
+    Membership-->>ProModal: 返回当前状态，并推算结算后的新到期日
+    ProModal->>PayQrModal: 生成 PRO 订阅订单并唤起扫码弹窗 (modal-pro-pay-qr)
+    PayQrModal-->>Creator: 展示订单号 / 应付金额 / 新到期日 / 15 分钟支付倒计时
+    PayQrModal->>PayQrModal: 渲染付款二维码 (pro-qr-frame)，图案由订单号与支付渠道共同派生
+
+    %% 场景十一 D：切换扫码渠道
+    Note over Creator, PayQrModal: 场景十一 D：切换扫码渠道，二维码即时重绘
+    Creator->>PayQrModal: 在渠道行 (pro-qr-channel-row) 点击「微信支付」或「支付宝」
+    PayQrModal->>PayQrModal: 渠道徽标与二维码图案重新派生并重绘
+
+    %% 场景十一 E：支付成功回调
+    Note over Creator, Membership: 场景十一 E：支付成功回调 —— 更新会员信息并打标 Pro
+    Creator->>PayQrModal: 完成扫码付款后点击「我已完成支付」
+    PayQrModal->>PayChannel: 校验支付结果
+    PayChannel-->>PayQrModal: 支付成功，返回支付流水号
+    PayQrModal->>Membership: 会员等级打标为 Pro，写入订阅方案与到期时间
+    PayQrModal->>Membership: 登记订阅订单 (状态 已支付 · 结算通道 会员订阅独立结算)
+    Note over Membership, Ledger: 订阅订单只进 membership.orders，不写入资产交易明细账本
+
+    %% 场景十一 F：三处展示位回显会员与到期时间
+    Note over Creator, Ledger: 场景十一 F：会员信息与 Pro 到期时间回显（三处展示位）
+    PayQrModal-->>AssetCenter: 统一刷新 Pro 相关全部展示位
+    AssetCenter-->>Creator: 资产页个人中心资料条 (assets-profile-hub) 点亮金色 PRO 徽章并展示有效期至与剩余天数
+    AssetCenter-->>Creator: 侧栏 Pro 入口卡 (pro-widget-card) 切换为会员卡并展示有效期至
+    AssetCenter-->>Creator: 会员状态条 (pro-subscribe-strip) 展示「PRO 生效中 · 有效期至」
+
+    %% 场景十一 G：续费在原到期日基础上顺延
+    Note over Creator, Membership: 场景十一 G：续费 —— 在原到期日基础上顺延
+    Creator->>AssetCenter: 在侧栏 Pro 入口卡点击「续费 / 管理」
+    AssetCenter->>ProModal: 再次唤起开通 Pro 弹窗 (modal-pro)，展示当前方案与有效期至
+    Creator->>ProModal: 选择月度订阅并再次点击「立即开通 Pro 会员」
+    ProModal->>Membership: 已是 Pro 且未过期，则在原到期日基础上顺延 30 天
+    Membership-->>Creator: 支付成功后回显新的到期日与剩余天数
+
+    %% 场景十一 H：取消订单与支付超时
+    Note over Creator, PayQrModal: 场景十一 H：取消订单与支付超时失效
+    alt 用户主动取消
+        Creator->>PayQrModal: 点击「取消订单」
+        PayQrModal-->>Creator: 关闭扫码弹窗并作废当前订阅订单，会员状态保持原样
+    else 15 分钟未完成支付
+        PayQrModal->>PayQrModal: 倒计时归零，订单自动失效并关闭扫码弹窗
+        PayQrModal-->>Creator: 提示支付超时，需重新发起开通
+    end
+
+    %% 场景十一 I：结算边界红线
+    Note over Creator, Ledger: 场景十一 I：结算边界红线 —— 会员订阅不占用账户余额
+    Creator->>AssetCenter: 查看【账户余额】卡片
+    AssetCenter-->>Creator: 总额 / 可提现余额 / 冻结金额三项与订阅前完全一致
+    Note over AssetCenter, Ledger: 会员订阅不动账户余额、不产生冻结额、不写入资产流水；「总额 = 可提现 + 冻结」恒等式始终成立
+```
+
+### 商单资金托管库 · 托管进度专项时序图（按冻结时间倒序 · 场景十二）
+
+> 本场景对应 §一「商单资金托管库 · 托管进度明细」。核心口径：以**当前商户**为主体，列表**按冻结时间倒序**展示名下**全部托管项目及每个项目冻结的金额**；所有**进行中项目**的冻结金额之和**恒等于资产卡「冻结金额」**，并与资产明细中 `托管中` 的支流水通过 `txId` 一一对应。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 当前商户 (创作者 / 主理人)
+    participant AssetCenter as 我的资产系统前端
+    participant EscrowModal as 托管进度弹窗 (modal-escrow-progress)
+    participant TaskMarket as 任务广场
+    participant Ledger as 资产数据账本 (MockData.assets)
+
+    %% 场景十二 A：打开托管进度
+    Note over User, Ledger: 场景十二 A：从托管库卡片打开托管进度
+    User->>AssetCenter: 点击 OPC 基础设施「商单资金托管库」卡片或【查看托管进度 >】
+    AssetCenter->>EscrowModal: 唤起托管进度弹窗 (modal-escrow-progress)
+
+    %% 场景十二 B：读取台账并按冻结时间倒序渲染
+    Note over EscrowModal, Ledger: 场景十二 B：读取托管台账，按冻结时间倒序渲染
+    EscrowModal->>Ledger: 读取当前商户名下全部托管项目，含冻结金额与冻结时间
+    Ledger-->>EscrowModal: 返回项目名称 / 商单号 / 交易对手 / 冻结金额 / 冻结时间 / 托管状态 / 履约进度
+    EscrowModal->>EscrowModal: 按冻结时间倒序排序，最新冻结的项目排在最上方
+    EscrowModal-->>User: 列表逐项标注冻结金额与冻结时间，并渲染履约进度条与结算规则
+
+    %% 场景十二 C：汇总条口径
+    Note over User, Ledger: 场景十二 C：汇总条口径与资产卡冻结金额同源
+    EscrowModal->>Ledger: 汇总进行中项目冻结合计、项目数与累计已结算金额
+    Ledger-->>EscrowModal: 返回托管中金额 ¥1,500.00 · 进行中 4 个 · 累计已结算 ¥4,200.00
+    EscrowModal-->>User: 汇总条三格展示，托管中金额恒等于资产卡「冻结金额」
+
+    %% 场景十二 D：筛选切换
+    Note over User, EscrowModal: 场景十二 D：按托管状态筛选项目
+    User->>EscrowModal: 点击「进行中」或「已结算 / 已退还」胶囊筛选
+    EscrowModal-->>User: 即时过滤列表并回写项目条数
+    User->>EscrowModal: 切回「全部」
+    EscrowModal-->>User: 恢复按冻结时间倒序的全量列表
+
+    %% 场景十二 E：单项目资金与进度穿透
+    Note over User, Ledger: 场景十二 E：单个托管项目穿透
+    User->>EscrowModal: 查看某项目的冻结金额、阶段说明与结算规则
+    EscrowModal-->>User: 展示冻结于何时、当前进度百分比与划转 / 退回规则
+
+    %% 场景十二 F：与发布、验收结算的闭环联动
+    Note over TaskMarket, Ledger: 场景十二 F：与发布、验收结算的闭环联动
+    TaskMarket->>Ledger: 发布商单全额托管冻结，新增一条进行中托管项目
+    Ledger-->>EscrowModal: 托管库列表顶部新增该项目，冻结时间记为刚刚
+    TaskMarket->>Ledger: 买家验收通过，解冻托管赏金并划转创作者
+    Ledger-->>EscrowModal: 对应项目转为已结算，履约进度置为 100%
+    Ledger-->>AssetCenter: 托管库卡片文案与资产卡冻结金额同步刷新
+
+    %% 场景十二 G：口径红线
+    Note over AssetCenter, Ledger: 场景十二 G：进行中项目冻结合计恒等于资产卡冻结金额；已结算 / 已退还项目展示原冻结金额但不计入合计
+```
+
+---
+
+### 申请提现合规四道闸专项时序图（实名 / 同名 / 单笔上限 / 仅限借记卡 · 场景十三）
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 创作者 / OPC主理人
+    participant AssetCenter as 我的资产系统前端
+    participant WithdrawModal as 申请提现弹窗 (modal-withdraw)
+    participant IdentityGate as 实名与账户合规校验层
+    participant BankLedger as 收款卡台账 (bankCards)
+    participant Ledger as 资产数据账本
+
+    %% 场景十三 A：闸一 · 实名前置校验
+    Note over User, IdentityGate: 场景十三 A：闸一 必须已实名
+    User->>AssetCenter: 点击账户余额卡片【去提现 >】或常用功能「提现管理」
+    AssetCenter->>WithdrawModal: 统一经提现入口唤起申请提现弹窗
+    WithdrawModal->>IdentityGate: 读取当前账号实名认证状态
+    alt 未完成实名认证
+        IdentityGate-->>WithdrawModal: 实名状态未通过
+        WithdrawModal-->>User: 实名状态条转红，提示「账户尚未完成实名认证，按监管要求不能提现」
+        User->>WithdrawModal: 点击「确认提现」
+        WithdrawModal-->>User: 拦截出金并自动跳转安全设置实名认证页面
+        Note over WithdrawModal, Ledger: 未实名时出金通道完全关闭，可提现余额与流水零变动
+    else 已完成实名认证
+        IdentityGate-->>WithdrawModal: 实名通过并回带实名姓名
+        WithdrawModal-->>User: 状态条展示已实名姓名与手机号，并声明收款人必须同此姓名
+    end
+
+    %% 场景十三 B：闸二 + 闸四 · 收款账户准入（同名 + 借记卡）
+    Note over WithdrawModal, BankLedger: 场景十三 B：闸二 必须同名提现 · 闸四 仅限借记卡
+    WithdrawModal->>BankLedger: 读取当前商户名下全部收款银行卡
+    BankLedger-->>WithdrawModal: 返回卡列表（银行 / 卡尾号 / 卡类型 / 持卡人）
+    WithdrawModal->>WithdrawModal: 逐张校验 持卡人等于实名姓名 且 卡类型为借记卡
+    WithdrawModal-->>User: 下拉仅同名借记卡可选；信用卡与异名借记卡置灰并标注不可用原因
+    User->>WithdrawModal: 选择本人同名的银行借记卡作为收款账户
+
+    %% 场景十三 C：闸三 · 单笔上限
+    Note over User, WithdrawModal: 场景十三 C：闸三 单笔上限 ¥10,000
+    User->>WithdrawModal: 输入提现金额
+    alt 金额超过单笔上限 ¥10,000
+        WithdrawModal-->>User: 实时提示超限，引导拆分为多笔提现
+    else 金额未超单笔上限
+        WithdrawModal-->>User: 实时提示本次扣减金额与提现后剩余可提现余额
+    end
+
+    %% 场景十三 D：可提现余额校验
+    Note over WithdrawModal, Ledger: 场景十三 D：可提现余额校验（冻结金额不可提现）
+    WithdrawModal->>Ledger: 读取可提现余额与冻结金额构成
+    alt 金额超过可提现余额
+        WithdrawModal-->>User: 拦截并提示超出可提现余额，冻结资金不可提现
+    else 金额未超可提现余额
+        Ledger-->>WithdrawModal: 校验通过，允许进入提交环节
+    end
+
+    %% 场景十三 E：四闸全过 · 扣款出金
+    Note over WithdrawModal, Ledger: 场景十三 E：四道闸全过，扣款出金与记账
+    User->>WithdrawModal: 点击「确认提现」
+    WithdrawModal->>Ledger: 同步扣减可提现余额与账户总额，冻结金额保持不变
+    WithdrawModal->>Ledger: 写入一条「提现到 XX 银行借记卡 (尾号 NNNN)」处理中流水
+    WithdrawModal-->>User: 弹出 Toast 提示已提交、到账时效与收款卡尾号
+    WithdrawModal->>AssetCenter: 关闭弹窗并刷新余额卡片、资产构成与明细列表
+
+    %% 场景十三 F：口径红线
+    Note over AssetCenter, Ledger: 场景十三 F：账户总额 − 可提现余额 = 冻结金额；提现永不触碰托管冻结款，收款渠道仅限本人同名的银行借记卡
+```
+
+---
+
+### 银行卡绑定与换绑专项时序图（仅支持本人同名借记卡 · 场景十四）
+
+> **两条硬口径**：①「**只支持借记卡绑定**」——信用卡与国际卡组织卡号段一律不许绑定；②「**必须完成实名认证后方可绑定**」——未实名时入口置灰、提交被拦截并自动跳转实名认证。
+> 本图侧重**从【前往安全设置】进入「银行卡管理」分区后发起的绑定 / 换绑全链路**（资产主面板不陈列银行卡明细），与场景十三（提现四道闸）共用同一份银行卡台账，互为闭环。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 创作者 / OPC主理人
+    participant AssetCenter as 我的资产主面板 (my assets)
+    participant SecurityModal as 安全设置弹窗 (modal-security-settings)
+    participant BankCardModal as 绑定与换绑弹窗 (modal-bank-card-bind)
+    participant IdentityGate as 实名与账户合规校验层
+    participant BinTable as 银联 BIN 号段识别表 (bankBinTable)
+    participant SmsChannel as 实名预留手机号短信通道
+    participant BankLedger as 银行卡台账 (bankCards)
+
+    %% 场景十四 A：入口与列表
+    Note over User, BankLedger: 场景十四 A：经【前往安全设置】进入「银行卡管理」分区查看已绑定卡
+    User->>AssetCenter: 在资产安全中心主面板点击【前往安全设置 >】（主面板不陈列银行卡明细）
+    AssetCenter->>SecurityModal: 唤起安全设置弹窗 (modal-security-settings)
+    SecurityModal->>BankLedger: 读取当前商户名下全部绑定卡
+    BankLedger-->>SecurityModal: 返回卡台账
+    SecurityModal-->>User: 「银行卡管理」分区展示已绑定卡列表（卡号掩码 / 发卡行 / 卡种 / 持卡人 / 绑定日期 / 状态标签）与「共 N 张 · 其中 M 张可用」提示
+    SecurityModal-->>User: 合规卡标「可用」；不合规存量卡（信用卡 / 异名卡）标「非借记卡 / 非本人卡」并给出「去换绑」主操作
+    User->>SecurityModal: 点击【+ 绑定新银行卡】（或某张卡的【换绑】）
+    SecurityModal->>BankCardModal: 唤起绑定 / 换绑弹窗，换绑模式额外回显待换绑原卡
+
+    %% 场景十四 B：闸一 必须已实名
+    Note over BankCardModal, IdentityGate: 场景十四 B：闸一 必须已实名
+    BankCardModal->>IdentityGate: 读取当前账号实名认证状态
+    alt 未完成实名认证
+        IdentityGate-->>BankCardModal: 实名状态未通过
+        BankCardModal-->>User: 状态条转红、提交按钮置灰，提示「账户尚未完成实名认证，按监管要求不能绑定银行卡」
+        User->>BankCardModal: 点击「确认绑定」
+        BankCardModal-->>User: 拦截并自动跳转安全设置实名认证页；银行卡台账零变动
+    else 已完成实名认证
+        IdentityGate-->>BankCardModal: 实名通过并回带实名姓名与预留手机号
+        BankCardModal-->>User: 状态条展示已实名姓名与手机号，持卡人姓名预填为该实名姓名
+    end
+
+    %% 场景十四 C：闸二 必须本人同名卡
+    Note over User, BankCardModal: 场景十四 C：闸二 仅限本人卡
+    User->>BankCardModal: 填写持卡人姓名
+    alt 持卡人与实名姓名不一致或留空
+        BankCardModal-->>User: 拦截并提示仅支持绑定本人银行卡
+    else 持卡人与实名姓名一致
+        BankCardModal-->>User: 通过同名校验，进入卡号识别环节
+    end
+
+    %% 场景十四 D：闸三 + 闸四 卡号识别与仅限借记卡
+    Note over BankCardModal, BinTable: 场景十四 D：闸三 卡号校验 · 闸四 仅限借记卡
+    User->>BankCardModal: 输入银行卡号（16-19 位）
+    BankCardModal->>BankCardModal: 校验位数并执行 Luhn 校验
+    BankCardModal->>BinTable: 按最长前缀匹配识别发卡行与卡种
+    alt 卡号位数 / Luhn 校验未通过
+        BankCardModal-->>User: 提示卡号格式校验未通过，请核对卡号
+    else 卡号识别为信用卡或国际卡组织号段
+        BankCardModal-->>User: 拦截并提示「为信用卡，仅支持绑定银行借记卡（储蓄卡）」
+    else 卡号识别为境内银联借记卡
+        BinTable-->>BankCardModal: 回带发卡行与卡种，界面实时展示识别结论
+        BankCardModal-->>User: 提示识别出发卡行、卡种与卡尾号，可用于绑定与提现
+    end
+
+    %% 场景十四 E：闸五 短信验证码
+    Note over BankCardModal, SmsChannel: 场景十四 E：闸五 短信验证码校验持卡人手机号
+    User->>BankCardModal: 点击「获取验证码」
+    BankCardModal->>SmsChannel: 向实名预留手机号下发 6 位验证码
+    SmsChannel-->>User: 收到短信验证码
+    User->>BankCardModal: 填写验证码并点击「确认绑定 / 确认换绑」
+    BankCardModal->>BankCardModal: 比对验证码
+    alt 未获取验证码 / 位数不足 / 验证码不正确
+        BankCardModal-->>User: 拦截并给出对应的验证码校验失败原因
+    else 验证码校验通过
+        BankCardModal-->>User: 允许进入落库环节
+    end
+
+    %% 场景十四 F：落库与两处回显
+    Note over BankCardModal, BankLedger: 场景十四 F：写入台账并同步刷新两处展示位
+    alt 绑定模式
+        BankCardModal->>BankLedger: 新增一条绑定卡记录（发卡行 / 卡号 / 卡种 / 持卡人 / 支行 / 绑定日期）
+    else 换绑模式
+        BankCardModal->>BankLedger: 用新卡信息替换原卡（卡位复用，不新增卡位；默认结算标记保留）
+        BankLedger-->>User: 原卡即刻解绑，收款账户切换为新卡
+    end
+    BankCardModal->>SecurityModal: 关闭绑卡弹窗并刷新安全设置「银行卡管理」列表与「共 N 张 · 其中 M 张可用」提示
+    BankCardModal->>AssetCenter: 同步刷新提现弹窗的收款账户下拉（新卡立即可选）
+    BankCardModal-->>User: 弹出 Toast 提示绑定 / 换绑成功并回带新卡发卡行与尾号
+
+    %% 场景十四 G：解绑与默认卡
+    Note over User, BankLedger: 场景十四 G：在「银行卡管理」分区设为默认结算卡与解绑
+    User->>SecurityModal: 点击某张可用卡的【设为默认】
+    SecurityModal->>BankLedger: 将该卡置为默认结算卡，其余卡取消默认
+    User->>SecurityModal: 点击某张非默认卡的【解绑】并二次确认
+    alt 目标卡为默认结算卡
+        SecurityModal-->>User: 拒绝解绑并提示「默认结算卡不可解绑，请先换绑其他卡并设为默认」
+    else 目标卡为非默认卡
+        SecurityModal->>BankLedger: 从台账移除该卡
+        SecurityModal-->>User: 解绑成功，提现收款账户下拉同步收敛
+    end
+
+    %% 场景十四 H：资金口径红线
+    Note over AssetCenter, BankLedger: 场景十四 H：绑定 / 换绑 / 解绑均不触碰账户余额、不产生冻结额、不写入资产流水；「总额 = 可提现 + 冻结」恒等式始终成立
+```
+
+---
+
+## 三、 全生命周期业务/任务状态机
+
+```mermaid
+stateDiagram-v2
+    [*] --> 资产账户建立: 创作者建档并加载资产大盘
+    
+    state 核心资产账户状态机 {
+        [*] --> 现金资产流: 账户余额 (¥6,820.50) / 可提现余额 (¥5,320.50)
+        [*] --> 商业收益流: 累计变现 (¥12,680.30) / 本月预估 (¥2,680.30)
+        [*] --> 创作积分成长流: 可用 2,680 积分 (驱动 Lv.1~Lv.5 等级)
+        [*] --> AI积分算力流: 算力池储备 2,340.00 积分 (工具消耗)
+    }
+
+    state 提现业务生命周期 {
+        [*] --> 余额充足: 可提现余额 > 0
+        余额充足 --> 唤起提现弹窗: 点击「去提现」打开 modal-withdraw
+        唤起提现弹窗 --> 实名前置校验: 闸一 必须已实名
+        实名前置校验 --> 未实名_拦截出金: 实名认证未通过
+        未实名_拦截出金 --> 安全设置实名认证: 自动跳转安全设置完成实名
+        安全设置实名认证 --> 实名前置校验: 实名通过后返回重试
+        实名前置校验 --> 收款账户准入校验: 实名认证通过
+        收款账户准入校验 --> 卡片不可用_置灰标注: 闸二 持卡人与实名不一致，或闸四 卡类型非借记卡
+        卡片不可用_置灰标注 --> 收款账户准入校验: 改选本人同名的银行借记卡
+        收款账户准入校验 --> 金额合规校验: 选中同名借记卡作为收款账户
+        金额合规校验 --> 超单笔上限_拦截: 闸三 金额 > ¥10,000
+        金额合规校验 --> 超可提现余额_拦截: 金额 > 可提现余额
+        超单笔上限_拦截 --> 金额合规校验: 拆分为多笔后重新输入
+        超可提现余额_拦截 --> 金额合规校验: 下调金额后重新输入
+        金额合规校验 --> 四闸全过_提交申请: 金额有效且未超单笔上限与可提现余额
+        四闸全过_提交申请 --> 扣减可提现余额: 可提现余额与账户总额同步扣减，冻结额不动
+        扣减可提现余额 --> 写入提现流水: 明细账本生成「提现-处理中」记录
+        写入提现流水 --> 提现到账结清: T+0 实时到账本人同名借记卡
+    }
+
+    state 人民币账户充值生命周期 {
+        [*] --> 账户余额构成核算: 账户总额 = 可提现余额 + 冻结金额
+        账户余额构成核算 --> 发起人民币账户充值: 点击账户余额卡片【去充值 >】打开 modal-account-recharge
+        发起人民币账户充值 --> 充值三闸校验: ① 必须已实名 ② 只能选已绑定的本人同名借记卡 ③ 仅限借记卡
+        充值三闸校验 --> 无可用借记卡_就地绑卡: 未绑卡或仅有信用卡 / 异名卡
+        无可用借记卡_就地绑卡 --> 充值三闸校验: 绑卡成功后下拉与可用卡数同源刷新，回到充值
+        充值三闸校验 --> 选择充值金额: 三闸全过，已选定可用借记卡
+        选择充值金额 --> 充值到账余额提升: 经该卡协议代扣成功，账户总额与可提现余额同步增加
+        充值到账余额提升 --> 写入充值收入流水: 明细账本生成「人民币账户充值 (发卡行 借记卡 尾号 XXXX)」收入记录
+        写入充值收入流水 --> 账户余额构成核算: 刷新账户余额卡片与资产明细列表
+    }
+
+    state 商单资金托管项目生命周期 {
+        [*] --> 托管项目建立: 发布商单或发起定制时全额冻结，登记冻结金额与冻结时间
+        托管项目建立 --> 招募选拔中: 任务上架大厅等待创作者报名
+        招募选拔中 --> 履约中: 选定创作者并进入履约制作
+        招募选拔中 --> 已退还_流标退回: 选拔截止未选定，托管资金全额原路退回
+        履约中 --> 待验收: 创作者提交交付物，买家 72 小时验收倒计时
+        待验收 --> 返修中: 买家驳回，返修期间托管赏金继续冻结
+        返修中 --> 待验收: 创作者重新提交交付物
+        待验收 --> 已结算_赏金划转: 验收通过，解冻赏金并划转创作者
+        已结算_赏金划转 --> [*]
+    }
+
+    state 全站余额支付与余额不足引导生命周期 {
+        [*] --> 发起购买行为: 算力充值 / 选购付费课程
+        发起购买行为 --> 可用余额比对: 统一经统一余额支付引擎校验
+        可用余额比对 --> 余额充足_扣款完成: 应付金额 ≤ 可用余额
+        可用余额比对 --> 余额不足_引导充值: 应付金额 > 可用余额
+        余额充足_扣款完成 --> 写入支出流水: 扣减可提现余额与账户总额，不产生冻结额
+        写入支出流水 --> 业务能力即时生效: 算力点入池 / 付费课程解锁
+        余额不足_引导充值 --> 唤起余额不足引导弹窗: 打开 modal-balance-insufficient
+        唤起余额不足引导弹窗 --> 发起人民币账户充值: 点击【去充值 >】跳转 modal-account-recharge
+        发起人民币账户充值 --> 可用余额比对: 充值到账后返回原弹窗重新校验
+        唤起余额不足引导弹窗 --> 放弃购买_无扣款: 点击稍后再说，业务保持原状态
+    }
+
+    state Pro会员订阅结算生命周期 {
+        [*] --> 未开通状态: 会员等级为免费版，资产页不展示 PRO 徽章
+        未开通状态 --> 订阅方案已选择: 打开 modal-pro 选择年费会员或月度订阅
+        订阅方案已选择 --> 扫码待支付: 生成 PRO 订阅订单并唤起 modal-pro-pay-qr
+        扫码待支付 --> 扫码待支付: 切换微信支付 / 支付宝渠道，二维码即时重绘
+        扫码待支付 --> 订单已取消: 点击取消订单，关闭弹窗并作废订单
+        扫码待支付 --> 订单已超时: 15 分钟倒计时归零，订单自动失效
+        扫码待支付 --> 会员信息已更新: 支付成功回调，打标 Pro 并写入订阅方案
+        会员信息已更新 --> 到期时间已回显: 资料条 PRO 徽章 / 侧栏入口卡 / 会员状态条三处回显有效期至
+        订单已取消 --> 未开通状态: 会员状态保持原样，账户资金零变动
+        订单已超时 --> 未开通状态: 需重新发起开通
+        到期时间已回显 --> 续费顺延中: 已是 Pro 且未过期，再次下单订阅
+        续费顺延中 --> 会员信息已更新: 在原到期日基础上顺延 30 天或 365 天
+        到期时间已回显 --> 未开通状态: 到期未续订，平稳收回 Pro 加速通道
+    }
+
+    state 发票开具生命周期 {
+        [*] --> 充值到账累计可开票金额: 人民币账户充值写入可开票记录
+        充值到账累计可开票金额 --> 进入发票管理: 常用功能「发票管理」或【增值税专票代开】
+        进入发票管理 --> 选择发票类型: 增值税普通发票 / 增值税专用发票
+        选择发票类型 --> 填写抬头与税号: 专票锁定企业抬头并必填纳税人识别号
+        填写抬头与税号 --> 提交开票申请: 校验开票金额 ≤ 所选充值记录金额
+        提交开票申请 --> 记录状态置为已开票: 写入开票记录并刷新汇总
+    }
+
+    state 资产安全中心生命周期 {
+        [*] --> 安全要素核验: 实名认证 / 支付密码 / 绑定手机
+        安全要素核验 --> 高安全等级_100分: 满格绿色安全防御条
+        高安全等级_100分 --> 前往安全设置: 点击打开 modal-security-settings
+        前往安全设置 --> 个人信息维护: 手机换绑短信验证 / 邮箱换绑 / 学号认证
+        前往安全设置 --> 银行卡管理: 「银行卡管理」分区内查看已绑定卡并绑定 / 换绑 / 设为默认 / 解绑（主面板不陈列卡明细）
+    }
+
+    state 银行卡绑定与换绑生命周期 {
+        [*] --> 是否已完成实名认证: 进入绑定 / 换绑弹窗
+        是否已完成实名认证 --> 绑定入口置灰并拦截: 未实名（点击提交自动跳转实名认证）
+        绑定入口置灰并拦截 --> 是否已完成实名认证: 完成实名后返回重试
+        是否已完成实名认证 --> 填写持卡人与卡号: 已实名（持卡人预填为实名姓名）
+        填写持卡人与卡号 --> 卡号识别: 位数校验 + Luhn 校验 + 银联 BIN 号段匹配
+        卡号识别 --> 填写持卡人与卡号: 位数 / Luhn 未通过
+        卡号识别 --> 拒绝绑定非借记卡: 识别为信用卡或国际卡组织号段
+        拒绝绑定非借记卡 --> 填写持卡人与卡号: 更换为本人借记卡号
+        卡号识别 --> 短信验证码校验: 识别为境内银联借记卡
+        短信验证码校验 --> 短信验证码校验: 未获取 / 位数不足 / 验证码错误
+        短信验证码校验 --> 判定绑定模式: 验证码校验通过
+        判定绑定模式 --> 写入台账_新增卡位: 绑定模式
+        判定绑定模式 --> 写入台账_替换原卡: 换绑模式（卡位复用，默认标记保留）
+        写入台账_新增卡位 --> 刷新两处展示位: 安全设置银行卡管理列表 + 提现收款账户下拉
+        写入台账_替换原卡 --> 刷新两处展示位: 安全设置银行卡管理列表 + 提现收款账户下拉
+        刷新两处展示位 --> 可提现收款: 新卡立即可用于提现（与四道闸闭环）
+        刷新两处展示位 --> 设为默认结算卡: 仅可用卡可设，默认卡不可解绑
+        设为默认结算卡 --> 解绑非默认卡: 二次确认后从台账移除
+        可提现收款 --> [*]
+        解绑非默认卡 --> [*]
+    }
+
+    state 数字藏品与凭据生命周期 {
+        [*] --> 商单交付_版权买断: 任务验收完成生成版权证明
+        [*] --> 学院结业_微学分生成: 完课结业生成高校微学分凭据
+        [*] --> 赛事荣誉_勋章授予: 平台活动生成成就勋章
+        商单交付_版权买断 --> 藏品展柜陈列: 5 宫格卡片展示
+        藏品展柜陈列 --> 灯箱全景速览: 点击打开 modal-preview-lightbox
+        藏品展柜陈列 --> 证书全景大厅: 点击查看全部打开 modal-my-certs
+    }
+
+    提现到账结清 --> [*]
+```
+
+---
+
+## 四、 核心功能模块与操作权限矩阵
+
+| 界面区域与板块 | 对应前端控件与触发动作 | 核心管理能力 | 资金与积分属性 | 普通创作者权限 | OPC/工作室主理人权限 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **OPC 基础设施 4 大中枢** | | | | | |
+| **- 增值税专票代开** | 点击卡片 / 【发票管理 >】(`App.openInvoiceModal()`) | 解决无对公资质难题，平台统筹合规开具专票，对账户充值记录发起开票申请 | 合规财税服务 | 查阅代开票机制与申请规范，个人可开普票 | 尊享合规专票绿色代开通道，企业抬头可开专票 |
+| **- 商单资金托管库** | 点击卡片 / 【查看托管进度 >】(`App.openEscrowProgressModal()`) | 展示已安全托管的在途未结算款项，汇总金额**恒等于资产卡「冻结金额」** | 资金托管专户 | 查看名下在途商单资金安全保障 | 查阅团队所有进行中商单的资金冻结保障 |
+| **- 托管进度明细 (modal-escrow-progress)** | 台账读取与倒序 (`App.getEscrowProjects()`)<br>汇总计算 (`App.getEscrowSummary()`)<br>列表渲染 (`App.renderEscrowProgress()`)<br>状态筛选 (`App.filterEscrowProjects()`)<br>卡片文案同源 (`App.renderEscrowLibraryCard()`) | 按**冻结时间倒序**展示当前商户名下**全部托管项目**及**每个项目冻结的金额**，含汇总条（托管中金额 / 进行中项目数 / 累计已结算）与三档状态筛选 | 托管台账可视 | 查看个人名下全部托管项目与进度 | 查看工作室全部托管项目与团队资金冻结保障 |
+| **- 专属普惠算力特权** | 【充值算力 >】(`App.openComputeRechargeModal()`) | 剩余 12,500 Tflops GPU 额度，经**账户余额** 4 折普惠充值（不直连外部支付通道） | 算力补贴 · 余额扣款 | 用账户余额充值算力点 | 尊享 4 折与 Pro 额外 10% 加赠 |
+| **- 学徒带教生态分润** | 点击卡片 (`App.showToast`) | 签约低年级学弟学妹，完成商单享有 5% 生态激励 | 带教分润收益 | 查阅带教分润机制说明 | 享受带教多名学员分润分成 |
+| **4 大核心资产卡片** | | | | | |
+| **- 账户余额 (元)** | 【去充值 >】(`App.openAccountRechargeModal()`)<br>【去提现 >】(`App.openWithdrawModal()`) | 展现总额 (¥6,820.50)、可提现金额 (¥5,320.50) 与冻结金额 (¥1,500.00，进行中商单托管款不可提现) | 现金钱包 | 用已绑定本人借记卡充值人民币账户，发起免手续费提现申请（仅限本人同名借记卡，单笔 ≤ ¥10,000） | 用已绑定工作室借记卡充值人民币账户，发起免手续费提现申请（仅限本人同名借记卡，单笔 ≤ ¥10,000） |
+| **- 创作收益 (元)** | 【收益明细 >】(`App.filterAssetsTab('收入')`) | 展示累计收益 (¥12,680.30) 与本月预估 (¥2,680.30) | 商业变现收益 | 查阅个人商业变现明细流水 | 查阅团队收益分配曲线 |
+| **- 创作积分（可用）** | 【积分明细 >】(`App.filterAssetsTab('创作积分')`) | 展示可用 2,680 积分与累计 4,120 积分 | **严格驱动等级认证与成长** | 积分累积推动 Lv.1~Lv.5 晋升 | 专享高阶创作等级与官方背书 |
+| **- AI 积分** | 【积分明细 >】(`App.filterAssetsTab('AI积分')`) | 展示算力池可用储备 2,340.00 积分 | **严格用于创作工具算力消耗** | 用于日常图像、视频生成扣费 | 尊享算力充值折扣与高并发配额 |
+| **人民币账户充值** | | | | | |
+| **- 人民币账户充值 (modal-account-recharge)** | 【去充值 >】(`App.openAccountRechargeModal()`)<br>充值银行卡下拉 (`#recharge-card-select`)<br>口径 chips (`#recharge-rule-row`)<br>卡核验说明 (`#recharge-card-note`)<br>快捷绑卡入口 (`#recharge-add-card-row` / `App.openBankCardBindModal()`)<br>快捷档位 (`App.selectRechargePreset()`)<br>【确认充值】(`#recharge-submit-btn` / `App.submitAccountRecharge()`) | **只能经「已绑定的本人同名借记卡」协议代扣入金**：原微信 / 支付宝 / 银联对公渠道路径已整体下线；个人创作者与发包企业均可使用，支持快捷档位与自定义金额（单笔上限 ¥50,000）；信用卡与异名卡在下拉中置灰不可选并标注不可用原因 | 现金入金 | 用已绑定借记卡充值人民币现金账户 | 用已绑定借记卡充值人民币现金账户（发票可追溯至扣款卡） |
+| **- 充值合规校验 (rechargeRules)** | 规则口径 (`App.getRechargeRules()`)<br>可用卡来源 (`App.getRechargeCards()`)<br>卡片准入校验 (`App.validateRechargeCard()`)<br>下拉渲染 (`App.renderRechargeCards()`)<br>面板刷新 (`App.refreshRechargePanel()`)<br>卡切换回显 (`App.onRechargeCardChange()`) | **充值三闸**：闸一 必须已实名 / 闸二 **必须已绑定银行卡**（不接受临时输入卡号，也不接受第三方钱包）/ 闸三 仅限借记卡；规则唯一真源为 `MockData.assets.rechargeRules`，卡台账与提现收款、安全设置**共用同一份** `MockData.assets.bankCards`；未实名或无可用已绑卡时【确认充值】置灰 | 现金入金合规闸门 | 了解充值口径与可用卡来源 | 了解充值口径与可用卡来源 |
+| **- 账户余额构成口径** | 账户余额卡片展示 | 账户总额 = 可提现余额 + 冻结金额；冻结金额为进行中商单托管款，不允许提现 | 账户口径规则 | 查看账户构成与冻结金额 | 查看账户构成与托管进度 |
+| **申请提现** | | | | | |
+| **- 申请提现 (modal-withdraw)** | 【去提现 >】(`App.openWithdrawModal()`)<br>常用功能「提现管理」(`App.handleCommonFuncClick()`)<br>规则口径 (`App.getWithdrawRules()`)<br>实名判定 (`App.isIdVerified()`)<br>卡片准入校验 (`App.validateWithdrawAccount()`)<br>下拉渲染 (`App.renderWithdrawAccounts()`)<br>面板刷新 (`App.refreshWithdrawPanel()`)<br>账户切换回显 (`App.onWithdrawAccountChange()`)<br>金额实时校验 (`App.onWithdrawAmountInput()`)<br>【确认提现】(`App.submitWithdraw()`) | **合规四道闸**：闸一 必须已实名（未实名拦截并跳转安全设置）/ 闸二 必须同名提现（持卡人 = 实名姓名）/ 闸三 单笔上限 ¥10,000 / 闸四 仅限借记卡（信用卡不可选）；不可用的卡保留展示但置灰并标注不可用原因，使合规规则在界面可见 | 现金出金 · 余额扣减 | 提现至本人同名借记卡（单笔 ≤ ¥10,000，T+0 实时到账 · 免手续费） | 提现至本人同名借记卡（单笔 ≤ ¥10,000，T+0 实时到账 · 免手续费） |
+| **- 收款卡台账 (bankCards)** | 台账读取 (`App.getWithdrawAccounts()` / `App.getBankCards()`) | **提现收款、账户充值、安全设置三处共用同一份银行卡台账**；台账含「同名借记卡（可用）」「信用卡（闸拦截）」「异名借记卡（闸拦截）」三类样本，让合规规则在 UI 上可被直接看见 | 资金账户准入 | 选择本人同名借记卡收款与充值 | 选择本人同名借记卡收款与充值 |
+| **银行卡绑定与换绑** | | | | | |
+| **- 安全设置银行卡管理分区（唯一陈列位）** | 【前往安全设置 >】(`App.openSecuritySettings()`)<br>弹窗内容容器 (`#security-settings-body`)<br>已绑定卡列表（security-bank-card-list，随弹窗动态生成）<br>【+ 绑定新银行卡】（security-bank-card-add / `App.openBankCardBindModal()`）<br>张数与可用数提示（security-bank-card-tip，随弹窗动态生成）<br>列表渲染 (`App.renderBankCardBlocks()`)<br>单卡行渲染 (`App.bankCardRowHtml()`)<br>卡号掩码 (`App.maskBankCardNo()`) | **银行卡能力的唯一陈列位**：资产安全中心主面板**不再陈列已绑定银行卡列表与绑卡按钮**，全部收敛到安全设置弹窗的「银行卡管理（仅支持本人同名借记卡）」分区；分区内为已绑定银行卡列表（卡号掩码 / 发卡行 / 卡种 / 持卡人 / 绑定日期 / 可用状态标签）+ 【+ 绑定新银行卡】按钮，合规卡提供【换绑】，不合规存量卡标「去换绑」 | 资金账户准入 | 绑定与换绑本人同名借记卡 | 管理工作室收款卡（含设为默认结算卡） |
+| **- 绑定与换绑弹窗 (modal-bank-card-bind)** | 持卡人 (`#bank-bind-holder`)<br>卡号 (`#bank-bind-cardno`)<br>卡号实时识别 (`#bank-bind-detect`)<br>演示卡号 (`#bank-bind-demo`)<br>开户支行 (`#bank-bind-branch`)<br>短信验证码 (`#bank-bind-code`)<br>实名状态条 (`#bank-bind-verify-strip`)<br>口径 chips (`#bank-bind-rule-row`)<br>待换绑原卡条 (`#bank-bind-rebind-strip`)<br>提交 (`#bank-bind-submit-btn` / `App.submitBankCardBind()`)<br>失败原因 (`#bank-bind-hint`) | **绑卡校验链**：闸一 必须已实名 / 闸二 仅限本人卡（持卡人 = 实名姓名）/ 闸三 卡号 16-19 位 + Luhn 校验 / 闸四 **仅限借记卡**（信用卡与国际卡组织号段一律拒绝）/ 闸五 短信验证码；换绑模式为**替换原卡、卡位复用** | 绑卡合规闸门 | 绑定、换绑本人同名借记卡 | 绑定、换绑工作室收款借记卡 |
+| **- 绑卡规则与卡号识别** | 规则口径 (`App.getBankBindRules()`)<br>卡号识别 (`App.detectBankCard()`)<br>Luhn 校验 (`App.luhnCheck()`)<br>台账读取 (`App.getBankCards()`)<br>卡片状态推导 (`App.getBankCardStatus()`)<br>绑定校验 (`App.validateBankCardBind()`) | 两条硬口径：**只支持借记卡绑定** + **必须已实名后方可绑定**；副口径：本人同名卡 / 不得重复绑定 / 最多 5 张；卡种判定依据银联 BIN 号段离线匹配 | 绑卡口径唯一真源 | 绑定前先看口径说明 | 绑定前先看口径说明 |
+| **- 卡号实时识别与验证码** | 卡号输入实时校验 (`App.onBankCardNoInput()`)<br>演示卡号填充 (`App.fillBankCardDemo()`)<br>获取验证码 (`App.sendBankBindCode()`)<br>弹窗状态刷新 (`App.refreshBankBindPanel()`) | 输入即识别发卡行与卡种并给出可否绑定的即时结论；验证码发送至实名预留手机号并参与提交校验 | 绑卡交互反馈 | 边填边看识别结论 | 边填边看识别结论 |
+| **- 默认结算卡与解绑** | 设为默认 (`App.setPayoutBankCard()`)<br>解绑二次确认 (`App.armUnbindBankCard()` / `App.cancelUnbindBankCard()`)<br>确认解绑 (`App.confirmUnbindBankCard()`)<br>联动刷新 (`App.refreshBankCardViews()`) | 仅可用卡可设为默认结算卡；**默认结算卡不可解绑**（须先换绑其他卡并设为默认）；解绑后提现收款账户下拉同步收敛 | 收款账户生命周期 | 管理个人收款卡 | 管理工作室收款卡 |
+| **全站统一余额支付** | | | | | |
+| **- 全站统一余额支付口径** | 统一支付引擎 (`App.payFromAccountBalance()`) | **购买类行为**（算力充值 / 付费课程选购）唯一支付来源；账户余额不承载 Pro 会员订阅；**账户余额的唯一入金口是充值弹窗内的「已绑定本人同名借记卡协议代扣」**，全站已无 `<option>` 形式的外部支付通道 | 购买类支付唯一源 | 用账户余额购买算力与课程 | 用账户余额购买算力与课程 |
+| **- 支付边界划分** | 余额支付 vs 会员订阅独立结算 | Pro 会员订阅走 `modal-pro-pay-qr` 扫码独立结算，不动余额 / 不产生冻结 / 不写资产流水；仅登记在 `membership.orders` | 资金台账纯净 | 资产流水只反映真实资金往来 | 资产流水只反映真实资金往来 |
+| **- 余额不足引导 (modal-balance-insufficient)** | 自动唤起 (`App.openInsufficientBalanceModal()`) | 展示应付金额 / 当前可用余额 / 尚缺金额，一键跳转充值后重试 | 支付风控引导 | 引导充值后重新购买 | 引导充值后重新购买 |
+| **- 专属普惠算力特权充值 (modal-compute-recharge)** | 【充值算力 >】(`App.openComputeRechargeModal()`)<br>算力包档位 (`App.selectComputePack()`)<br>【确认充值】(`App.submitComputeRecharge()`) | 账户余额扣款式算力充值，4 折算力包 ¥40·100点 / ¥200·500点 / ¥400·1,000点 / ¥2,000·5,000点 | 算力点 · 余额扣款 | 用余额充值算力点 | 尊享 4 折与 Pro 额外加赠 |
+| **发票管理** | | | | | |
+| **- 发票管理 (modal-invoice)** | 常用功能「发票管理」<br>【增值税专票代开】(`App.openInvoiceModal()`)<br>充值成功 Toast 引导 | 对人民币账户充值记录申请开票，支持增值税普通发票 / 专用发票 | 合规财税凭据 | 对充值记录申请普票 | 企业抬头申请增值税专票 |
+| **- 开票申请提交 (modal-invoice)** | 发票类型 (`App.selectInvoiceType()`)<br>【提交开票申请】(`App.submitInvoiceApply()`) | 校验开票金额 ≤ 所选充值记录金额；专票须企业抬头 + 纳税人识别号 | 开票规则 | 填写个人抬头与邮箱 | 填写企业抬头、税号与邮箱 |
+| **资产明细流水账本** | 6 大 Tab / 时间下拉 / 【查看更多明细 >】 | 穿透式展示收入、支出、提现与双轨积分流水 | 交易历史存证 | 查阅近 1 年个人交易流水 | 查阅全量交易流水并加载更多历史 |
+| **我的数字藏品 (5宫格)** | 5 张卡片 / 【查看全部 >】(`modal-my-certs`) | 陈列数字艺术藏品卡片与稀有度标签 | 稀有/珍稀/普通数字藏品 | 点击灯箱预览大图，查阅全量证书与藏品 | 在线展示个人数字藏品展柜 |
+| **右侧：安全中心与常用面板** | 【前往安全设置 >】(`modal-security-settings`)<br>常用功能 8 宫格点击交互<br>（银行卡绑定 / 换绑 / 设为默认 / 解绑在安全设置弹窗的「银行卡管理」分区内完成） | 账户安全等级防线、信息换绑、**银行卡绑定与换绑（经安全设置进入）**、常用业务快速分发 | 综合中枢 | 管理个人姓名/手机/邮箱/学号与收款借记卡 | 管理账户安全与团队收款卡，快速跳转各项业务 |
+
+---
+
+## 五、 与全局各模块的深度联动体系说明
+
+1. **与【任务广场】深度联动（资金托管、验收解冻与交付凭据）**：
+   - **充值独立于发布（新增）**：人民币账户充值经 `modal-account-recharge` 完成，为**账户级通用入金能力**——个人创作者与发包企业均可随时充值，**不构成发布任务的前置条件**，任务发布资格的判定不依赖账户余额；**入金路径收敛为「已绑定本人同名借记卡协议代扣」**，不再提供微信 / 支付宝 / 银联对公等聚合支付与对公转账选项；
+   - 发包方在任务广场发单，资金全额冻结于平台托管专户，并在资产页【商单资金托管库】**自动新增一条进行中托管项目**（记录冻结金额与冻结时间），托管进度列表按冻结时间倒序实时体现；
+   - 商单验收放款后，款项解冻注入创作者【账户余额】（可提现余额同步增加），同时记录「商单结算」收入流水并奖励创作积分；**托管库中对应项目同步转为「已结算 · 进度 100%」**，冻结合计随之扣减；
+   - 任务成果版权确权凭证自动入库【我的数字藏品】展示。
+2. **与【创作工具】深度联动（AI 积分算力扣除闭环）**：
+   - 创作者在工作台每发起一次视频或图像渲染，系统仅扣减【我的资产】中的 **AI 积分**；
+   - 资产卡片中的 AI 积分明细清晰记录每一笔算力消耗，与成长创作积分彻底解耦。
+3. **与【成长学院】深度联动（学籍证书与高校微学分互通）**：
+   - 学员在成长学院领取的官方结业证书、高校微学分（CERT-CREDIT），实时同步至【我的数字藏品】及【我的证书与成就 (`modal-my-certs`)】中；
+   - 学院研习课节与证书领取奖励的创作积分，实时同步至资产卡片「创作积分（可用）」中。
+4. **与【发现页】深度联动（主页穿透与作品资产沉淀）**：
+   - 发现页右侧创作者画像卡片点击【我的主页】可直接跳转至【我的资产】总金库；
+   - 创作者发布的优秀作品自动沉淀至【我的作品 (`modal-my-works`)】合集中。
+5. **与【数据中心】深度联动（财务与履约数据双向核对）**：
+   - 资产中心的累计变现金额、月度收益预估与 OPC 学徒带教分成，实时映射到【数据中心】的商业履约人效看板与收益分析模块。
+6. **与全站购买行为的统一支付联动（购买类支付源与发票闭环）**：
+   - **购买类支付源（修订）**：账户余额是全站**购买类行为**的唯一支付来源——【专属普惠算力特权】充值、【成长学院】付费课程选购一律经 `App.payFromAccountBalance()` 从账户余额扣减；**【Pro 会员】订阅已从余额支付口径中剥离**，改由【用户管理】的独立订阅结算通道（`modal-pro-pay-qr` 扫码支付）承接，不占用账户余额；
+   - **入金通道收敛（2026-09-22 修订）**：账户余额的唯一入金口 `modal-account-recharge` **只接受「已绑定的本人同名借记卡协议代扣」**——微信 / 支付宝等聚合支付与银联对公转账**已整体下线**，全站不再存在以 `<option>` 形式陈列外部支付通道的入口；Pro 会员订阅弹窗内的扫码渠道以按钮形式独立承载，且不扣余额、不入资产流水；
+   - **余额不足统一口径**：算力充值、付费课程选购等余额支付场景余额不足时，统一唤起 `modal-balance-insufficient`，展示应付金额 / 当前可用余额 / 尚缺金额并引导充值，充值后返回原购买弹窗重试；会员订阅为扫码支付，不触发余额不足引导；
+   - **充值—开票闭环**：人民币账户充值完成后，充值流水自动进入可开票记录，用户可经 `modal-invoice` 申请开具增值税普通发票或专用发票，形成「入金 → 消费 → 开票」的完整财务闭环。
+7. **与【用户管理】深度联动（Pro 会员信息在资产页的回显）**：
+   - Pro 会员订阅成功后，`MockData.systemAdmin.membership` 的 `currentTier` / `plan` / `expireDate` 即时生效，资产页个人中心资料条（`assets-profile-hub`）同步点亮 `PRO` 徽章并展示「有效期至 YYYY-MM-DD（剩余 N 天）」；
+   - 会员订阅订单仅登记在 `membership.orders`，**不进入资产交易明细账本**，保证「总额 = 可提现 + 冻结」恒等式与资金台账不受订阅业务污染。
+8. **与【用户管理】深度联动（实名认证是提现的前置闸门）**：
+   - **闸一即实名**：`MockData.currentUser.idVerified` 未通过时出金通道**完全关闭**——弹窗实名状态条转红、提交按钮置灰，点击提交即被拦截并自动跳转安全设置实名认证（`App.openSecuritySettings('实名认证')`）；
+   - **闸二即同名**：收款卡持卡人必须与**实名认证姓名逐字一致**，实名姓名（含手机号掩码）在提现弹窗状态条与账户说明中同步回显，与【用户管理】的个人信息天然同源，杜绝「用他人卡收款」的洗钱 / 代持风险；
+   - **与风控锁叠加**：【用户管理】侧因更换手机号 / 重置密码触发的 **24 小时出金风控锁**在提现提交前独立生效，与本模块四道闸形成「1 + 4」道出金防线。
+9. **与提现收款账户准入的联动（银行卡绑定与换绑，2026-09-22 新增）**：
+   - **唯一陈列位与同一份台账**：已绑定银行卡只在安全设置弹窗的「银行卡管理（仅支持本人同名借记卡）」分区（经【前往安全设置 >】进入）陈列，与提现弹窗的收款账户下拉**共用同一份 `MockData.assets.bankCards`**，绑定 / 换绑 / 解绑后两处同源刷新（`App.refreshBankCardViews()`），不存在「绑了卡却提现选不到」的割裂；资产安全中心主面板不再复制一份卡列表，避免双陈列位带来的口径漂移与维护成本；
+   - **两条硬口径前移到绑卡环节**：①「**只支持借记卡绑定**」②「**必须已实名后方可绑定**」——提现侧闸二（必须同名）与闸四（仅限借记卡）原本在**出金时**才拦截不合规卡，现在**绑定 / 换绑时即前置校验**，从账户准入源头杜绝信用卡与异名卡进入台账；
+   - **存量卡的整改路径**：台账中历史遗留的信用卡与异名卡不做静默删除，而是在列表中标为**待整改**并提供【去换绑】主操作，换绑为本人借记卡后该卡即刻转为「可用」并可参与提现；
+   - **提现无卡时的就地闭环**：提现弹窗在无可用同名借记卡时提供【+ 绑定银行卡】快捷入口，绑卡成功后弹窗自动刷新收款账户，用户无需退出重进；
+   - **资金隔离红线**：绑定、换绑、解绑、设为默认**全部为账户结构变更，零资金动作**——不扣减可提现余额、不产生冻结额、不写入资产交易明细，与「总额 = 可提现 + 冻结」恒等式和托管台账完全解耦。
+10. **与充值入金账户准入的联动（充值只能走已绑定借记卡，2026-09-22 新增）**：
+   - **一卡两用、同一份台账**：充值弹窗的「充值银行卡」下拉与提现弹窗的收款账户下拉、安全设置卡列表**共用同一份 `MockData.assets.bankCards`**——已绑定的本人借记卡既作**收款卡**（提现）也作**付款卡**（充值协议代扣），绑卡 / 换绑 / 解绑后三处同源刷新（`App.refreshBankCardViews()` 联动 `App.refreshRechargePanel()`）；
+   - **三条硬口径落在充值入口**：① 必须已实名 ② **只能选已绑定银行卡（不接受临时输入卡号与第三方钱包）** ③ 仅限借记卡——由 `App.validateRechargeCard()` 统一校验，信用卡与异名卡在下拉中置灰并标注不可用原因，使口径在界面上直接可见；
+   - **无卡时的就地闭环**：充值弹窗在无可用已绑借记卡时提供【+ 绑定银行卡 >】快捷入口，绑卡成功后弹窗内下拉自动刷新，用户无需退出重进；
+   - **充值凭据可追溯至扣款卡**：充值流水名统一为 `人民币账户充值 (发卡行 借记卡 尾号 XXXX)`，发票管理的「充值渠道」字段直接取自该括号文本，实现「入金 → 开票」链路可回溯到具体扣款银行卡。
+
+---
+
+## 六、 变更记录
+
+| 日期 | 变更类型 | 变更内容 | 影响范围 |
+| :--- | :--- | :--- | :--- |
+| 2026-09-21 | 新增 | §二新增「充值业务专项时序图（场景七）」，含 4 段子流程：A 现金直充（经聚合支付通道）、B 非 Pro 会员开通引导（复用 `modal-pro`）、C 礼品卡兑换码零成本充值（复用 `modal-help-faq`）、D 双轨积分红线（创作积分严禁充值） | §二；`modal-recharge` 为契约先行声明（待实现，当前入口仅 Toast）；§三状态机可后续补充「充值业务生命周期」 |
+| 2026-09-22 | 新增并修订 | 新增**人民币账户充值**业务：§一 定义面向**个人创作者与发包企业均可使用**的通用现金入金通道，核心口径「**账户总额 = 可提现余额 + 冻结金额**」，冻结金额为进行中商单托管款、不允许提现；§二 新增「人民币账户充值专项时序图（场景八）」（A 个人创作者充值入金 / B 发包企业银联对公充值 / C 账户余额构成与提现口径 / D 与业务动作及双轨积分解耦）；§三 状态机新增「人民币账户充值生命周期」；§四 矩阵新增「人民币账户充值」2 行，账户余额卡片更新为双入口；§五 联动补充「充值独立于发布」。<br>**修订说明**：初版曾将本功能设计为「发布任务前置入金 + 按任务价值冻结并校验额度」，经需求确认后明确**人民币充值不需要绑定发布环节**，已移除全部发布相关子流程（原场景八 B/C/D 段）、状态转移与契约行 | §一 ~ §六；【任务广场】侧对应的「发布前置充值 / 额度校验」联动已同步回退 |
+| 2026-09-22 | 实现 | 【账户余额】卡片新增人民币账户【去充值 >】入口（**契约转实现**）：① `index.html` 账户余额卡副行改为「可提现余额 + 操作组〔去充值 / 去提现〕」双入口布局，并新增 `#modal-account-recharge` 充值弹窗（余额条 / 充值渠道下拉〔微信支付·支付宝·银联对公〕/ 4 档快捷档位 ¥500·¥1,000·¥5,000·¥10,000 / 自定义金额 / 确认充值）；② `js/app.js` 新增 `App.openAccountRechargeModal()`（回填当前余额并复位档位）、`App.selectRechargePreset()`、`App.submitAccountRecharge()`（金额与单笔上限 ¥50,000 校验 → 账户总额与可提现余额同步增加 → 更新 breakdown 可提现项 → 写入「人民币账户充值」收入流水 → 刷新卡片与明细）；③ `css/style.css` 新增卡片双入口与充值弹窗共 10 个样式类 | §一、§四、§二、§三；`modal-account-recharge` 由契约先行转为**已实现**；L1 保持 36 ERROR / 本文件 0 ERROR |
+| 2026-09-22 | 契约修订 | 确立**「账户余额 = 全站唯一现金支付源」**支付架构：① §一 新增「全站统一余额支付口径」——所有购买行为统一经统一支付引擎从账户余额扣款，外部支付通道收敛为仅存在于 `modal-account-recharge`；② §一 新增「专属普惠算力特权充值 (`modal-compute-recharge`)」与「发票管理 (`modal-invoice`)」两大功能定义；③ §二 **场景七整体重写**——算力充值由「经聚合支付通道现金直充」改为「账户余额扣款」，并增加余额不足 `alt` 分支与 Pro 折扣引导；④ §二 新增「场景九 全站统一余额支付与余额不足引导」与「场景十 发票管理（充值后开票）」两张专项时序图；⑤ §三 新增「全站余额支付与余额不足引导生命周期」与「发票开具生命周期」两组状态机；⑥ §四 新增「全站统一余额支付」「发票管理」共 6 行契约，并更新【增值税专票代开】【专属普惠算力特权】两行触发动作；⑦ §五 新增第 6 条联动「与全站购买行为的统一支付联动」 | §一 ~ §六；新增契约 `#modal-compute-recharge`、`#modal-balance-insufficient`、`#modal-invoice` 与统一支付引擎；联动【创作工具】【成长学院】【我的资产·Pro 会员】；L1 保持 36 ERROR / 本文件 0 ERROR |
+| 2026-09-22 | 实现 + 契约修订 | **Pro 会员订阅与账户余额解耦（支付边界划分）**：① §一「全站唯一现金支付源」收窄为**购买类行为唯一支付源**，并新增「支付边界划分（余额支付 vs 会员订阅独立结算）」功能块；② §一 个人中心资料条补充**会员信息区**（`PRO` 徽章 + 有效期至 + 剩余天数）；③ §四 修订「全站统一余额支付口径」行并新增「支付边界划分」行；④ §五 第 6 条联动同步修订，并新增第 7 条「与用户管理的 Pro 会员信息回显联动」；⑤ 口径明确：**会员订阅不占用账户余额、不产生冻结额、不写入资产流水**，仅登记在 `membership.orders`，账户侧「总额 = 可提现 + 冻结」恒等式与资金台账保持纯净 | §一、§四、§五、§六；Pro 订阅业务主体见【用户管理设计.md】；新增契约 `#modal-pro-pay-qr`；自检 103 项断言全通过；L1 本文件保持 0 ERROR |
+| 2026-09-22 | 实现 | **统一余额支付体系落地**（契约转实现）：① `index.html` 新增 `#modal-balance-insufficient`（应付 / 可用 / 尚缺三格 + 去充值）、`#modal-compute-recharge`（算力包网格 + 订单摘要）、`#modal-invoice`（可开票记录列表 + 开票表单）三个弹窗，并把【增值税专票代开】改接 `App.openInvoiceModal()`、【专属普惠算力特权】改接 `App.openComputeRechargeModal()`（文案由「多通道 4 折直充」改为「账户余额 4 折普惠充值」）、`modal-pro` 改为方案可选 + 支付来源条；② `js/app.js` 新增 18 个方法：统一支付引擎 `App.payFromAccountBalance()`（余额不足自动转引导弹窗、成功则扣可提现余额 + 写「支出」流水，不产生冻结额）、`App.getAccountBalance()` / `App.formatMoney()` / `App.isProMember()`、余额不足引导 `App.openInsufficientBalanceModal()`、算力充值 `App.openComputeRechargeModal()` / `App.selectComputePack()` / `App.refreshComputeOrderSummary()` / `App.submitComputeRecharge()`（含 Pro +10% 加赠）、发票管理 `App.getInvoiceRecords()` / `App.openInvoiceModal()` / `App.renderInvoiceRecords()` / `App.selectInvoiceRecord()` / `App.selectInvoiceType()` / `App.submitInvoiceApply()`、Pro 与课程 `App.refreshProPaySource()` / `App.selectProPlan()` / `App.buyAcademyPlan()`；`App.handleUpgradePro()`（生效版）改为账户余额支付 ¥699 / ¥98，`App.handleCommonFuncClick('发票管理')` 改接发票弹窗，`App.openModal('modal-pro')` 增加余额与方案预置，`App.openAcademyCourseDetail()` 增加未购课程「立即选购」与课节「待解锁」态，`App.renderAcademyCoursesList()` 增加「已购」角标；③ `js/mock_data.js` 新增 `assets.computePacks`（4 档 4 折算力包）与 `assets.invoiceRecords`（开票记录，txId 关联流水），并补 2 条「人民币账户充值」种子流水 TX9 / TX10；④ `css/style.css` 新增 15 个样式类 | §一 ~ §六；自检 96 项断言全通过；**外部支付通道仅存于充值弹窗**（3 个 `<option>` 全在 `modal-account-recharge` 内，app.js 中通道字面量仅 1 处且为充值默认值）；L1 保持 36 ERROR / 本文件 0 ERROR；同步回填【成长学院设计.md】§一/§四/§五并新建其 §六 |
+| 2026-09-22 | 契约修订 | **§二 新增「Pro 会员开通与续费专项时序图（场景十一）」**（独立订阅结算视角）：含 A 从我的资产侧发起开通（侧栏 Pro 入口卡 → `modal-pro`）/ B 年费与月度方案二选一 / C 生成 PRO 订阅订单并唤起 `modal-pro-pay-qr` 付款二维码 / D 微信与支付宝渠道切换即时重绘 / E **支付成功回调 → 会员信息打标 Pro 并写入订阅方案与到期时间** / F 三处展示位回显（`assets-profile-hub` 资料条徽章 · `pro-widget-card` 侧栏入口卡 · `pro-subscribe-strip` 会员状态条）/ G **续费在原到期日基础上顺延**（月付 30 天 · 年费 365 天）/ H 取消订单与 15 分钟超时失效 `alt` 分支 / I 结算边界红线（账户总额、可提现余额、冻结金额三项订阅前后完全一致）。<br>**同步消歧（消除与新图矛盾的旧表述）**：① §二 场景七 D 备注由「Pro 开通同样走账户余额支付口径」改为「走独立订阅扫码结算，不占用账户余额」；② §二 场景九 适用范围由「所有购买行为（含 Pro 会员开通）」收窄为「全部购买类行为（算力充值 / 付费课程）」，参与者与首条消息同步移除 Pro；③ §三「全站余额支付与余额不足引导生命周期」移除「开通 Pro」与「Pro 身份生效」两处状态流转；④ §三 **新增「Pro 会员订阅结算生命周期」状态机**（未开通 → 方案已选择 → 扫码待支付 →〔取消 / 超时 / 支付成功〕→ 会员信息已更新 → 到期时间已回显 → 续费顺延）；⑤ §四 新增「Pro 会员订阅扫码支付 (`modal-pro-pay-qr`)」契约行；⑥ 修复末尾豁免说明中丢失的 `App.refreshProPaySource()` 方法名 | §二、§三、§四、§六；Pro 订阅业务主体仍归【用户管理设计.md】；L1 本文件保持 0 ERROR；Mermaid 结构门禁 0 问题 |
+| 2026-09-22 | 实现 + 契约修订 | **商单资金托管库 · 托管进度明细落地**：① §一「商单资金托管库」由「点击 Toast 说明」升级为**按冻结时间倒序的托管项目进度列表**，并新增「商单资金托管库 · 托管进度明细 (`modal-escrow-progress`)」功能块（排序规则 / 列表字段 / 冻结金额唯一真源 / 汇总条 / 筛选维度 / 发布结算联动 / 卡片文案同源）；② §二 新增「商单资金托管库 · 托管进度专项时序图（场景十二）」（A 打开弹窗 / B 台账读取与倒序渲染 / C 汇总条同源 / D 状态筛选 / E 单项目穿透 / F 发布与结算闭环联动 / G 口径红线）；③ §三 新增「商单资金托管项目生命周期」状态机（托管项目建立 → 招募选拔中 → 履约中 → 待验收 →〔返修中〕→ 已结算 / 流标已退还）；④ §四 修订「商单资金托管库」行触发动作，并新增「托管进度明细」契约行（6 个函数）；⑤ §五 第 1 条联动补充「发布自动新增托管项目 / 验收结算自动转已结算」；⑥ **数字校准**：卡片托管款项 ¥1,850.00 → **¥1,500.00**，与资产卡「冻结金额」口径对齐。<br>**代码实现**：`js/mock_data.js` 新增 `assets.escrowProjects`（6 个项目 = 4 个进行中、冻结合计 **¥1,500.00** + 2 个历史已结算 / 已退还），并把原 `TX0` 单笔 −¥1,500.00 拆为 4 笔「托管中」支流水（TX0 ¥600 · TX0B ¥420 · TX0C ¥300 · TX0D ¥180，合计仍为 ¥1,500.00），与项目台账通过 `txId` 一一对应；`index.html` 托管库卡片改绑 `App.openEscrowProgressModal()`、描述加 `#escrow-library-desc`，并新增 `#modal-escrow-progress`（汇总条三格 / 状态筛选胶囊 / 项目列表 / 口径说明）；`js/app.js` 新增 `App.getEscrowProjects()` / `App.getEscrowSummary()` / `App.renderEscrowLibraryCard()` / `App.openEscrowProgressModal()` / `App.filterEscrowProjects()` / `App.renderEscrowProgress()` 六个方法，并让 `App.freezeEscrow()` 自动登记托管项目、`App.releaseEscrow()` 自动把对应项目转为已结算、`App.refreshAssetDisplays()` 增加卡片文案同源刷新；`css/style.css` 新增 18 个托管进度样式类 | §一 ~ §六；新增契约 `#modal-escrow-progress`、`#escrow-project-list`、`#escrow-filter-tabs`、`#escrow-library-desc`；L1 保持 35 ERROR / 本文件 0 ERROR；Mermaid 结构门禁 0 问题 |
+| 2026-09-22 | 实现 + 契约修订 | **申请提现合规四道闸落地（实名 / 同名 / 单笔上限 / 仅限借记卡）**：① §一 新增「申请提现 (`modal-withdraw` · 合规四道闸)」功能块（10 条口径：实名前置 / 同名提现 / 单笔上限 ¥10,000 / 仅限借记卡 / 可提现余额校验 / 下拉置灰标注 / 金额实时提示 / 扣款与流水 / 入口收敛 / T+0 到账）；② §二 **场景二重写**为四道闸链路（原「选择微信零钱」等非借记卡账户与「24 小时到账」表述一并消除），并**新增「申请提现合规四道闸专项时序图（场景十三）」**——含 A 闸一实名前置（`alt` 未实名拦截并跳转安全设置）/ B 闸二 + 闸四 收款账户准入（信用卡与异名卡置灰标注）/ C 闸三 单笔上限 ¥10,000（`alt` 超限引导拆分）/ D 可提现余额校验（冻结款不可提现）/ E 四闸全过扣款出金与记账 / F 口径红线；③ §三 **「提现业务生命周期」状态机重写**：新增「实名前置校验 → 未实名_拦截出金 → 安全设置实名认证」回环、「卡片不可用_置灰标注 → 收款账户准入校验」回环、「超单笔上限_拦截 / 超可提现余额_拦截」两条独立拦截路径；④ §四 修订「账户余额 (元)」行触发动作为 `App.openWithdrawModal()`，并新增「申请提现」分组 2 行契约（含 10 个函数）；⑤ §五 新增第 8 条「与【用户管理的实名认证前置闸门】深度联动」。<br>**代码实现**：`js/mock_data.js` 新增 `assets.withdrawRules`（`maxPerTx: 10000` / `requireIdVerified` / `sameNameOnly` / `debitOnly` / `arrivalNote` 五项唯一真源）与 `assets.bankCards` 收款卡台账 4 张（BC1 招商尾号 1234 同名借记卡 · BC2 建设尾号 5678 同名借记卡 · BC3 中国银行尾号 6608 信用卡〔闸四拦截样本〕· BC4 招商尾号 3302 异名借记卡〔闸二拦截样本〕）；`index.html` 提现弹窗重构为「实名状态条 + 四条规则 chips + 动态收款账户下拉（含不可用原因标注）+ 金额实时提示 + `max="10000"`」，并删除硬编码的「微信零钱钱包」等渠道选项；`js/app.js` 新增 10 个方法 —— `App.getWithdrawRules()` / `App.getWithdrawAccounts()` / `App.isIdVerified()` / `App.validateWithdrawAccount()` / `App.renderWithdrawAccounts()` / `App.refreshWithdrawPanel()` / `App.openWithdrawModal()` / `App.onWithdrawAccountChange()` / `App.onWithdrawAmountInput()`，并**重写 `App.submitWithdraw()`** 为四道闸顺序校验（实名 → 同名借记卡 → 单笔上限 → 可提现余额），只有全部通过才扣减可提现余额与账户总额并写入「提现到 XX 银行借记卡 (尾号 NNNN)」处理中流水；`App.openModal('modal-withdraw')` 钩子改调 `App.refreshWithdrawPanel()`，`App.handleCommonFuncClick('提现管理')` 与资产卡【去提现 >】均改走 `App.openWithdrawModal()`（入口收敛） | §一 ~ §六；新增契约 `#withdraw-account-select`、`#withdraw-verify-strip`、`#withdraw-rule-row` 等 9 个节点；自检 145 项断言全通过；**闸一实名 + 闸二同名 + 闸三 ¥10,000 上限 + 闸四仅借记卡**；L1 由 35 降至 **34 ERROR**（`App.openWithdrawModal` 此前是 `_设计驱动开发规范.md` 中的契约先行声明，本轮转实现后消解 1 个历史 ERROR）/ 本文件 0 ERROR；Mermaid 结构门禁 0 问题（27 → 28 图块） |
+| 2026-09-22 | 实现 + 契约修订 | **资产安全中心 · 银行卡绑定与换绑落地（只支持借记卡 + 必须已实名）**：① §一「资产安全中心」功能块补全**银行卡绑定与换绑**设计（两条硬口径 / 功能构成 / 绑卡校验链 / 换绑语义 / 与提现的闭环 / 资金隔离红线 / 张数上限与唯一真源）；② §二 场景三补入银行卡管理交互链路，并**新增「银行卡绑定与换绑专项时序图（场景十四）」**——含 A 资产安全中心银行卡列表与入口 / B 闸一 必须已实名（`alt` 未实名拦截并跳转实名认证）/ C 闸二 仅限本人卡（`alt` 异名与留空拦截）/ D 闸三 卡号位数 + Luhn 校验、闸四 **仅限借记卡**（`alt` 位数或 Luhn 失败 / 信用卡与国际卡组织号段拦截 / 银联借记卡通过）/ E 闸五 短信验证码（`alt` 未获取 / 位数不足 / 不正确）/ F 绑定与换绑双模式落库并刷新两处展示位 / G 设为默认结算卡与解绑（`alt` 默认卡不可解绑）/ H 资金口径红线；③ §三 「资产安全中心生命周期」新增银行卡管理分支，并**新增「银行卡绑定与换绑生命周期」状态机**（实名前置回环 / 卡号识别三分支 / 验证码回环 / 绑定与换绑双落库 / 默认卡与解绑）；④ §四 新增「银行卡绑定与换绑」分组 5 行契约（含 20 个函数与 14 个节点），并更新「右侧：安全中心与常用面板」行；⑤ §五 新增第 9 条「与提现收款账户准入的联动」。<br>**代码实现**：`js/mock_data.js` 新增 `assets.bankBindRules`（`requireIdVerified` / `debitOnly` / `sameNameOnly` / `unionPayOnly` / `codeRequired` / `maxCards: 5` 六项唯一真源）、`assets.bankBinTable`（14 条银联 BIN 号段，含 11 条借记卡与 3 条信用卡号段）、`assets.bankCardDemos`（3 张演示卡号，含一张会被「仅限借记卡」拦下的信用卡），并为 `assets.bankCards` 4 张卡补 `cardNo`（Luhn 合法且末 4 位与 `tail` 一致）与 `boundAt`；`index.html` 资产安全中心曾新增银行卡专区（bank-card-list / bank-card-count / bank-card-bind-entry 三个节点，**已在本轮「入口收敛」中随专区一并移除**）、提现弹窗新增快捷绑卡入口，并新增 `#modal-bank-card-bind`（实名状态条 / 口径 chips / 待换绑原卡条 / 持卡人 / 卡号 + 实时识别 / 演示卡号 / 开户支行 / 短信验证码 / 失败原因）；`js/app.js` 新增 20 个方法 —— 规则与台账 `App.getBankBindRules()` / `App.getBankCards()`、卡号工具 `App.maskBankCardNo()` / `App.luhnCheck()` / `App.detectBankCard()`、状态与校验 `App.getBankCardStatus()` / `App.validateBankCardBind()`、渲染 `App.bankCardRowHtml()` / `App.renderBankCardBlocks()`、弹窗与表单 `App.openBankCardBindModal()` / `App.refreshBankBindPanel()` / `App.onBankCardNoInput()` / `App.fillBankCardDemo()` / `App.sendBankBindCode()` / `App.submitBankCardBind()`、账户生命周期 `App.setPayoutBankCard()` / `App.armUnbindBankCard()` / `App.cancelUnbindBankCard()` / `App.confirmUnbindBankCard()` / `App.refreshBankCardViews()`，并在 `App.openSecuritySettings()` 内新增「银行卡管理」分区、`App.openModal('modal-bank-card-bind')` 增加面板刷新钩子、`App.renderAssetsRight()` 增加银行卡列表渲染；`css/style.css` 新增 31 个样式类。**换绑语义 = 用合规借记卡替换原卡（卡位复用、默认标记保留）**，存量信用卡与异名卡不做静默删除而是标记「去换绑」以待整改 | §一 ~ §六；新增契约 `#modal-bank-card-bind` 等 14 个节点（其中三个主面板节点已在本轮入口收敛时移除）；自检 **261 项断言全通过**；**只支持借记卡绑定 + 必须已实名**两条要求均有独立闸门与断言；提现 / 托管 / Pro 三轮自检 145 + 82 + 103 项全数回归通过；L1 保持 **34 ERROR** / 本文件 0 ERROR；Mermaid 结构门禁 0 问题（28 → 29 图块） |
+
+| 2026-09-22 | 契约修订 + 实现 | **资产安全中心银行卡入口收敛（唯一陈列位）**：① §一 资产安全中心功能块明确「**资产主面板不再陈列已绑定银行卡明细**」——主面板只保留账户安全等级、3 大安全要素与【前往安全设置 >】入口，查看卡列表与绑定 / 换绑 / 设为默认 / 解绑全部收敛到安全设置弹窗的「银行卡管理（仅支持本人同名借记卡）」分区；② §二 场景三入口句补注「主面板不陈列银行卡明细，仅此一个入口」，落库回显句由「资产安全中心列表」改为「安全设置银行卡管理列表」；③ §二 **场景十四重写 A / F / G 三段**——新增 `modal-security-settings` 参与者，A 段改为「主面板点【前往安全设置 >】→ 安全设置弹窗『银行卡管理』分区读取台账并渲染卡列表与『共 N 张 · 其中 M 张可用』提示」，F 段刷新目标改为安全设置列表，G 段【设为默认】/【解绑】操作主体由资产主面板改为安全设置弹窗；④ §三「资产安全中心生命周期」与「银行卡绑定与换绑生命周期」同步修订（进入绑卡弹窗的起点改为安全设置分区，两处展示位改为「安全设置银行卡管理列表 + 提现收款账户下拉」）；⑤ §四 契约行由「资产安全中心银行卡专区」改写为「**安全设置银行卡管理分区（唯一陈列位）**」——移除旧主面板的三个银行卡节点（bank-card-list / bank-card-count / bank-card-bind-entry），改为随安全设置弹窗动态生成的三节点（security-bank-card-list / security-bank-card-add / security-bank-card-tip，按项目约定在文档中以纯文本表述）并保留静态容器 `#security-settings-body`；⑥ §五 第 9 条改为「唯一陈列位与同一份台账」。<br>**代码实现**：`index.html` 删除资产安全中心内的银行卡专区整块（bank-card-block，含已绑定卡数 / 绑卡入口 / 卡列表 / 口径提示），仅保留【前往安全设置 >】；`js/app.js` 的 `App.bankCardRowHtml()` 去掉 `variant` 参数与 `mini` 分支（只服务安全设置分区）、`App.renderBankCardBlocks()` 收敛为只渲染安全设置弹窗内的卡列表与张数提示、未实名置灰只作用于「+ 绑定新银行卡」入口；`css/style.css` 删除随主面板专区失效的 6 组样式规则（bank-card-block / bank-card-block-head / bank-card-block-title（含 em）/ bank-card-block-add（含 hover、is-disabled）/ bank-card-row 的 is-mini 两条）。**主面板不再出现任何银行卡节点**，绑卡能力完全由「前往安全设置」承载 | §一 ~ §六；L1 保持 34 ERROR ｜ 本文件 0 ERROR ｜ WARN 0（三个随弹窗动态生成的节点按项目既有约定以纯文本表述，不写成 `#id` 形式，避免「ID 仅由 JS 动态生成」告警）；Mermaid 结构门禁 0 问题；`temp/wb-bankcard-verify.js` 断言按「主面板无卡列表 + 安全设置分区可绑卡」重写后 262 项全通过 |
+
+| 2026-09-22 | 实现 + 契约修订 | **账户余额充值收敛为「只能经已绑定的本人同名借记卡充值」**：① §一「人民币账户充值」功能块重写充值通道口径——原「充值渠道」下拉（微信支付 / 支付宝 / 银联对公转账）**整体下线**，改为「**充值银行卡**」下拉且选项只来自银行卡台账；新增「充值三闸校验链」「就近绑卡闭环」「合规口径可视」「到账时效 T+0」四条；账本联动的流水名格式明确为 `人民币账户充值 (发卡行 借记卡 尾号 XXXX)`，发票渠道直接取该括号文本；② §一「唯一入金通道」与 §二 场景七备注、**场景八整图重写**（参与者由「聚合支付通道」改为「银行卡台账 + 银行借记卡代扣通道」，A 段改为「逐张核验已绑卡 → 选定借记卡 → 协议代扣」，B 段由「银联对公充值」改为「未绑卡时就地绑卡再充值」）；③ §二 场景九铁律与 §三「人民币账户充值生命周期」状态机同步修订（新增「充值三闸校验 → 无可用借记卡_就地绑卡」回环）；④ §四 修订「账户余额 (元)」「人民币账户充值」「收款卡台账」「全站统一余额支付口径」四行，并新增「充值合规校验 (rechargeRules)」契约行；⑤ §五 第 1 条、第 6 条同步修订，并新增第 10 条「与充值入金账户准入的联动」。<br>**代码实现**：`js/mock_data.js` 新增 `assets.rechargeRules`（`boundCardOnly` / `requireIdVerified` / `debitOnly` / `sameNameOnly` / `maxPerTx: 50000` / `arrivalNote` 六项唯一真源），并把两条历史充值流水 TX9 / TX10 的渠道由「微信支付」/「银联对公转账」改为「招商银行 借记卡 尾号 1234」/「建设银行 借记卡 尾号 5678」，使发票管理记录不再出现已下线的外部渠道；`index.html` 充值弹窗删除 `<select id="recharge-channel-select">` 三通道下拉，改为口径 chips（`#recharge-rule-row`）+「充值银行卡」下拉（`#recharge-card-select`）+ 卡核验说明（`#recharge-card-note`）+ 快捷绑卡行（`#recharge-add-card-row`），并为【确认充值】补 `#recharge-submit-btn` 以支持置灰态；`js/app.js` 新增 6 个方法 —— `App.getRechargeRules()` / `App.getRechargeCards()` / `App.validateRechargeCard()` / `App.renderRechargeCards()` / `App.refreshRechargePanel()` / `App.onRechargeCardChange()`，**重写 `App.submitAccountRecharge()` 为三闸顺序校验**（已实名 → 只能选已绑定本人同名借记卡 → 金额有效且不超单笔上限），只有全通过才按协议代扣入金并写入带扣款卡号的收入流水，`App.openAccountRechargeModal()` 增加面板刷新、`App.refreshBankCardViews()` 增加充值面板联动刷新、`App.openModal('modal-account-recharge')` 增加合规兜底刷新；`css/style.css` 把提现弹窗的合规组件样式（口径 chips / 卡校验说明 / 快捷绑卡行 / 下拉置灰）改为与充值弹窗**共用同一组选择器**，零重复样式 | §一 ~ §六；新增契约 `#recharge-card-select`、`#recharge-card-note`、`#recharge-rule-row`、`#recharge-add-card-row`、`#recharge-submit-btn`；`temp/wb-recharge-verify.js` 新增专项自检；L1 保持 34 ERROR / 本文件 0 ERROR；Mermaid 结构门禁 0 问题 |
+
+<!-- contract-ignore: App.refreshProPaySource -->
+> 豁免说明：`App.refreshProPaySource()` 是 2026-09-22 首版统一余额支付时引入的 Pro 弹窗余额读数方法，同日在「Pro 会员订阅与账户余额解耦」迭代中随账户余额支付一并移除；上方变更记录保留其历史称谓，故在此显式豁免。

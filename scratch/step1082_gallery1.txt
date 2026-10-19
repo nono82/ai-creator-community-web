@@ -1,0 +1,65 @@
+Created At: 2026-09-17T17:54:17+08:00
+Completed At: 2026-09-17T17:54:17+08:00
+File Path: `file:///Users/huangjianbin/Desktop/AI%E5%88%9B%E4%BD%9C%E8%80%85%E7%A4%BE%E5%8C%BA/ai-creator-community/js/app.js`
+Total Lines: 8050
+Total Bytes: 363416
+Showing lines 2974 to 3030
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2974:   renderGalleryPlaza: function() {
+2975:     const grid = document.getElementById('gallery-works-grid');
+2976:     const intro = document.getElementById('gallery-intro-text');
+2977:     const gallery = MockData.tasks.gallery;
+2978:     if (!grid || !gallery) return;
+2979: 
+2980:     if (intro && (!intro.innerHTML.trim() || intro.textContent === '')) {
+2981:       intro.innerHTML = `
+2982:         <div class="gallery-intro-heading">
+2983:           <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="color:#F59E0B; margin-right:4px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+2984:           <strong>高校超级个体商业交付标杆展馆</strong>
+2985:           <span class="gallery-intro-pill">官方版权存证</span>
+2986:         </div>
+2987:         <div class="gallery-intro-sub">
+2988:           沉淀高校认证创作者真实商单交付成果与高分样片。品牌雇主可直接观摩成片并「找 TA 定制」同款；创作者可申请作品入库并自主管理接单档期。
+2989:         </div>
+2990:       `;
+2991:     }
+2992: 
+2993:     let list = [...(gallery.works || [])];
+2994:     const cat = this.activeGalleryCategory;
+2995:     if (cat === '可接单') {
+2996:       this.activeGalleryCategory = '全部';
+2997:       list = [...(gallery.works || [])];
+2998:     } else if (cat && cat !== '全部') {
+2999:       list = list.filter(w => w.category === cat || (w.tags || []).includes(cat));
+3000:     }
+3001: 
+3002:     const parseViews = (v) => {
+3003:       if (!v) return 0;
+3004:       if (String(v).includes('万')) return parseFloat(v) * 10000;
+3005:       return parseInt(String(v).replace(/[^\d]/g, ''), 10) || 0;
+3006:     };
+3007:     const parsePrice = (p) => parseInt(String(p || '').replace(/[^\d]/g, ''), 10) || 0;
+3008: 
+3009:     if (this.activeGallerySort === 'hot') {
+3010:       list.sort((a, b) => parseViews(b.views) - parseViews(a.views));
+3011:     } else if (this.activeGallerySort === 'price-asc') {
+3012:       list.sort((a, b) => parsePrice(a.priceRange) - parsePrice(b.priceRange));
+3013:     } else if (this.activeGallerySort === 'latest') {
+3014:       list = list.slice().reverse();
+3015:     } else {
+3016:       const creatorLv = (w) => parseInt(String((w.creator && w.creator.level) || '').replace(/[^\d]/g, ''), 10) || 0;
+3017:       const rank = (w) => {
+3018:         // Lv.4+ 商业创作者展厅优先加权
+3019:         if (w.weightBoost || creatorLv(w) >= 4) return -1;
+3020:         if (w.badge === '精选' || w.badge === '榜单入选') return 0;
+3021:         if (w.badge === '学院认证') return 1;
+3022:         if (w.available) return 2;
+3023:         return 3;
+3024:       };
+3025:       list.sort((a, b) => rank(a) - rank(b) || parseViews(b.views) - parseViews(a.views));
+3026:     }
+3027: 
+3028:     if (list.length === 0) {
+3029:       grid.innerHTML = `<div class="gallery-empty">该筛选下暂无展厅作品，试试切换品类</div>`;
+3030:       return;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

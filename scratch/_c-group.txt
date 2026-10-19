@@ -1,0 +1,75 @@
+console.log(' C 组 · 课节完成唯一入口');
+{
+  let s = fresh();
+  ok(isFn(s.App, 'markLessonDone'), 'C1 `App.markLessonDone` 存在（课节完成唯一入口，FR-003-03）');
+
+  // ---- 成功路径：取一节**非视频**且未完成的课节（视频有 95% 闸门，不能用作成功路径）----
+  // 实测：P1-L04 = article / todo / 下一节 P1-L05 = todo ⇒ 完成后 L05 应变 learning、progress 40 → 60
+  s = fresh();
+  const SUCC = { planId: 'P1', lessonId: 'P1-L04', idx: 3 };
+  const lpBefore = Number(s.MockData.currentUser.learningPoints || 0);
+  const lgBefore = logLen(s.MockData);
+  const ret = safe(() => s.App.markLessonDone(SUCC.planId, SUCC.lessonId), null);
+  const tLesson = lessonOf(s.MockData, SUCC.planId, SUCC.lessonId);
+  const tPlan = planOf(s.MockData, SUCC.planId);
+  const tDone = doneCount(s.MockData, SUCC.planId);
+  const tTotal = (tPlan && tPlan.lessonList || []).length;
+  const tNext = tPlan && tPlan.lessonList ? tPlan.lessonList[SUCC.idx + 1] : null;
+  const reached = !!tLesson && tLesson.status === 'done';   // 🔑 前置非空：以下断言全部建立在它之上
+
+  ok(reached, 'C2 完成课节 ⇒ 该节 `status` 变为 `done`（P1-L04，实测 ' + (tLesson ? tLesson.status : '—') + '）');
+  ok(reached && Number(tPlan.progress) === Math.round((tDone / tTotal) * 100),
+    'C3 🔴 `progress` **按课节数重算**（' + tDone + '/' + tTotal + ' ⇒ 期望 ' + Math.round((tDone / tTotal) * 100) + '，实测 ' + (tPlan ? tPlan.progress : '—') + '；禁止固定增量，FR-003-07）');
+  ok(reached && !!tNext && tNext.status === 'learning',
+    'C4 完成后**下一节**置 `learning`（P1-L05 实测 ' + (tNext ? tNext.status : '—') + '）');
+  ok(reached && Number(s.MockData.currentUser.learningPoints) === lpBefore + 30,
+    'C5 🔴 完成课节 ⇒ **+30**（' + lpBefore + ' → ' + Number(s.MockData.currentUser.learningPoints) + '；REQ-103）');
+  ok(reached && logLen(s.MockData) === lgBefore + 1,
+    'C6 完成课节写流水 1 条（' + lgBefore + ' → ' + logLen(s.MockData) + '）');
+  ok(reached && ret && typeof ret === 'object' && Number(ret.progress) === Number(tPlan.progress),
+    'C7 返回值携带新 `progress`（供 UI 与断言消费）');
+
+  // ---- 视频闸门（**前置 = 成功路径已成立**，否则"方法不存在"也会平凡通过）----
+  s = fresh();
+  const vLess = lessonOf(s.MockData, 'P1', 'P1-L03');
+  const isVideo = !!vLess && vLess.type === 'video';
+  safe(() => s.App.markLessonDone('P1', 'P1-L03'), null);
+  ok(reached && isVideo && vLess.status !== 'done',
+    'C8 🔴 视频课**未看够 95% ⇒ 不得标记完成**（P1-L03 未观看即打卡 ⇒ 实测 ' + vLess.status + '；FR-003-32）');
+
+  // ---- 幂等（**前置 = 首次打卡确实加了分**）----
+  s = fresh();
+  const lp0 = Number(s.MockData.currentUser.learningPoints || 0);
+  const lg0 = logLen(s.MockData);
+  safe(() => s.App.markLessonDone(SUCC.planId, SUCC.lessonId), null);
+  const afterFirst = Number(s.MockData.currentUser.learningPoints || 0);
+  const dup = safe(() => s.App.markLessonDone(SUCC.planId, SUCC.lessonId), 'THROW');
+  ok(afterFirst === lp0 + 30 && dup === null,
+    'C9 🔴 **幂等**：已完成课节重复打卡 ⇒ 返回 null（首次 ' + lp0 + ' → ' + afterFirst + '；FR-003-09）');
+  ok(afterFirst === lp0 + 30 && Number(s.MockData.currentUser.learningPoints) === afterFirst && logLen(s.MockData) === lg0 + 1,
+    'C10 🔴 重复打卡**不重复加分、不重复写流水**（SC-003-08）');
+
+  s = fresh();
+  ok(safe(() => s.App.markLessonDone('NOT-EXIST', 'P1-L03'), 'THROW') === null,
+    'C11 🔴 未知 `planId` ⇒ **显式失败**（返回 null；FR-003-06 / EX-003-10）');
+  ok(safe(() => s.App.markLessonDone('P1', 'NOT-EXIST'), 'THROW') === null,
+    'C12 🔴 未知 `lessonId` ⇒ **显式失败**（返回 null）');
+
+  // ---- 兼容壳 completeLesson(title)：必须**精确标识**并转调（FR-003-05 / 缺陷 ①③）----
+  // 实测：calendarTasks day30 ⇒ 「AI配音情感合成技巧」对应 P2-L04（article / learning）
+  s = fresh();
+  safe(() => s.App.completeLesson('AI配音情感合成技巧'), 'THROW');
+  const pl04 = lessonOf(s.MockData, 'P2', 'P2-L04');
+  const shPlan = planOf(s.MockData, 'P2');
+  const shDone = doneCount(s.MockData, 'P2');
+  const shTotal = (shPlan && shPlan.lessonList || []).length;
+  ok(!!pl04 && pl04.status === 'done',
+    'C13 🔴 兼容壳必须**精确命中 P2-L04** 并置 done（实测 ' + (pl04 ? pl04.status : '—') + '；旧实现靠模糊匹配 + 兜底 `plans[0]` ⇒ 会落到 P1 上，缺陷 ③）');
+  ok(!!pl04 && pl04.status === 'done' && Number(shPlan.progress) === Math.round((shDone / shTotal) * 100),
+    'C14 🔴 兼容壳同样走**按课节数重算**（P2 实测 ' + (shPlan ? shPlan.progress : '—') + '，期望 ' + Math.round((shDone / shTotal) * 100) + '；不得 `progress + 18`，缺陷 ①）');
+
+  // ---- 数据层：既有流水被旧口径污染（缺陷 ①）----
+  const wl = writeLogPoints(fresh().MockData);
+  ok(wl.length > 0 && wl.every((e) => Number(e.points) === 30),
+    'C15 🔴 「完成课节」流水的 `points` **恒为 30**（实测含 ' + wl.map((e) => e.points).join(',') + ' ⇒ 既有数据被旧 `+50` 口径污染，须一并收敛）');
+}

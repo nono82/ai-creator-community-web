@@ -1,0 +1,94 @@
+Created At: 2026-09-17T17:55:47+08:00
+Completed At: 2026-09-17T17:55:47+08:00
+File Path: `file:///Users/huangjianbin/Desktop/AI%E5%88%9B%E4%BD%9C%E8%80%85%E7%A4%BE%E5%8C%BA/ai-creator-community/js/app.js`
+Total Lines: 8050
+Total Bytes: 363416
+Showing lines 3050 to 3135
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3050:                 <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+3051:                 <span>${w.sourceTask.award || '精选任务成果'} · ${w.sourceTask.title}</span>
+3052:               </span>
+3053:             ` : (w.badge ? `<span class="gallery-work-badge">${w.badge}</span>` : '')}
+3054:             <button type="button" class="gallery-play-btn" aria-label="播放作品">${playIcon}</button>
+3055:             <div class="gallery-work-stats">
+3056:               <span>${w.views || '5.8万'} 播放</span>
+3057:               <span>${w.likes || 480} 赞</span>
+3058:             </div>
+3059:           </div>
+3060:           <div class="gallery-work-body">
+3061:             <div class="gallery-title-row">
+3062:               <h3 class="gallery-work-title" title="${w.title}">${w.title}</h3>
+3063:               <div class="gallery-work-tags">
+3064:                 <span class="gallery-tag">${categoryTag}</span>
+3065:                 <span class="gallery-tag is-muted">${sceneTag}</span>
+3066:               </div>
+3067:             </div>
+3068:             <div class="gallery-work-footer">
+3069:               <div class="gallery-footer-top">
+3070:                 <div class="gallery-creator-row">
+3071:                   <img src="${c.avatar || 'assets/avatars/user_header.png'}" alt="${c.name}" class="gallery-creator-avatar">
+3072:                   <div class="gallery-creator-meta">
+3073:                     <div class="gallery-creator-name">
+3074:                       <span class="gallery-creator-name-text">${c.name}</span>
+3075:                       <span class="gallery-creator-lv">${c.level || ''}</span>
+3076:                     </div>
+3077:                     <div class="gallery-creator-chips">
+3078:                       ${c.school ? `<span>${c.school}</span>` : ''}
+3079:                       <span>交付 ${w.delivered || w.ordersCount || 10} 单</span>
+3080:                       <div class="gallery-schedule-badge-wrap">
+3081:                         ${w.scheduleStatus === 'busy'
+3082:                           ? '<span class="gallery-schedule-tag is-busy"><span class="status-dot dot-busy"></span>档期紧张</span>'
+3083:                           : (w.scheduleStatus === 'closed' || !w.available
+3084:                             ? '<span class="gallery-schedule-tag is-closed"><span class="status-dot dot-closed"></span>暂停接单</span>'
+3085:                             : '<span class="gallery-schedule-tag is-available"><span class="status-dot dot-available"></span>可接单</span>')}
+3086:                       </div>
+3087:                     </div>
+3088:                   </div>
+3089:                 </div>
+3090:                 <div class="gallery-price">
+3091:                   <span class="gallery-price-label">参考报价</span>
+3092:                   <strong>${priceText}</strong>
+3093:                 </div>
+3094:               </div>
+3095:               <div class="gallery-work-actions">
+3096:                 <button type="button" class="gallery-btn-secondary" onclick="event.stopPropagation(); App.openCreatorProfile('${c.name}')">看创作者</button>
+3097:                 <button type="button" class="gallery-btn-primary ${w.available && w.scheduleStatus !== 'closed' ? '' : 'is-disabled'}"
+3098:                   onclick="${w.available && w.scheduleStatus !== 'closed'
+3099:                     ? (w.scheduleStatus === 'busy' ? `App.showToast('提示：该创作者当前档期紧张，制作周期可能需顺延'); App.openGalleryCustomModal('${w.id}');` : `App.openGalleryCustomModal('${w.id}')`)
+3100:                     : `App.showToast('该同学当前暂停接单，可关注主页等待档期开放')`}">
+3101:                   ${w.available && w.scheduleStatus !== 'closed' ? '找 TA 定制' : '暂不可约'}
+3102:                 </button>
+3103:               </div>
+3104:             </div>
+3105:           </div>
+3106:         </article>
+3107:       `;
+3108:     }).join('');
+3109:   },
+3110: 
+3111:   renderTasksRight: function() {
+3112:     const todayRec = document.getElementById('tasks-today-rec-container');
+3113:     const recTitle = document.getElementById('tasks-side-rec-title');
+3114:     const recMore = document.getElementById('tasks-side-rec-more');
+3115:     const isGallery = this.activeTasksMode === 'gallery';
+3116: 
+3117:     if (recTitle) recTitle.textContent = isGallery ? '展厅热门' : '今日推荐任务';
+3118:     if (recMore) {
+3119:       recMore.onclick = () => {
+3120:         if (isGallery) {
+3121:           this.setTasksMode('gallery');
+3122:           this.showToast('已定位至作品展厅精选列表');
+3123:         } else {
+3124:           this.showToast('已刷新今日算法推荐任务');
+3125:         }
+3126:       };
+3127:     }
+3128: 
+3129:     if (todayRec) {
+3130:       if (isGallery) {
+3131:         const works = (MockData.tasks.gallery && MockData.tasks.gallery.works || []).slice(0, 3);
+3132:         todayRec.innerHTML = works.map(w => {
+3133:           const price = w.priceRange || w.basePrice || '¥ 2,800 起';
+3134:           const authorName = (w.creator && w.creator.name) || w.author || '创作者';
+3135:           const isAvail = w.scheduleStatus === 'available' || w.available === true;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,3293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI创作者社区 · 高校青年 OPC 超级个体商业孵化与赋能平台</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部顶栏 -->
+    <header class="top-header">
+      <div class="brand-area" onclick="App.navigateTo('discover')">
+        <img src="assets/decorations/logo_mark.png" alt="" class="brand-logo-mark">
+        <div class="brand-text">
+          <div class="brand-title">AI 创作者社区</div>
+          <div class="brand-subtitle">Campus OPC Incubator · 高校青年一人公司孵化平台</div>
+        </div>
+      </div>
+
+      <!-- 全局搜索栏 -->
+      <div class="global-search-container">
+        <div class="search-input-wrapper">
+          <svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="global-search-input" class="search-input" placeholder="搜索创作者 / 课程 / 任务 / 作品" autocomplete="off">
+          <button class="search-btn" id="btn-global-search">搜索</button>
+        </div>
+
+        <!-- 实时搜索下拉匹配 -->
+        <div class="search-dropdown" id="search-dropdown">
+          <div class="search-dropdown-item" onclick="App.handleSearchSelect('《未来信号》AI科幻短剧', 'discover')">
+            🎬 《未来信号》AI科幻短剧 · 作品
+          </div>
+          <div class="search-dropdown-item" onclick="App.handleSearchSelect('AI 漫剧创作全流程', 'academy')">
+            📚 AI 漫剧创作全流程 · 课程
+          </div>
+          <div class="search-dropdown-item" onclick="App.handleSearchSelect('AI 图像生成', 'tools')">
+            🛠️ AI 图像生成 · 工具
+          </div>
+          <div class="search-dropdown-item" onclick="App.handleSearchSelect('未来城市：AI短视频创作挑战', 'tasks')">
+            🎯 未来城市：AI短视频创作挑战 · 任务
+          </div>
+        </div>
+      </div>
+
+      <!-- 顶栏右侧交互按钮 -->
+      <div class="header-actions">
+        <button class="btn-creation-center" onclick="App.navigateTo('tools')">创作中心</button>
+        <button class="btn-publish" onclick="App.openModal('modal-publish')">发布作品</button>
+        
+        <button class="btn-icon-notify" id="btn-notify" onclick="App.toggleNotifyDropdown(event)" title="通知消息">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="notify-badge" id="notify-badge"></span>
+        </button>
+        <div class="notify-dropdown" id="notify-dropdown" hidden></div>
+
+        <!-- 校园 OPC 认证标识 -->
+        <div class="header-opc-tag" onclick="App.navigateTo('assets')" title="已认证：南京大学 校园 OPC 工作室 (Lv.4) · 点击进入个人中心">
+          <span class="opc-tag-dot"></span>
+          <span class="opc-tag-text">南大 · 认证 OPC 工作室 (Lv.4)</span>
+        </div>
+
+        <img src="assets/avatars/user_header.png" alt="小宇同学" class="header-user-avatar" onclick="App.navigateTo('assets')" title="小宇同学 · 个人中心">
+      </div>
+    </header>
+
+    <!-- 主工作区 -->
+    <div class="main-wrapper">
+      <!-- 左侧导航栏 (7大一级导航) -->
+      <aside class="left-sidebar">
+        <nav class="nav-menu">
+          <div class="nav-item active" data-view="discover" onclick="App.navigateTo('discover')">
+            <span class="nav-icon-wrap nav-icon-discover">
+              <svg class="nav-svg-active" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" fill="currentColor"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#fff"></polygon>
+              </svg>
+              <svg class="nav-svg-inactive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+            </span>
+            <span>发现</span>
+          </div>
+
+          <div class="nav-item" data-view="academy" onclick="App.navigateTo('academy')">
+            <span class="nav-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                <path d="M8 21h8"></path>
+                <path d="M12 17v4"></path>
+                <polyline points="7 13 10 10 13 12 17 7"></polyline>
+              </svg>
+            </span>
+            <span>成长学院</span>
+          </div>
+
+          <div class="nav-item" data-view="tools" onclick="App.navigateTo('tools')">
+            <span class="nav-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+            </span>
+            <span>创作工具</span>
+          </div>
+
+          <div class="nav-item" data-view="community" onclick="App.navigateTo('community')">
+            <span class="nav-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+            </span>
+            <span>社区中心</span>
+          </div>
+
+          <div class="nav-item" data-view="tasks" onclick="App.navigateTo('tasks')">
+            <span class="nav-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="M9 16l2 2 4-4"></path>
+              </svg>
+            </span>
+            <span>任务广场</span>
+          </div>
+
+          <div class="nav-item" data-view="analytics" onclick="App.navigateTo('analytics')">
+            <span class="nav-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </span>
+            <span>数据中心</span>
+          </div>
+
+          <div class="nav-item" data-view="assets" onclick="App.navigateTo('assets')">
+            <span class="nav-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+                <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+                <circle cx="12" cy="14" r="1.5"></circle>
+              </svg>
+            </span>
+            <span>我的资产</span>
+          </div>
+        </nav>
+
+        <!-- 左侧下方 Pro 卡片与帮助中心 -->
+        <div class="sidebar-footer">
+          <div class="pro-widget-card" id="pro-widget-card">
+            <!-- 动态渲染：未开通 / Pro 生效中（含有效期至） -->
+          </div>
+
+          <div class="help-center-link" style="display:flex; justify-content:center; align-items:center;">
+            <div onclick="App.openHelpFaqModal()" style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              <span>帮助中心</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 中间主视图容器 (7大页面无缝切换) -->
+      <main class="content-viewport" id="content-viewport">
+        
+        <!-- =================================================================
+             1. 发现页 (view-discover)
+             ================================================================= -->
+        <section class="view-container active" id="view-discover">
+          <div class="view-grid-layout">
+            <!-- 左侧核心主栏 -->
+            <div class="col-main">
+              <!-- 顶部 Banner -->
+              <div class="hero-banner-card hero-banner-discover">
+                <img src="assets/banners/banner_discover.png" alt="AI创作·无限可能" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">AI 创作 · 无限可能</h2>
+                  <p class="hero-banner-desc">学习 AI 技能，创作优质内容，获得流量与收益<br>成为新一代 AI 创作者</p>
+                  <div class="hero-banner-actions">
+                    <button type="button" class="hero-btn-primary" onclick="App.navigateTo('tools')">开始创作</button>
+                    <button type="button" class="hero-btn-secondary" onclick="App.navigateTo('community')">了解社区</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 高校青年 OPC 超级个体扶持专区 (4大护城河) -->
+              <div class="campus-opc-hero-section">
+                <div class="campus-opc-header-row">
+                  <div class="campus-opc-badge-pill">
+                    <span class="opc-tag-dot"></span>
+                    <span>新质生产力 · 高校青年 OPC 商业孵化体系</span>
+                  </div>
+                  <span class="campus-opc-slogan">大学期间不只打零工 · 在校创办你的第一家 AI 一人公司 (OPC)</span>
+                  <span class="link-more" onclick="App.openModal('modal-pro')">了解扶持政策 &gt;</span>
+                </div>
+                <div class="campus-opc-grid-4">
+                  <div class="campus-opc-card" onclick="App.navigateTo('tasks'); App.setTasksMode('hall');">
+                    <div class="copc-card-header">
+                      <div class="copc-title-group">
+                        <span class="copc-icon-badge" style="background:#EEF2FF; color:#6366F1;">💼</span>
+                        <span class="copc-card-title">标品接单</span>
+                      </div>
+                      <span class="badge-mini-hot">免扯皮</span>
+                    </div>
+                    <div class="copc-benefit">48H 标准化交付 · 资金托管</div>
+                    <div class="copc-sub">杜绝改稿扯皮 · 收益确定</div>
+                  </div>
+
+                  <div class="campus-opc-card" onclick="App.navigateTo('tools'); App.showToast('已享受专属低价算力池 4 折补贴（多通道直充）！');">
+                    <div class="copc-card-header">
+                      <div class="copc-title-group">
+                        <span class="copc-icon-badge" style="background:#DCFCE7; color:#10B981;">⚡</span>
+                        <span class="copc-card-title">专属算力</span>
+                      </div>
+                      <span class="badge-mini-green">4折专享</span>
+                    </div>
+                    <div class="copc-benefit">普惠算力池 · 专属通道直充</div>
+                    <div class="copc-sub">聚合低价GPU · 零硬件门槛</div>
+                  </div>
+
+                  <div class="campus-opc-card" onclick="App.navigateTo('assets'); App.showToast('高校双创合规开票通道：平台统一代开增值税专票，对公合规');">
+                    <div class="copc-card-header">
+                      <div class="copc-title-group">
+                        <span class="copc-icon-badge" style="background:#FEF3C7; color:#D97706;">🏛️</span>
+                        <span class="copc-card-title">合规专票</span>
+                      </div>
+                      <span class="badge-mini-gold">对公无忧</span>
+                    </div>
+                    <div class="copc-benefit">平台统一增票 · 对公结算</div>
+                    <div class="copc-sub">解决报销难题 · 成果纳学分</div>
+                  </div>
+
+                  <div class="campus-opc-card" onclick="App.navigateTo('tasks'); App.setTasksMode('hall');">
+                    <div class="copc-card-header">
+                      <div class="copc-title-group">
+                        <span class="copc-icon-badge" style="background:#FCE7F3; color:#DB2777;">🚀</span>
+                        <span class="copc-card-title">联合舰队</span>
+                      </div>
+                      <span class="badge-mini-pink">拼大单</span>
+                    </div>
+                    <div class="copc-benefit">学长领航组网 · 协同交付</div>
+                    <div class="copc-sub">瓜分5~10万全案 · 学弟分润</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 推荐作品模块 (带分类Tab) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <div class="section-title-wrap">
+                    <span class="section-title">推荐作品</span>
+                    <div class="pill-tabs" id="discover-work-tabs">
+                      <button class="pill-tab active" data-cat="全部">全部</button>
+                      <button class="pill-tab" data-cat="AI短剧">AI短剧</button>
+                      <button class="pill-tab" data-cat="AI漫剧">AI漫剧</button>
+                      <button class="pill-tab" data-cat="校园Vlog">校园Vlog</button>
+                      <button class="pill-tab" data-cat="AI广告">AI广告</button>
+                      <button class="pill-tab" data-cat="AI音乐">AI音乐</button>
+                      <button class="pill-tab" data-cat="热门榜单">热门榜单</button>
+                    </div>
+                  </div>
+                  <span class="link-more" onclick="App.navigateTo('community')">更多 &gt;</span>
+                </div>
+
+                <!-- 5 栏作品卡片流 -->
+                <div class="works-grid-5" id="discover-works-container">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 任务广场精选模块 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <div class="section-title-wrap">
+                    <span class="section-title">任务广场</span>
+                    <div class="pill-tabs" id="discover-task-tabs">
+                      <button class="pill-tab active" data-taskcat="全部">全部</button>
+                      <button class="pill-tab" data-taskcat="品牌任务">品牌任务</button>
+                      <button class="pill-tab" data-taskcat="创作挑战">创作挑战</button>
+                      <button class="pill-tab" data-taskcat="长期合作">长期合作</button>
+                      <button class="pill-tab" data-taskcat="校园推广">校园推广</button>
+                    </div>
+                  </div>
+                  <span class="link-more" onclick="App.navigateTo('tasks')">更多任务 &gt;</span>
+                </div>
+
+                <!-- 4 栏任务卡片流 -->
+                <div class="tasks-grid-4" id="discover-tasks-container">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 推荐课程模块 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">推荐课程</span>
+                  <span class="link-more" onclick="App.navigateTo('academy')">更多课程 &gt;</span>
+                </div>
+
+                <div class="courses-grid-5" id="discover-courses-container">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="col-side">
+              <!-- 快捷入口 -->
+              <div class="card-section">
+                <div class="section-header" style="margin-bottom:12px;">
+                  <span class="section-title">快捷入口</span>
+                </div>
+                <div class="quick-entry-grid" id="discover-quick-entry">
+                  <!-- Icons.soft 动态注入 -->
+                </div>
+              </div>
+
+              <!-- 创作者个人卡片 -->
+              <div class="card-section creator-profile-card">
+                <div class="profile-top">
+                  <div class="profile-user">
+                    <img src="assets/avatars/user_profile_large.png" alt="小宇同学" class="profile-avatar">
+                    <div>
+                      <div class="profile-name-row">
+                        <span class="profile-name">小宇同学</span>
+                        <span class="badge-level">Lv.4</span>
+                      </div>
+                      <div class="profile-sub">南京大学 ｜ 商业创作者</div>
+                    </div>
+                  </div>
+                  <button class="btn-my-homepage" onclick="App.navigateTo('assets')">我的主页</button>
+                </div>
+
+                <div class="profile-stats-row">
+                  <div>
+                    <div class="profile-stat-val">36</div>
+                    <div class="profile-stat-lbl">作品数</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-val">2.8万</div>
+                    <div class="profile-stat-lbl">粉丝数</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-val">12.6万</div>
+                    <div class="profile-stat-lbl">获赞数</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-val">¥6,820</div>
+                    <div class="profile-stat-lbl">累计收入</div>
+                  </div>
+                </div>
+
+                <div class="profile-exp-bar-wrap">
+                  <span data-user-level-text="创作者等级 <strong style=&quot;color:var(--primary);&quot;>{lv}</strong>">创作者等级 <strong style="color:var(--primary);">Lv.4</strong></span>
+                  <span>3450 / 5000</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 69%;"></div>
+                </div>
+              </div>
+
+              <!-- 矩阵分发数据 (近7日) -->
+              <div class="card-section matrix-card">
+                <div class="section-header">
+                  <span class="section-title">全网与社区矩阵 <span style="font-size:12px;font-weight:normal;color:var(--text-muted);">(近7日)</span></span>
+                  <span class="link-more" onclick="App.openMatrixAnalytics()">查看回流 &gt;</span>
+                </div>
+
+                <div class="matrix-platform-icons" id="discover-matrix-platforms">
+                  <!-- 动态渲染 -->
+                </div>
+
+                <div class="matrix-bottom-stats">
+                  <div class="matrix-stat-item">
+                    <div class="matrix-stat-lbl">总播放量</div>
+                    <div class="matrix-stat-val">47.0万</div>
+                  </div>
+                  <div class="matrix-stat-item">
+                    <div class="matrix-stat-lbl">新增粉丝</div>
+                    <div class="matrix-stat-val">3.2万</div>
+                  </div>
+                  <div class="matrix-stat-item">
+                    <div class="matrix-stat-lbl">互动数</div>
+                    <div class="matrix-stat-val">5.6万</div>
+                  </div>
+                  <div class="matrix-stat-item">
+                    <div class="matrix-stat-lbl">预计收益</div>
+                    <div class="matrix-stat-val">¥1,268</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 为你推荐任务 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">为你推荐任务</span>
+                  <span class="link-more" onclick="App.navigateTo('tasks')">更多 &gt;</span>
+                </div>
+
+                <div class="rec-task-list" id="discover-rec-tasks-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             2. 成长学院 (view-academy)
+             ================================================================= -->
+        <section class="view-container" id="view-academy">
+          <div class="view-grid-layout" id="academy-main-shell">
+            <div class="col-main">
+              <!-- 学院 Banner -->
+              <div class="hero-banner-card hero-banner-academy">
+                <img src="assets/banners/banner_academy.png" alt="成长学院" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">成长学院</h2>
+                  <p class="hero-banner-desc">系统化学习 AI 创作技能，解锁更多可能，成为优秀的 AI 创作者</p>
+                  <div class="hero-banner-actions">
+                    <button type="button" class="hero-btn-primary" onclick="App.focusGrowthPath()">我的学习路径</button>
+                    <button type="button" class="hero-btn-secondary" onclick="App.openAcademyRecords()">学习记录</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 我的成长路径 (Lv.1 ~ Lv.5) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">我的成长路径</span>
+                  <span class="link-more" onclick="App.openLevelPerksModal()">查看完整路径 &gt;</span>
+                </div>
+
+                <div class="growth-steps-container" id="growth-steps-container">
+                  <!-- 动态渲染 Lv.1 ~ Lv.5 节点 -->
+                </div>
+              </div>
+
+              <!-- 推荐学习计划 (含分类Tab) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <div class="section-title-wrap">
+                    <span class="section-title">推荐学习计划</span>
+                    <div class="pill-tabs" id="academy-plan-tabs">
+                      <button class="pill-tab active" data-plancat="全部">全部</button>
+                      <button class="pill-tab" data-plancat="新手入门">新手入门</button>
+                      <button class="pill-tab" data-plancat="技能提升">技能提升</button>
+                      <button class="pill-tab" data-plancat="实战进阶">实战进阶</button>
+                      <button class="pill-tab" data-plancat="出海运营">出海运营</button>
+                      <button class="pill-tab" data-plancat="商业变现">商业变现</button>
+                    </div>
+                  </div>
+                  <span class="link-more" onclick="App.openAcademyAllCourses()">更多课程 &gt;</span>
+                </div>
+
+                <div class="academy-plans-grid" id="academy-plans-container">
+                  <!-- 动态渲染计划卡片 -->
+                </div>
+              </div>
+
+              <!-- 学习资源库 6 宫格 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">学习资源库</span>
+                  <span class="link-more" onclick="App.openAcademyResource('R1')">查看全部资源 &gt;</span>
+                </div>
+                <div class="resources-grid-6" id="academy-resources-container">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧栏：学分统计、周打卡、我的成就 -->
+            <div class="col-side">
+              <div class="card-section creator-profile-card">
+                <div class="profile-top">
+                  <div class="profile-user">
+                    <img src="assets/avatars/user_profile_large.png" alt="小宇同学" class="profile-avatar">
+                    <div>
+                      <div class="profile-name-row">
+                        <span class="profile-name">小宇同学</span>
+                        <span class="badge-level">Lv.4</span>
+                      </div>
+                      <span class="profile-sub">南京大学 ｜ 商业创作者</span>
+                    </div>
+                  </div>
+                  <button class="btn-my-homepage" onclick="App.openMyCertsModal()">我的证书 &gt;</button>
+                </div>
+
+                <div class="profile-stats-row" id="academy-profile-stats">
+                  <div>
+                    <div class="profile-stat-lbl">学习时长</div>
+                    <div class="profile-stat-val"><span id="academy-stat-hours">128</span> <span style="font-size:11px;font-weight:normal;">小时</span></div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-lbl">课程完成</div>
+                    <div class="profile-stat-val"><span id="academy-stat-courses">16</span> <span style="font-size:11px;font-weight:normal;">门</span></div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-lbl">获得证书</div>
+                    <div class="profile-stat-val"><span id="academy-stat-certs">8</span> <span style="font-size:11px;font-weight:normal;">张</span></div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-lbl">可用创作积分</div>
+                    <div class="profile-stat-val" style="color:var(--primary);" id="academy-stat-points">2680</div>
+                  </div>
+                </div>
+
+                <!-- 连续学习打卡 -->
+                <div class="streak-banner">
+                  <div class="streak-left">
+                    <span class="streak-title"><span class="streak-flame-icon" id="streak-flame-icon"></span> 连续学习 <span id="academy-streak-days">7</span> 天</span>
+                    <span class="streak-sub">再学 28 分钟可获得额外积分</span>
+                    <div class="streak-progress-row">
+                      <div class="progress-bar-bg" style="width: 140px;">
+                        <div class="progress-bar-fill" style="width: 46%;"></div>
+                      </div>
+                      <span class="streak-minutes">28 / 60 分钟</span>
+                    </div>
+                  </div>
+                  <img src="assets/decorations/streak_gold_medal.png" alt="打卡金牌" class="streak-medal-img">
+                </div>
+              </div>
+
+              <!-- 本周学习计划与周历 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">本周学习计划</span>
+                  <span class="link-more" onclick="App.openAcademyRecords()">查看更多 &gt;</span>
+                </div>
+
+                <!-- 周一至周日选择器 -->
+                <div class="calendar-week-row" id="academy-calendar-row">
+                  <div class="calendar-day-col" data-day="26">
+                    <div class="cal-day-label">一</div>
+                    <div class="cal-day-num">26</div>
+                  </div>
+                  <div class="calendar-day-col" data-day="27">
+                    <div class="cal-day-label">二</div>
+                    <div class="cal-day-num">27</div>
+                  </div>
+                  <div class="calendar-day-col active" data-day="28">
+                    <div class="cal-day-label">三</div>
+                    <div class="cal-day-num">28</div>
+                  </div>
+                  <div class="calendar-day-col" data-day="29">
+                    <div class="cal-day-label">四</div>
+                    <div class="cal-day-num">29</div>
+                  </div>
+                  <div class="calendar-day-col" data-day="30">
+                    <div class="cal-day-label">五</div>
+                    <div class="cal-day-num">30</div>
+                  </div>
+                  <div class="calendar-day-col" data-day="31">
+                    <div class="cal-day-label">六</div>
+                    <div class="cal-day-num">31</div>
+                  </div>
+                  <div class="calendar-day-col" data-day="1">
+                    <div class="cal-day-label">日</div>
+                    <div class="cal-day-num">1</div>
+                  </div>
+                </div>
+
+                <div class="today-plans-list" id="academy-today-plans-list">
+                  <!-- 动态渲染当天学习任务 -->
+                </div>
+              </div>
+
+              <!-- 我的成就 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">我的成就</span>
+                  <span class="link-more" onclick="App.openMyCertsModal()">查看更多 &gt;</span>
+                </div>
+                <div class="achievements-grid" id="academy-achievements-grid">
+                  <!-- 动态渲染勋章 -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 学院二级：全量课程中心/选课大厅 -->
+          <div class="academy-sub-page" id="academy-courses-page" hidden>
+            <div class="academy-sub-topbar">
+              <button type="button" class="academy-sub-back" onclick="App.closeAcademySubPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回学院
+              </button>
+              <div class="academy-sub-crumb">成长学院<span>/</span><span>全量课程中心</span></div>
+              <div class="academy-sub-topbar-actions" id="academy-courses-top-actions">
+                <button type="button" class="hero-btn-secondary" onclick="App.openAcademyRecords()">学习记录</button>
+              </div>
+            </div>
+            <div class="academy-sub-body">
+              <div class="academy-filter-bar" id="academy-courses-filter"></div>
+              <div id="academy-courses-body"></div>
+            </div>
+          </div>
+
+          <!-- 学院二级：课程详情 -->
+          <div class="academy-sub-page" id="academy-course-page" hidden>
+            <div class="academy-sub-topbar">
+              <button type="button" class="academy-sub-back" onclick="App.closeAcademySubPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="academy-sub-crumb">成长学院<span>/</span><span id="academy-course-crumb">课程详情</span></div>
+              <div class="academy-sub-topbar-actions" id="academy-course-top-actions"></div>
+            </div>
+            <div class="academy-sub-body" id="academy-course-body"></div>
+          </div>
+
+          <!-- 学院二级：课节学习 -->
+          <div class="academy-sub-page" id="academy-lesson-page" hidden>
+            <div class="academy-sub-topbar">
+              <button type="button" class="academy-sub-back" onclick="App.backFromAcademyLesson()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="academy-sub-crumb">成长学院<span>/</span><span id="academy-lesson-crumb-course">课程</span><span>/</span><span id="academy-lesson-crumb">课节</span></div>
+              <div class="academy-sub-topbar-actions" id="academy-lesson-top-actions"></div>
+            </div>
+            <div class="academy-sub-body" id="academy-lesson-body"></div>
+          </div>
+
+          <!-- 学院二级：学习记录 -->
+          <div class="academy-sub-page" id="academy-records-page" hidden>
+            <div class="academy-sub-topbar">
+              <button type="button" class="academy-sub-back" onclick="App.closeAcademySubPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="academy-sub-crumb">成长学院<span>/</span>学习记录</div>
+              <div class="academy-sub-topbar-actions">
+                <button type="button" class="hero-btn-secondary" onclick="App.openMyCertsModal()">我的证书</button>
+              </div>
+            </div>
+            <div class="academy-sub-body" id="academy-records-body"></div>
+          </div>
+
+          <!-- 学院二级：资源详情 -->
+          <div class="academy-sub-page" id="academy-resource-page" hidden>
+            <div class="academy-sub-topbar">
+              <button type="button" class="academy-sub-back" onclick="App.closeAcademySubPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="academy-sub-crumb">成长学院<span>/</span><span id="academy-resource-crumb">资源详情</span></div>
+              <div class="academy-sub-topbar-actions" id="academy-resource-top-actions"></div>
+            </div>
+            <div class="academy-sub-body" id="academy-resource-body"></div>
+          </div>
+
+          <!-- 学院二级：证书详情 -->
+          <div class="academy-sub-page" id="academy-cert-page" hidden>
+            <div class="academy-sub-topbar">
+              <button type="button" class="academy-sub-back" onclick="App.closeAcademySubPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="academy-sub-crumb">成长学院<span>/</span><span id="academy-cert-crumb">证书详情</span></div>
+              <div class="academy-sub-topbar-actions" id="academy-cert-top-actions"></div>
+            </div>
+            <div class="academy-sub-body" id="academy-cert-body"></div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             3. 创作工具 (view-tools)
+             ================================================================= -->
+        <section class="view-container" id="view-tools">
+          <div class="view-grid-layout">
+            <div class="col-main">
+              <!-- Banner -->
+              <div class="hero-banner-card hero-banner-tools">
+                <img src="assets/banners/banner_tools.png" alt="创作工具" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">创作工具 · 提升创作效率</h2>
+                  <p class="hero-banner-desc">AI 赋能创作全流程，从灵感到成品，释放无限创意</p>
+                  <div class="hero-banner-actions">
+                    <button type="button" class="hero-btn-primary" onclick="App.openAIWorkbench('AI 智能创作工作台')">开始创作</button>
+                    <button type="button" class="hero-btn-secondary" onclick="App.openHelpFaqModal()">使用指南</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 我的工具箱 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">我的工具箱</span>
+                  <span class="link-more link-more-edit" onclick="App.showToast('编辑常用工具箱：支持拖拽排序与增删常用工具')">编辑工具箱 <span class="link-more-icon" aria-hidden="true"></span></span>
+                </div>
+                <div class="toolbox-grid" id="my-toolbox-grid">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 热门创作工具 (含Tab分类) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <div class="section-title-wrap">
+                    <span class="section-title">热门创作工具</span>
+                    <div class="pill-tabs" id="tools-category-tabs">
+                      <button class="pill-tab active" data-toolcat="全部">全部</button>
+                      <button class="pill-tab" data-toolcat="AI 写作">AI 写作</button>
+                      <button class="pill-tab" data-toolcat="图像生成">图像生成</button>
+                      <button class="pill-tab" data-toolcat="视频制作">视频制作</button>
+                      <button class="pill-tab" data-toolcat="音频处理">音频处理</button>
+                      <button class="pill-tab" data-toolcat="设计辅助">设计辅助</button>
+                      <button class="pill-tab" data-toolcat="效率工具">效率工具</button>
+                    </div>
+                  </div>
+                  <span class="link-more" onclick="App.scrollToToolsCatalog()">更多工具 &gt;</span>
+                </div>
+
+                <div class="hot-tools-grid" id="hot-tools-grid">
+                  <!-- 动态渲染工具卡片 -->
+                </div>
+              </div>
+
+              <!-- 创作工具分类 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">创作工具分类</span>
+                </div>
+                <div class="toolbox-grid" id="tool-categories-grid">
+                  <!-- 动态渲染 6 大分类卡片 -->
+                </div>
+                <div class="tools-bottom-stats">
+                  <div class="tools-bottom-stat">
+                    <div class="tools-bottom-stat-val">62+</div>
+                    <div class="tools-bottom-stat-lbl">工具总数</div>
+                  </div>
+                  <div class="tools-bottom-stat">
+                    <div class="tools-bottom-stat-val">28.6万+</div>
+                    <div class="tools-bottom-stat-lbl">月活跃</div>
+                  </div>
+                  <div class="tools-bottom-stat">
+                    <div class="tools-bottom-stat-val">156.8万+次</div>
+                    <div class="tools-bottom-stat-lbl">累计使用</div>
+                  </div>
+                  <div class="tools-bottom-stat">
+                    <div class="tools-bottom-stat-val">4.8/5.0</div>
+                    <div class="tools-bottom-stat-lbl">满意度</div>
+                  </div>
+                  <div class="tools-bottom-stat">
+                    <div class="tools-bottom-stat-val">86.2万</div>
+                    <div class="tools-bottom-stat-lbl">本月 AI 积分</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧栏：最近项目、生成队列、工具统计、排行榜、使用技巧 -->
+            <div class="col-side">
+              <!-- 最近项目 / 继续创作 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">最近项目</span>
+                  <span class="link-more" onclick="App.showToast('已打开草稿箱，共 8 个未完成项目')">草稿箱 &gt;</span>
+                </div>
+                <div class="recent-projects-list" id="tools-recent-projects">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 后台生成任务队列 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">生成任务</span>
+                  <span class="link-more" onclick="App.showToast('已查看全部后台生成任务')">全部 &gt;</span>
+                </div>
+                <div class="gen-queue-list" id="tools-gen-queue">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 热门工具榜单 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">热门工具榜单</span>
+                  <span class="link-more" onclick="App.showToast('已查看工具影响力综合排名')">更多 &gt;</span>
+                </div>
+                <div class="leaderboard-list" id="tools-leaderboard-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 工具使用技巧 -->
+              <div class="card-section" style="cursor:pointer;" onclick="App.showToast('已打开技巧文章：《如何用 AI 工具提升创作效率：5 个实用技巧让你事半功倍》')">
+                <div class="section-header">
+                  <span class="section-title">工具使用技巧</span>
+                  <span class="link-more">更多 &gt;</span>
+                </div>
+                <div class="tool-tip-card">
+                  <img src="assets/covers/tool_tip.png" alt="技巧" class="tool-tip-cover">
+                  <div class="tool-tip-body">
+                    <div class="tool-tip-title">如何用 AI 工具提升创作效率</div>
+                    <div class="tool-tip-desc">5 个实用技巧让你事半功倍</div>
+                    <div class="tool-tip-meta">3,256 人阅读</div>
+                  </div>
+                  <div class="tool-tip-arrow">➔</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             4. 社区中心 (view-community)
+             ================================================================= -->
+        <section class="view-container" id="view-community">
+          <div class="view-grid-layout">
+            <div class="col-main">
+              <!-- Banner -->
+              <div class="hero-banner-card hero-banner-community">
+                <img src="assets/banners/banner_community.png" alt="创作者社区" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">创作者社区</h2>
+                  <p class="hero-banner-desc">交流创作经验，分享灵感与成长，遇见志同道合的伙伴</p>
+                </div>
+              </div>
+
+              <!-- 顶部三个并排挂件：热门话题、创作圈子、同城创作者 -->
+              <div class="community-header-widgets">
+                <div class="widget-sub-card">
+                  <div class="widget-sub-title">
+                    <span class="widget-title-icon" data-icon="hash"></span>
+                    <span>热门话题</span>
+                  </div>
+                  <div id="community-topics-list">
+                    <!-- 渲染话题 -->
+                  </div>
+                  <div class="widget-link-more link-more" onclick="App.openTopicsMoreModal()">查看全部 &gt;</div>
+                </div>
+
+                <div class="widget-sub-card">
+                  <div class="widget-sub-title">
+                    <span class="widget-title-icon" data-icon="chat"></span>
+                    <span>创作圈子</span>
+                  </div>
+                  <div id="community-circles-list-mini">
+                    <!-- 渲染圈子 -->
+                  </div>
+                  <div class="widget-link-more link-more" onclick="App.focusHotCircle()">查看全部 &gt;</div>
+                </div>
+
+                <div class="widget-sub-card">
+                  <div class="widget-sub-title">
+                    <span class="widget-title-icon" data-icon="nearby"></span>
+                    <span>同城创作者</span>
+                  </div>
+                  <div class="widget-nearby-desc">发现你附近的创作者</div>
+                  <div class="nearby-avatars-row">
+                    <img src="assets/avatars/nearby_1.jpg" class="nearby-avatar" alt="同城创作者">
+                    <img src="assets/avatars/nearby_2.jpg" class="nearby-avatar" alt="同城创作者">
+                    <img src="assets/avatars/nearby_3.jpg" class="nearby-avatar" alt="同城创作者">
+                    <img src="assets/avatars/nearby_4.jpg" class="nearby-avatar" alt="同城创作者">
+                    <span class="nearby-more-badge">+298</span>
+                  </div>
+                  <div class="widget-link-more link-more" onclick="App.showToast('已匹配南京地区同城创作者圈子')">查看全部 &gt;</div>
+                </div>
+              </div>
+
+              <!-- 社区 Feed 动态流 (含分类Tab与排序) -->
+              <div>
+                <div class="section-header community-feed-header">
+                  <div class="underline-tabs community-feed-tabs" id="community-feed-tabs">
+                    <div class="underline-tab active" data-feedcat="全部">全部</div>
+                    <div class="underline-tab" data-feedcat="关注">关注</div>
+                    <div class="underline-tab" data-feedcat="推荐">推荐</div>
+                    <div class="underline-tab" data-feedcat="最新">最新</div>
+                    <div class="underline-tab" data-feedcat="精华">精华</div>
+                  </div>
+                  <div class="feed-sort-group">
+                    <span class="feed-sort-btn active" id="sort-hot" onclick="App.setCommunitySort('hot')">热门</span>
+                    <span class="feed-sort-btn" id="sort-latest" onclick="App.setCommunitySort('latest')">最新</span>
+                  </div>
+                </div>
+
+                <div class="feed-stream" id="community-feed-container">
+                  <!-- 动态渲染 Feed 流卡片 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧栏：个人、活跃榜、热门圈子、社区公告、引导卡片 -->
+            <div class="col-side">
+              <div class="card-section creator-profile-card">
+                <div class="profile-top">
+                  <div class="profile-user">
+                    <img src="assets/avatars/user_profile_large.png" alt="小宇同学" class="profile-avatar">
+                    <div>
+                      <div class="profile-name-row">
+                        <span class="profile-name">小宇同学</span>
+                        <span class="badge-level">Lv.4</span>
+                      </div>
+                      <div class="profile-sub">南京大学 ｜ 商业创作者</div>
+                    </div>
+                  </div>
+                  <button class="btn-my-homepage" onclick="App.navigateTo('assets')">我的主页 &gt;</button>
+                </div>
+                <div class="profile-stats-row profile-stats-lbl-top">
+                  <div>
+                    <div class="profile-stat-lbl">关注</div>
+                    <div class="profile-stat-val">128</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-lbl">粉丝</div>
+                    <div class="profile-stat-val">2.8万</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-lbl">获赞</div>
+                    <div class="profile-stat-val">12.6万</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-lbl">作品</div>
+                    <div class="profile-stat-val">36</div>
+                  </div>
+                </div>
+                <div class="profile-exp-bar-wrap">
+                  <span data-user-level-text="创作等级 <strong style=&quot;color:var(--primary);&quot;>{lv}</strong>">创作等级 <strong style="color:var(--primary);">Lv.4</strong></span>
+                  <span>3450 / 5000</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 69%;"></div>
+                </div>
+              </div>
+
+              <!-- 活跃榜 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">活跃榜</span>
+                  <div class="active-rank-tabs">
+                    <button class="rank-tab-btn active" data-rankperiod="day" onclick="App.switchRankPeriod('day')">日榜</button>
+                    <button class="rank-tab-btn" data-rankperiod="week" onclick="App.switchRankPeriod('week')">周榜</button>
+                    <button class="rank-tab-btn" data-rankperiod="month" onclick="App.switchRankPeriod('month')">月榜</button>
+                  </div>
+                  <span class="link-more" onclick="App.openActiveRanksModal()">更多 &gt;</span>
+                </div>
+                <div class="leaderboard-list" id="community-active-ranks-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 热门圈子 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">热门圈子</span>
+                  <span class="link-more" onclick="App.focusHotCircle()">更多 &gt;</span>
+                </div>
+                <div class="circles-list circles-list-stack" id="community-hot-circles-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 社区公告 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">社区公告</span>
+                  <span class="link-more" onclick="App.openAnnouncementDetail(0)">更多 &gt;</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;" id="community-announcements-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 底部悬浮发布引导卡片 -->
+              <div class="card-section community-publish-guide">
+                <div>
+                  <div class="publish-guide-title">分享你的创作，</div>
+                  <div class="publish-guide-sub">收获更多关注与机会</div>
+                  <button class="btn-publish" style="padding:6px 18px; font-size:12px;" onclick="App.openModal('modal-publish')">发布作品</button>
+                </div>
+                <img src="assets/decorations/community_share_card.png" alt="发布" class="publish-guide-img">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             5. 任务广场 (view-tasks)
+             ================================================================= -->
+        <section class="view-container" id="view-tasks">
+          <div class="view-grid-layout" id="tasks-main-shell">
+            <div class="col-main">
+              <!-- Banner -->
+              <div class="hero-banner-card hero-banner-tasks">
+                <img src="assets/banners/banner_tasks.png" alt="任务广场" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">任务广场</h2>
+                  <p class="hero-banner-desc" id="tasks-hero-desc">参与任务挑战，赢取奖励与成长；或逛作品展厅，找校园制作方定制</p>
+                  <div class="hero-banner-actions" id="tasks-hero-actions">
+                    <button type="button" class="hero-btn-primary" onclick="App.openPublishTaskModal()">发布任务</button>
+                    <button type="button" class="hero-btn-secondary" onclick="App.setTasksMode('gallery')">逛作品展厅</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 一级模式：任务大厅 / 作品展厅 / 我的任务 -->
+              <div class="underline-tabs" id="tasks-mode-tabs">
+                <div class="underline-tab active" data-mode="hall">任务大厅</div>
+                <div class="underline-tab" data-mode="gallery">作品展厅</div>
+                <div class="underline-tab" data-mode="mine">我的任务</div>
+              </div>
+
+              <!-- 任务大厅 -->
+              <div id="tasks-hall-block" class="tasks-hall-block">
+                <div class="tasks-mine-role-switch" id="tasks-lifecycle-tabs" role="tablist" aria-label="任务阶段">
+                  <button type="button" class="tasks-mine-role-btn active" data-life="open" role="tab" aria-selected="true">可报名</button>
+                  <button type="button" class="tasks-mine-role-btn" data-life="active" role="tab" aria-selected="false">履约中</button>
+                  <button type="button" class="tasks-mine-role-btn" data-life="ended" role="tab" aria-selected="false">已结束</button>
+                </div>
+                <div class="card-section tasks-filter-bar" id="tasks-filter-card">
+                  <div class="tasks-filter-main-row">
+                    <div class="pill-tabs tasks-filter-tabs-nowrap" id="tasks-filter-tabs">
+                      <button class="pill-tab active" data-tcat="全部任务">全部</button>
+                      <button class="pill-tab" data-tcat="热门任务">热门</button>
+                      <button class="pill-tab" data-tcat="AI短视频">AI短视频</button>
+                      <button class="pill-tab" data-tcat="AI漫画">AI漫画</button>
+                      <button class="pill-tab" data-tcat="数字人">数字人</button>
+                      <button class="pill-tab" data-tcat="图文创作">图文创作</button>
+                      <button class="pill-tab" data-tcat="品牌合作">品牌合作</button>
+                    </div>
+                    <div class="tasks-filter-side">
+                      <label class="tasks-search-wrap" for="tasks-title-search">
+                        <svg class="tasks-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                        <input type="search" id="tasks-title-search" class="tasks-search-input" placeholder="搜索任务标题" autocomplete="off" enterkeyhint="search">
+                      </label>
+                      <div class="tasks-sort-menu" id="tasks-sort-menu">
+                        <button type="button" class="tasks-sort-btn" id="tasks-sort-btn" aria-expanded="false" aria-haspopup="listbox" aria-controls="tasks-sort-dropdown">
+                          <span id="tasks-sort-btn-label">赏金从高到低</span>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <div class="tasks-sort-dropdown" id="tasks-sort-dropdown" role="listbox" hidden>
+                          <button type="button" class="tasks-sort-option active" data-tsort="high-reward" role="option">赏金从高到低</button>
+                          <button type="button" class="tasks-sort-option" data-tsort="deadline-soon" role="option">即将截止</button>
+                          <button type="button" class="tasks-sort-option" data-tsort="most-applied" role="option">报名人数最多</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tasks-plaza-list" id="tasks-plaza-list-container">
+                  <!-- 动态渲染任务卡片 -->
+                </div>
+              </div>
+
+              <!-- 作品展厅（精选馆） -->
+              <div id="tasks-gallery-block" class="tasks-gallery-block" hidden>
+                <div class="gallery-intro-bar">
+                  <div class="gallery-intro-text" id="gallery-intro-text">
+                    沉淀高校认证创作者真实商单交付成果与高分样片，支持在线观摩与一键定制。
+                  </div>
+                  <div class="gallery-intro-right">
+                    <button type="button" class="gallery-my-booth-btn" onclick="App.openMyGalleryManageModal()">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      我的展位与档期
+                    </button>
+                    <span class="gallery-intro-tag">精选馆</span>
+                  </div>
+                </div>
+
+                <div class="card-section tasks-filter-bar">
+                  <div class="section-header" style="margin-bottom:0;">
+                    <div class="pill-tabs tasks-filter-tabs-nowrap" id="gallery-filter-tabs">
+                      <button class="pill-tab active" data-gcat="全部">全部</button>
+                      <button class="pill-tab" data-gcat="AI短剧">AI短剧</button>
+                      <button class="pill-tab" data-gcat="AI短视频">AI短视频</button>
+                      <button class="pill-tab" data-gcat="AI漫画">AI漫画</button>
+                      <button class="pill-tab" data-gcat="数字人">数字人</button>
+                      <button class="pill-tab" data-gcat="图文创作">图文创作</button>
+                    </div>
+                    <div>
+                      <select id="gallery-dropdown-filter" class="form-select" style="padding:4px 10px; font-size:12px; border-radius:var(--radius-pill); cursor:pointer;">
+                        <option value="featured">精选优先</option>
+                        <option value="hot">按热度</option>
+                        <option value="latest">最新入选</option>
+                        <option value="price-asc">报价从低到高</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gallery-works-grid" id="gallery-works-grid">
+                  <!-- 动态渲染展厅作品 -->
+                </div>
+              </div>
+
+              <!-- 我的任务台账 -->
+              <div id="tasks-mine-block" class="tasks-mine-block" hidden>
+                <div class="tasks-mine-role-switch" id="my-tasks-role-tabs" role="tablist" aria-label="任务类型">
+                  <button type="button" class="tasks-mine-role-btn active" data-myrole="taken" role="tab" aria-selected="true">承接任务</button>
+                  <button type="button" class="tasks-mine-role-btn" data-myrole="published" role="tab" aria-selected="false">发布任务</button>
+                </div>
+                <div class="card-section tasks-filter-bar">
+                  <div class="pill-tabs tasks-filter-tabs-nowrap" id="my-tasks-status-tabs">
+                    <!-- 按类型动态渲染状态 -->
+                  </div>
+                </div>
+                <div class="tasks-plaza-list" id="tasks-mine-list-container">
+                  <!-- 动态渲染我的任务 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="col-side">
+              <div class="card-section creator-profile-card">
+                <div class="profile-top">
+                  <div class="profile-user">
+                    <img src="assets/avatars/user_profile_large.png" alt="小宇同学" class="profile-avatar">
+                    <div>
+                      <div class="profile-name-row">
+                        <span class="profile-name">小宇同学</span>
+                        <span class="badge-level">Lv.4</span>
+                      </div>
+                      <div class="profile-sub">南京大学 ｜ 商业创作者</div>
+                    </div>
+                  </div>
+                  <button class="btn-my-homepage" onclick="App.filterTasks('进行中')">我的任务 &gt;</button>
+                </div>
+
+                <div class="profile-stats-row">
+                  <div>
+                    <div class="profile-stat-val" id="my-active-tasks-count" style="color:var(--primary);">3</div>
+                    <div class="profile-stat-lbl">进行中</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-val" id="my-finished-tasks-count">12</div>
+                    <div class="profile-stat-lbl">累计完成</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-val" style="color:#EF4444;">¥6,820</div>
+                    <div class="profile-stat-lbl">累计奖励</div>
+                  </div>
+                  <div>
+                    <div class="profile-stat-val" id="tasks-side-creation-points">2680</div>
+                    <div class="profile-stat-lbl">可用创作积分</div>
+                  </div>
+                </div>
+                <div class="profile-exp-bar-wrap">
+                  <span data-user-level-text="任务等级 <strong style=&quot;color:var(--primary);&quot;>{lv}</strong>">任务等级 <strong style="color:var(--primary);">Lv.4</strong></span>
+                  <span>2680 / 4000</span>
+                </div>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" style="width: 67%;"></div>
+                </div>
+              </div>
+
+              <!-- 今日推荐：任务大厅 / 展厅热门 随模式切换 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title" id="tasks-side-rec-title">今日推荐任务</span>
+                  <span class="link-more" id="tasks-side-rec-more" onclick="App.refreshTodayRec()">换一批 &gt;</span>
+                </div>
+                <div class="rec-task-list" id="tasks-today-rec-container">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 任务排行榜 (本周) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">任务排行榜 <span style="font-size:11.5px;color:var(--text-muted);">(本周)</span></span>
+                  <span class="link-more" onclick="App.openTasksLeaderboardModal()">更多 &gt;</span>
+                </div>
+                <div class="leaderboard-list" id="tasks-leaderboard-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 底部升级特权激励卡 -->
+              <div class="card-section" style="background: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 100%); border: 1px solid #E0E7FF; display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                  <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:2px;">完成更多任务，赢取丰厚奖励</div>
+                  <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:8px;">提升等级，解锁更多特权！</div>
+                  <button class="hero-btn-primary" style="padding:5px 14px; font-size:11.5px;" onclick="App.openLevelPerksModal()">查看等级权益</button>
+                </div>
+                <img src="assets/decorations/trophy.png" alt="奖杯" style="width:75px; height:auto; object-fit:contain;">
+              </div>
+            </div>
+          </div>
+
+          <!-- 发布任务 · 全页二级视图 -->
+          <div class="tasks-publish-page" id="tasks-publish-page" hidden>
+            <div class="tasks-publish-topbar">
+              <button type="button" class="tasks-publish-back" onclick="App.closePublishTaskPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="tasks-publish-crumb">任务广场<span>/</span>发布任务</div>
+              <div class="tasks-publish-topbar-actions">
+                <button type="button" class="hero-btn-danger" id="publish-delete-draft-btn" onclick="App.requestDeleteDraft(App.editingDraftOrderId)" hidden>删除草稿</button>
+                <button type="button" class="hero-btn-secondary" onclick="App.submitPublishTask(true)">保存草稿</button>
+                <button type="button" class="hero-btn-primary" onclick="App.submitPublishTask(false)">确认发布</button>
+              </div>
+            </div>
+
+            <div class="tasks-publish-body">
+              <div class="tasks-publish-hero">
+                <div>
+                  <h2 class="tasks-publish-hero-title">发布任务</h2>
+                  <p class="tasks-publish-hero-desc">按你选择的接单模式撮合创作者；资金由平台托管，验收通过后结算。</p>
+                </div>
+                <div class="tasks-publish-steps" aria-hidden="true">
+                  <span class="is-on">1 基础</span>
+                  <span>2 需求</span>
+                  <span>3 预算</span>
+                  <span>4 合规</span>
+                </div>
+              </div>
+
+              <div class="publish-task-form">
+                <section class="publish-task-section">
+                  <header class="publish-task-section-head">
+                    <span class="publish-task-step">1</span>
+                    <div>
+                      <div class="publish-task-section-title">基础信息</div>
+                      <div class="publish-task-section-desc">标题、封面与任务分类，决定大厅展示效果</div>
+                    </div>
+                  </header>
+
+                  <div class="form-group">
+                    <label class="form-label">任务标题 <span class="form-required">*</span></label>
+                    <input type="text" id="pt-title" class="form-input" maxlength="60" placeholder="例如：品牌开学季 AI 短视频创作挑战">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">任务封面图 <span class="form-required">*</span></label>
+                    <div class="pt-cover-card" id="pt-cover-preview">
+                      <span class="pt-cover-placeholder" id="pt-cover-placeholder">
+                        <span class="pt-cover-icon">＋</span>
+                        <span>点击或拖拽上传封面</span>
+                        <small>建议 16:9 · JPG / PNG · 不超过 5MB</small>
+                      </span>
+                      <img id="pt-cover-img" alt="" hidden>
+                      <div class="pt-cover-toolbar" id="pt-cover-toolbar" hidden>
+                        <label class="pt-cover-tool-btn" for="pt-cover-input">更换</label>
+                        <button type="button" class="pt-cover-tool-btn" id="pt-cover-clear" onclick="App.clearPublishTaskCover()">移除</button>
+                      </div>
+                    </div>
+                    <input type="file" id="pt-cover-input" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                    <div class="pt-field-hint">封面展示在任务大厅列表，主题清晰更容易获得报名。</div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">需求附件 <span class="form-optional">可选 · 最多 3 个压缩包</span></label>
+                    <div class="pt-attach-box" id="pt-attach-box">
+                      <div class="pt-attach-list" id="pt-attach-list"></div>
+                      <label class="pt-attach-trigger" for="pt-attach-input">
+                        <span class="pt-attach-trigger-icon">＋</span>
+                        <span class="pt-attach-trigger-copy">
+                          <strong>上传 ZIP / TAR 压缩包</strong>
+                          <em>参考图、物料、说明文档请先打包 · 单个不超过 50MB</em>
+                        </span>
+                      </label>
+                      <input type="file" id="pt-attach-input" accept=".zip,.tar,.tar.gz,.tgz,application/zip,application/x-zip-compressed,application/x-tar,application/gzip" multiple hidden>
+                    </div>
+                    <div class="pt-field-hint">创作者报名时可下载附件查看完整需求物料。</div>
+                  </div>
+
+                  <div class="publish-task-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">任务类型 <span class="form-required">*</span></label>
+                      <select id="pt-type" class="form-select">
+                        <option value="品牌任务">品牌任务</option>
+                        <option value="创作挑战" selected>创作挑战</option>
+                        <option value="长期合作">长期合作</option>
+                        <option value="校园推广">校园推广</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">内容品类 <span class="form-required">*</span></label>
+                      <select id="pt-category" class="form-select">
+                        <option value="AI短视频" selected>AI短视频</option>
+                        <option value="AI漫画">AI漫画</option>
+                        <option value="数字人">数字人</option>
+                        <option value="图文创作">图文创作</option>
+                        <option value="品牌合作">品牌合作</option>
+                        <option value="长期任务">长期任务</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">发布方身份 <span class="form-required">*</span></label>
+                    <select id="pt-publisher-role" class="form-select">
+                      <option value="校园 OPC 工作室" selected>校园 OPC 工作室</option>
+                      <option value="学生社团 / 组织">学生社团 / 组织</option>
+                      <option value="品牌方 / 商家">品牌方 / 商家</option>
+                      <option value="个人创作者">个人创作者</option>
+                    </select>
+                  </div>
+                </section>
+
+                <section class="publish-task-section">
+                  <header class="publish-task-section-head">
+                    <span class="publish-task-step">2</span>
+                    <div>
+                      <div class="publish-task-section-title">需求与交付</div>
+                      <div class="publish-task-section-desc">写清目标与交付标准，减少沟通成本</div>
+                    </div>
+                  </header>
+                  <div class="form-group">
+                    <label class="form-label">任务需求描述 <span class="form-required">*</span></label>
+                    <textarea id="pt-desc" class="form-textarea" rows="4" placeholder="说明任务背景、目标受众、风格参考、必须包含的卖点或禁止事项…"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">交付物要求 <span class="form-required">*</span></label>
+                    <textarea id="pt-deliverables" class="form-textarea" rows="3" placeholder="例如：1 条 30–60 秒竖版短视频（1080P）；含字幕与配乐；提供工程文件与可商用授权说明"></textarea>
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">技能 / 标签</label>
+                    <div class="publish-task-tags" id="pt-tags">
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="AI短视频" checked> AI短视频</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="创意挑战" checked> 创意挑战</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="AI漫画"> AI漫画</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="数字人"> 数字人</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="图文"> 图文</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="剪辑"> 剪辑</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="出海"> 出海</label>
+                      <label class="pt-tag-chip"><input type="checkbox" name="pt-tag" value="校园"> 校园</label>
+                    </div>
+                    <input type="text" id="pt-tags-extra" class="form-input" style="margin-top:10px;" placeholder="自定义标签，多个用顿号或逗号分隔（可选）">
+                  </div>
+                </section>
+
+                <section class="publish-task-section">
+                  <header class="publish-task-section-head">
+                    <span class="publish-task-step">3</span>
+                    <div>
+                      <div class="publish-task-section-title">预算与周期</div>
+                      <div class="publish-task-section-desc">赏金、积分与关键时间节点</div>
+                    </div>
+                  </header>
+                  <div class="publish-task-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">赏金金额（元） <span class="form-required">*</span></label>
+                      <input type="number" id="pt-reward" class="form-input" min="0" step="100" placeholder="例如 5000">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">创作积分奖励</label>
+                      <input type="number" id="pt-points" class="form-input" min="0" step="50" placeholder="例如 800（可选）">
+                      <div class="pt-field-hint" id="pt-points-hint">可用创作积分 0 · 发布时从可用余额扣减，不影响等级</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">接单模式</label>
+                    <div class="pt-accept-mode-grid" id="pt-accept-mode-grid">
+                      <div class="pt-accept-mode-card is-checked">
+                        <span>
+                          <strong>发布方选定 · 报名制</strong>
+                          <em>全站统一为报名制：创作者先提交报名方案，你再从候选人中选定合作人选，不再支持抢单直取名额</em>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="pt-field-hint" id="pt-accept-mode-hint">选定创作者后赏金继续托管冻结，双方确认合作再进入履约。</div>
+                  </div>
+                  <div class="publish-task-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">报名截止日期 <span class="form-required">*</span></label>
+                      <input type="date" id="pt-apply-deadline" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">交付截止日期 <span class="form-required">*</span></label>
+                      <input type="date" id="pt-delivery-deadline" class="form-input">
+                    </div>
+                  </div>
+                  <div class="publish-task-grid-2" style="margin-bottom:0;">
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label" id="pt-quota-label">可同时履约人数</label>
+                      <input type="number" id="pt-quota" class="form-input" min="1" max="9999" value="1" placeholder="默认 1">
+                      <div class="pt-field-hint" id="pt-quota-hint">报名制下可同时选定的合作创作者人数。</div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label">预算说明</label>
+                      <select id="pt-budget-note" class="form-select">
+                        <option value="固定赏金" selected>固定赏金（验收后结算）</option>
+                        <option value="面议">面议（沟通后确认）</option>
+                        <option value="阶梯奖励">阶梯奖励（按名次发放）</option>
+                      </select>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="publish-task-section">
+                  <header class="publish-task-section-head">
+                    <span class="publish-task-step">4</span>
+                    <div>
+                      <div class="publish-task-section-title">托管与合规</div>
+                      <div class="publish-task-section-desc">资金安全与开票选项</div>
+                    </div>
+                  </header>
+                  <label class="publish-task-check-card">
+                    <input type="checkbox" id="pt-escrow" checked>
+                    <span>
+                      <strong>启用平台资金托管（推荐）</strong>
+                      <em>发布后按赏金冻结可用余额，验收通过后再结算给创作者</em>
+                    </span>
+                  </label>
+                  <label class="publish-task-check-card">
+                    <input type="checkbox" id="pt-invoice">
+                    <span>
+                      <strong>需要增值税专票 / 对公结算</strong>
+                      <em>由平台协助开票与对公结算支持</em>
+                    </span>
+                  </label>
+                  <div class="form-group" style="margin:12px 0 0;">
+                    <label class="form-label">补充说明</label>
+                    <textarea id="pt-extra" class="form-textarea" rows="2" placeholder="可选：参考片链接、品牌手册、站内沟通偏好。请勿引导站外私下转账。"></textarea>
+                  </div>
+                </section>
+
+                <label class="publish-task-agree">
+                  <input type="checkbox" id="pt-agree">
+                  <span>我已阅读并同意《任务发布规范》：内容合法合规、赏金真实有效、不以站外交易规避平台托管；虚假任务将被下架并影响信用。</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 任务详情 · 全页二级视图 -->
+          <div class="tasks-publish-page tasks-detail-page" id="tasks-detail-page" hidden>
+            <div class="tasks-publish-topbar">
+              <button type="button" class="tasks-publish-back" onclick="App.closeTaskDetailPage()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                返回
+              </button>
+              <div class="tasks-publish-crumb">任务广场<span>/</span>任务详情</div>
+              <div class="tasks-publish-topbar-actions" id="task-detail-top-actions">
+                <!-- 动态 CTA -->
+              </div>
+            </div>
+            <div class="tasks-detail-body" id="tasks-detail-body">
+              <!-- 动态渲染 -->
+            </div>
+          </div>
+
+        </section>
+        <section class="view-container" id="view-analytics">
+          <div class="view-grid-layout">
+            <div class="col-main">
+              <!-- Banner -->
+              <div class="hero-banner-card hero-banner-analytics">
+                <img src="assets/banners/banner_analytics.png" alt="数据中心" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">数据中心</h2>
+                  <p class="hero-banner-desc">全面的数据分析与洞察，助你优化创作策略，提升内容影响力</p>
+                </div>
+              </div>
+
+              <!-- 核心维度 Tab -->
+              <div class="underline-tabs" id="analytics-dimension-tabs">
+                <div class="underline-tab active" data-dimension="概览">概览</div>
+                <div class="underline-tab" data-dimension="内容分析">内容分析</div>
+                <div class="underline-tab" data-dimension="用户分析">用户分析</div>
+                <div class="underline-tab" data-dimension="收益分析">收益分析</div>
+                <div class="underline-tab" data-dimension="创作表现">创作表现</div>
+                <div class="underline-tab" data-dimension="矩阵分发">矩阵分发</div>
+              </div>
+
+              <!-- 时间筛选栏 (7天 / 30天 / 90天 / 自定义) -->
+              <div class="analytics-timeframe-row">
+                <div class="pill-tabs" id="analytics-timeframe-tabs">
+                  <button class="pill-tab" data-time="7d">7天</button>
+                  <button class="pill-tab active" data-time="30d">30天</button>
+                  <button class="pill-tab" data-time="90d">90天</button>
+                  <button class="pill-tab" data-time="custom">
+                    <svg class="inline-meta-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    自定义
+                  </button>
+                </div>
+                <div class="analytics-update-hint">
+                  数据更新于 2024-05-18 12:00
+                </div>
+              </div>
+
+              <!-- 概览等内容块 -->
+              <div id="analytics-overview-block">
+                <!-- 校园 OPC 商业履约与经营效能看板 -->
+                <div class="opc-analytics-banner">
+                  <div class="opc-analytics-title-row">
+                    <span class="opc-analytics-title">
+                      <span class="opc-tag-dot"></span>
+                      星芒 AI 视觉工作室 · OPC 商业履约与人效看板
+                    </span>
+                    <span class="badge-mini-gold">南京大学创客空间认证</span>
+                  </div>
+                  <div class="opc-analytics-grid-4">
+                    <div class="opc-metric-item">
+                      <div class="opc-metric-lbl">商单准时达成率</div>
+                      <div class="opc-metric-val">99.4%</div>
+                      <div class="opc-metric-sub">近30天 0 违约延误</div>
+                    </div>
+                    <div class="opc-metric-item">
+                      <div class="opc-metric-lbl">平均交付时效</div>
+                      <div class="opc-metric-val">36 小时</div>
+                      <div class="opc-metric-sub">比行业均值快 45%</div>
+                    </div>
+                    <div class="opc-metric-item">
+                      <div class="opc-metric-lbl">OPC 商业信誉分</div>
+                      <div class="opc-metric-val">785 <span style="font-size:11px;font-weight:normal;color:#6B7280;">/ 850</span></div>
+                      <div class="opc-metric-sub">卓越信用 · 平台免质保金</div>
+                    </div>
+                    <div class="opc-metric-item">
+                      <div class="opc-metric-lbl">学弟学妹带教分成</div>
+                      <div class="opc-metric-val">¥ 620.00</div>
+                      <div class="opc-metric-sub">签约 3 位学弟跟跑实训</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 6 大核心指标卡片 -->
+                <div class="analytics-metric-cards-6" id="analytics-metric-cards">
+                <!-- 动态渲染 -->
+              </div>
+
+              <!-- 数据趋势折线图 (带可复选多曲线与粒度切换) -->
+              <div class="chart-trend-card">
+                <div class="chart-header-top">
+                  <div class="chart-header-left">
+                    <span class="section-title">数据趋势</span>
+                    <div class="chart-legend-row">
+                      <div class="legend-item" data-series="views" onclick="App.toggleChartSeries('views')">
+                        <span class="legend-dot" style="background:#6366F1;"></span>
+                        <span>播放量</span>
+                      </div>
+                      <div class="legend-item" data-series="likes" onclick="App.toggleChartSeries('likes')">
+                        <span class="legend-dot" style="background:#10B981;"></span>
+                        <span>点赞数</span>
+                      </div>
+                      <div class="legend-item" data-series="comments" onclick="App.toggleChartSeries('comments')">
+                        <span class="legend-dot" style="background:#8B5CF6;"></span>
+                        <span>评论数</span>
+                      </div>
+                      <div class="legend-item" data-series="shares" onclick="App.toggleChartSeries('shares')">
+                        <span class="legend-dot" style="background:#F59E0B;"></span>
+                        <span>分享数</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="trend-granularity-seg" role="group" aria-label="趋势粒度">
+                    <button type="button" class="trend-granularity-btn is-active" data-granularity="day">按天</button>
+                    <button type="button" class="trend-granularity-btn" data-granularity="week">按周</button>
+                    <button type="button" class="trend-granularity-btn" data-granularity="month">按月</button>
+                  </div>
+                </div>
+
+                <div class="chart-canvas-container">
+                  <canvas id="analytics-trend-canvas" class="trend-canvas"></canvas>
+                </div>
+              </div>
+
+              <!-- 下方三个图表：用户画像、地域分布、设备分布 -->
+              <div class="bottom-charts-row">
+                <!-- 用户画像 -->
+                <div class="sub-chart-card">
+                  <div class="sub-chart-header">
+                    <span class="section-title">用户画像</span>
+                  </div>
+                  <div class="sub-chart-visual">
+                    <div class="donut-canvas-box">
+                      <canvas id="age-donut-canvas"></canvas>
+                    </div>
+                  </div>
+                  <div class="dist-legend-list" id="age-legend-col">
+                    <!-- 年龄分布图例 -->
+                  </div>
+                </div>
+
+                <!-- 地域分布 -->
+                <div class="sub-chart-card">
+                  <div class="sub-chart-header">
+                    <span class="section-title">地域分布</span>
+                    <span class="link-more" onclick="App.showToast('查看全国省市热力分布大图')">更多 &gt;</span>
+                  </div>
+                  <div class="sub-chart-visual region-visual">
+                    <img src="assets/decorations/china_map.png" alt="地域分布" class="region-map-img">
+                  </div>
+                  <div class="dist-legend-list" id="region-list-col">
+                    <!-- 地域百分比列表 -->
+                  </div>
+                </div>
+
+                <!-- 设备分布 -->
+                <div class="sub-chart-card">
+                  <div class="sub-chart-header">
+                    <span class="section-title">设备分布</span>
+                    <span class="link-more" onclick="App.showToast('查看终端型号与系统版本占比')">更多 &gt;</span>
+                  </div>
+                  <div class="sub-chart-visual">
+                    <div class="donut-canvas-box">
+                      <canvas id="device-donut-canvas"></canvas>
+                    </div>
+                  </div>
+                  <div class="dist-legend-list" id="device-legend-col">
+                    <!-- 设备图例 -->
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <!-- 矩阵分发回流面板 -->
+              <div id="analytics-matrix-block" class="analytics-matrix-block" hidden>
+                <div class="matrix-summary-row" id="matrix-summary-row"></div>
+                <div class="matrix-platform-grid" id="matrix-platform-grid"></div>
+                <div class="card-section matrix-work-card">
+                  <div class="section-header">
+                    <span class="section-title">作品 × 平台回流</span>
+                    <span class="link-more" onclick="App.showToast('已导出矩阵分发明细报表')">导出明细 &gt;</span>
+                  </div>
+                  <div class="matrix-work-table-wrap">
+                    <table class="matrix-work-table">
+                      <thead>
+                        <tr>
+                          <th>作品</th>
+                          <th class="th-native">社区大本营</th>
+                          <th>抖音</th>
+                          <th>快手</th>
+                          <th>哔哩哔哩</th>
+                          <th>小红书</th>
+                          <th>视频号</th>
+                          <th>TikTok</th>
+                          <th>YouTube</th>
+                          <th>Facebook</th>
+                          <th>Instagram</th>
+                          <th>推特 (X)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="matrix-work-tbody"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="card-section">
+                  <div class="section-header">
+                    <span class="section-title">分发洞察</span>
+                  </div>
+                  <div class="matrix-insight-list" id="matrix-insight-list"></div>
+                </div>
+              </div>
+
+              <!-- 内容 / 用户 / 收益 / 创作表现 动态面板 -->
+              <div id="analytics-dim-block" class="analytics-dim-block" hidden></div>
+            </div>
+
+            <!-- 右侧栏：实时数据折线、热门内容 Top5、数据洞察建议 -->
+            <div class="col-side">
+              <!-- 实时数据 (近24小时) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">实时数据 <span style="font-size:11.5px;color:var(--text-muted);">(近 24 小时)</span></span>
+                  <span class="link-more" onclick="App.showToast('已进入数据大屏模式')">查看实时大屏 &gt;</span>
+                </div>
+
+                <div class="realtime-metrics-grid">
+                  <div class="realtime-metric">
+                    <div class="realtime-metric-lbl">实时播放量</div>
+                    <div class="realtime-metric-val">12,875</div>
+                  </div>
+                  <div class="realtime-metric">
+                    <div class="realtime-metric-lbl">实时点赞数</div>
+                    <div class="realtime-metric-val">1,268</div>
+                  </div>
+                  <div class="realtime-metric">
+                    <div class="realtime-metric-lbl">实时评论数</div>
+                    <div class="realtime-metric-val">286</div>
+                  </div>
+                  <div class="realtime-metric">
+                    <div class="realtime-metric-lbl">实时分享数</div>
+                    <div class="realtime-metric-val">532</div>
+                  </div>
+                </div>
+
+                <!-- 24小时平滑渐变曲线 -->
+                <div class="realtime-chart-wrap">
+                  <canvas id="realtime-24h-canvas"></canvas>
+                </div>
+              </div>
+
+              <!-- 热门内容 TOP5 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">热门内容 TOP5</span>
+                  <span class="link-more" onclick="App.showToast('已打开内容效果全量诊断明细')">更多 &gt;</span>
+                </div>
+                <div class="top5-list" id="analytics-top5-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 数据洞察 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">数据洞察</span>
+                  <span class="link-more" onclick="App.showToast('已生成 AI 智能运营策略周报')">更多 &gt;</span>
+                </div>
+                <div class="insights-list" id="analytics-insights-list">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================================
+             7. 我的资产 (view-assets)
+             ================================================================= -->
+        <section class="view-container" id="view-assets">
+          <div class="view-grid-layout">
+            <div class="col-main">
+              <!-- Banner -->
+              <div class="hero-banner-card hero-banner-assets">
+                <img src="assets/banners/banner_assets.png" alt="我的资产" class="hero-banner-img">
+                <div class="hero-banner-overlay">
+                  <h2 class="hero-banner-title">我的资产</h2>
+                  <p class="hero-banner-desc">个人中心 · 管理数字资产与创作收益</p>
+                </div>
+              </div>
+
+              <!-- 个人中心资料条 -->
+              <div class="card-section assets-profile-hub" id="assets-profile-hub">
+                <!-- 动态渲染 -->
+              </div>
+
+              <!-- 校园 OPC 商业合规与后勤基础设施中枢 -->
+              <div class="opc-infrastructure-grid">
+                <div class="opc-infra-card" onclick="App.openInvoiceModal()">
+                  <div class="opc-infra-header">
+                    <span class="opc-infra-icon">🧾</span>
+                    <span class="opc-infra-title">增值税专票代开</span>
+                  </div>
+                  <div class="opc-infra-desc">解决大学生无对公资质难题，充值记录可一键申请开票</div>
+                  <div class="opc-infra-action">发票管理 &gt;</div>
+                </div>
+                <div class="opc-infra-card" onclick="App.openEscrowProgressModal()">
+                  <div class="opc-infra-header">
+                    <span class="opc-infra-icon">🔒</span>
+                    <span class="opc-infra-title">商单资金托管库</span>
+                  </div>
+                  <div class="opc-infra-desc" id="escrow-library-desc">已安全托管未结算商单款项 ¥ 1,500.00，完工立即到账</div>
+                  <div class="opc-infra-action">查看托管进度 &gt;</div>
+                </div>
+                <div class="opc-infra-card" onclick="App.openComputeRechargeModal()">
+                  <div class="opc-infra-header">
+                    <span class="opc-infra-icon">⚡</span>
+                    <span class="opc-infra-title">专属普惠算力特权</span>
+                  </div>
+                  <div class="opc-infra-desc">剩余 12,500 Tflops 高性能 GPU 额度，账户余额 4 折普惠充值</div>
+                  <div class="opc-infra-action">充值算力 &gt;</div>
+                </div>
+                <div class="opc-infra-card" onclick="App.showToast('学长带教生态分润：已签约 3 位学弟学妹，完成商单享有 5% 生态激励')">
+                  <div class="opc-infra-header">
+                    <span class="opc-infra-icon">👥</span>
+                    <span class="opc-infra-title">学徒带教生态分润</span>
+                  </div>
+                  <div class="opc-infra-desc">已签约带教 3 位低年级学弟学妹，本月分润 ¥ 620.00</div>
+                  <div class="opc-infra-action">带教管理 &gt;</div>
+                </div>
+              </div>
+
+              <!-- 3 大核心资产卡片（创作积分卡已下线，创作积分改由上方个人信息条展示） -->
+              <div class="assets-overview-cards-4" id="assets-overview-cards">
+                <div class="asset-stat-card">
+                  <div class="asset-card-top-row">
+                    <span class="asset-card-label">账户余额 (元)</span>
+                    <span class="asset-card-icon">
+                      <img src="assets/icons/3d/wallet.png" alt="" width="22" height="22" class="icon-3d-img">
+                    </span>
+                  </div>
+                  <div class="asset-card-amount" id="asset-display-balance">¥ 6,820.50</div>
+                  <div class="asset-card-sub asset-card-sub-actions">
+                    <span class="asset-sub-text">可消费 <span id="asset-display-withdrawable">¥ 5,320.50</span></span>
+                    <span class="asset-sub-text is-frozen">已冻结 <span id="asset-display-frozen">¥ 1,500.00</span></span>
+                    <span class="asset-card-action-group">
+                      <span class="link-asset-action" onclick="App.openAccountRechargeModal()">去充值 &gt;</span>
+                    </span>
+                  </div>
+                  <div class="asset-card-note" id="asset-balance-note">冻结款为进行中商单托管金额 · 仅可充值、不可提现</div>
+                </div>
+
+                <div class="asset-stat-card">
+                  <div class="asset-card-top-row">
+                    <span class="asset-card-label">创作收益 (元)</span>
+                    <span class="asset-card-icon">
+                      <img src="assets/icons/3d/purse.png" alt="" width="22" height="22" class="icon-3d-img">
+                    </span>
+                  </div>
+                  <div class="asset-card-amount" id="asset-display-earnings">¥ 12,680.30</div>
+                  <div class="asset-card-sub">
+                    <span id="asset-display-earnings-forecast">本月预估 ¥ 2,680.30</span>
+                    <span class="asset-card-action-group">
+                      <span class="link-asset-action" onclick="App.filterAssetsTab('收入')">收益明细 &gt;</span>
+                      <span class="link-asset-action" onclick="App.openWithdrawModal('income')">去提现 &gt;</span>
+                    </span>
+                  </div>
+                  <div class="asset-card-note is-accent" id="asset-earnings-note">唯一可提现资金来源 · T+0 到账 · 免手续费</div>
+                </div>
+
+                <div class="asset-stat-card">
+                  <div class="asset-card-top-row">
+                    <span class="asset-card-label">AI 积分</span>
+                    <span class="asset-card-icon">
+                      <img src="assets/icons/3d/coin.png" alt="" width="22" height="22" class="icon-3d-img">
+                    </span>
+                  </div>
+                  <div class="asset-card-amount" id="asset-display-ai-points">2,340.00</div>
+                  <div class="asset-card-sub">
+                    <span>用于工具算力消耗</span>
+                    <span class="asset-card-action-group">
+                      <span class="link-asset-action" onclick="App.openAiPointsDetail('all')">积分明细 &gt;</span>
+                      <span class="link-asset-action" onclick="App.openComputeRechargeModal()">去充值 &gt;</span>
+                    </span>
+                  </div>
+                  <div class="asset-token-split">
+                    <span class="asset-token-cell"><i style="background:#6366F1;"></i>自有算力 <b id="asset-display-tokens-self">1,640.00</b></span>
+                    <span class="asset-token-cell"><i style="background:#8B5CF6;"></i>集成算力 <b id="asset-display-tokens-integrated">700.00</b></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 资产明细流水表格 -->
+              <div class="card-section">
+                <div class="section-header assets-tx-header">
+                  <div class="section-title-wrap assets-tx-title-wrap">
+                    <span class="section-title">资产明细</span>
+                    <div class="underline-tabs asset-tx-underline-tabs" id="asset-transaction-tabs">
+                      <div class="underline-tab active" data-txcat="全部">全部</div>
+                      <div class="underline-tab" data-txcat="收入">收入</div>
+                      <div class="underline-tab" data-txcat="支出">支出</div>
+                      <div class="underline-tab" data-txcat="提现">提现</div>
+                      <div class="underline-tab" data-txcat="创作积分">创作积分</div>
+                      <div class="underline-tab" data-txcat="AI积分">AI 积分</div>
+                    </div>
+                  </div>
+                  <div>
+                    <select id="asset-time-select" class="form-select" style="padding:4px 10px; font-size:12px; border-radius:var(--radius-pill); cursor:pointer;">
+                      <option value="all">全部时间</option>
+                      <option value="month">近 1 个月</option>
+                      <option value="quarter">近 3 个月</option>
+                      <option value="year">近 1 年</option>
+                    </select>
+                  </div>
+                </div>
+
+                <table class="transactions-table">
+                  <thead>
+                    <tr>
+                      <th style="width:12%;">类型</th>
+                      <th style="width:38%;">名称</th>
+                      <th style="width:20%;">金额 (元)</th>
+                      <th style="width:15%;">状态</th>
+                      <th style="width:15%;">时间</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transactions-tbody">
+                    <!-- 动态渲染表格行 -->
+                  </tbody>
+                </table>
+                <div style="text-align:center; padding-top:12px;">
+                  <span class="link-more" style="display:inline-flex;" onclick="App.showMoreTransactions()">查看更多明细 &gt;</span>
+                </div>
+              </div>
+
+              <!-- 我的数字藏品 (NFT / 版权证明) -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">我的数字藏品</span>
+                  <span class="link-more" onclick="App.openMyCertsModal()">查看全部 &gt;</span>
+                </div>
+
+                <div class="nfts-grid-5" id="nfts-grid-container">
+                  <!-- 动态渲染 5 张 NFT 藏品 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧栏：安全中心、权益特权、常用功能（资产概览已下线，总资产与构成改由 4 大资产卡片承载） -->
+            <div class="col-side">
+              <!-- 资产安全中心 -->
+              <div class="card-section">
+                <div class="section-header" style="margin-bottom:8px;">
+                  <span class="section-title">资产安全中心</span>
+                </div>
+                <div class="security-level-block">
+                  <div class="security-level-text">账户安全等级：<strong>高</strong></div>
+                  <div class="progress-bar-bg security-level-bar">
+                    <div class="progress-bar-fill" style="width:100%;"></div>
+                  </div>
+                </div>
+                <div class="security-items-grid" id="security-items-grid">
+                  <!-- 动态渲染 -->
+                </div>
+
+                <!-- 银行卡不再在主面板陈列明细，统一收敛至【常用功能 · 银行卡管理】弹窗 -->
+                <div style="text-align:center; margin-top:8px;">
+                  <span class="link-more" style="display:inline-flex;" onclick="App.openSecuritySettings()">前往安全设置 &gt;</span>
+                </div>
+              </div>
+
+              <!-- 我的权益与特权：个人勋章 / 荣耀墙，点击图片查看对应权益详细说明 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">我的权益与特权</span>
+                  <span class="section-title-note" id="assets-honors-summary">—</span>
+                  <span class="link-more" onclick="App.openLevelPerksModal()">查看全部 &gt;</span>
+                </div>
+                <div class="honors-grid" id="assets-honors-grid">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+
+              <!-- 常用功能宫格 -->
+              <div class="card-section">
+                <div class="section-header">
+                  <span class="section-title">常用功能</span>
+                </div>
+                <div class="common-functions-grid" id="common-functions-grid">
+                  <!-- 动态渲染 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <!-- 底部常驻全网核心统计指标栏 -->
+    <footer class="bottom-stats-bar">
+      <div class="bottom-stats-inner">
+        <div class="bottom-stat-item">
+          <span class="stat-icon-bullet" data-footer-icon="creators"></span>
+          <span>高校创作者</span>
+          <span class="stat-val-bold" id="stat-creators">128,560 +</span>
+        </div>
+        <div class="bottom-stat-divider"></div>
+        <div class="bottom-stat-item">
+          <span class="stat-icon-bullet" style="background:#8B5CF6;"></span>
+          <span>孵化校园 OPC</span>
+          <span class="stat-val-bold" style="color:#7C3AED;">18,420 +</span>
+        </div>
+        <div class="bottom-stat-divider"></div>
+        <div class="bottom-stat-item">
+          <span class="stat-icon-bullet" data-footer-icon="brands"></span>
+          <span>合作品牌</span>
+          <span class="stat-val-bold" id="stat-brands">2,340 +</span>
+        </div>
+        <div class="bottom-stat-divider"></div>
+        <div class="bottom-stat-item">
+          <span class="stat-icon-bullet" data-footer-icon="tasks_done"></span>
+          <span>商单与标品交付</span>
+          <span class="stat-val-bold" id="stat-tasks">18,760 +</span>
+        </div>
+        <div class="bottom-stat-divider"></div>
+        <div class="bottom-stat-item">
+          <span class="stat-icon-bullet" data-footer-icon="paid"></span>
+          <span>平台支付金额</span>
+          <span class="stat-val-bold" id="stat-paid">¥3,256,890 +</span>
+        </div>
+        <div class="bottom-stat-divider"></div>
+        <div class="bottom-stat-item">
+          <span class="stat-icon-bullet" style="background:#10B981;"></span>
+          <span>专票合规结算率</span>
+          <span class="stat-val-bold" style="color:#059669;">100%</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- =======================================================================
+       全局交互弹窗集合 (Modals)
+       ======================================================================= -->
+
+  <!-- 1. 发布作品弹窗 (Modal Publish) -->
+  <div class="modal-backdrop" id="modal-publish">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-publish')">✕</div>
+      <div class="modal-header-title">发布作品</div>
+      <div class="modal-header-sub">分享你的 AI 创作心得与成果，同步全网矩阵分发</div>
+
+      <div class="form-group">
+        <label class="form-label">作品标题</label>
+        <input type="text" id="publish-title" class="form-input" placeholder="输入吸睛的作品标题，如《未来信号》AI科幻短剧">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">所属分类</label>
+        <select id="publish-category" class="form-select">
+          <option value="AI短剧">AI短剧</option>
+          <option value="AI漫剧">AI漫剧</option>
+          <option value="校园Vlog">校园Vlog</option>
+          <option value="AI广告">AI广告</option>
+          <option value="AI音乐">AI音乐</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">创作心得与提示词模板</label>
+        <textarea id="publish-content" class="form-textarea" rows="4" placeholder="详细分享你的 AI 制作工作流、提示词模型与生成技巧..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">矩阵分发平台</label>
+        <div class="publish-matrix-checks" id="publish-matrix-checks">
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="native" checked> 社区大本营</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="douyin" checked> 抖音</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="kuaishou" checked> 快手</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="bilibili" checked> 哔哩哔哩</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="xiaohongshu" checked> 小红书</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="shipinhao" checked> 视频号</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="tiktok" checked> TikTok</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="youtube" checked> YouTube</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="facebook" checked> Facebook</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="instagram" checked> Instagram</label>
+          <label class="publish-matrix-item"><input type="checkbox" name="matrix-plat" value="twitter" checked> 推特 (X)</label>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-top:6px;">勾选后将同步分发，并回写数据中心「矩阵分发」看板</div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-publish')">取消</button>
+        <button class="hero-btn-primary" onclick="App.submitPublishWork()">立即发布并同步</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 任务报名接单弹窗 (Modal Task Apply) -->
+  <div class="modal-backdrop" id="modal-task-apply">
+    <div class="modal-dialog" style="width:560px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-task-apply')">✕</div>
+      <div class="modal-header-title" id="modal-task-title">任务详情与报名</div>
+      <div class="modal-header-sub" id="modal-task-sub">官方品牌商悬赏任务 · 平台全程资金托管</div>
+
+      <div style="background:#F8FAFC; border-radius:10px; padding:14px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="color:var(--text-muted); font-size:12.5px;">任务悬赏奖金</span>
+          <strong id="modal-task-reward" style="color:#EF4444; font-size:18px;">¥ 5,000</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="color:var(--text-muted); font-size:12.5px;">接单模式</span>
+          <span id="modal-task-accept-mode" style="color:var(--text-primary); font-size:12.5px;">发布方选定</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--text-muted); font-size:12.5px;">交付截止时间</span>
+          <span id="modal-task-deadline" style="color:var(--text-primary); font-size:12.5px;">3天后截止</span>
+        </div>
+      </div>
+
+      <div class="form-group" id="task-apply-manual-fields" hidden>
+        <label class="form-label">报名说明 / 方案要点 <span class="form-required">*</span></label>
+        <textarea id="task-apply-proposal" class="form-textarea" rows="3" placeholder="简要说明你的思路、档期与相关作品（30–100 字）"></textarea>
+        <input type="text" id="task-apply-portfolio" class="form-input" style="margin-top:8px;" placeholder="作品链接或展厅作品名（可选）">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">创作者作品承诺书</label>
+        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;" id="modal-task-pledge">
+          • 本次任务需采用合规 AI 工具创作，严禁抄袭与违规搬运；<br>
+          • 作品通过审核后，款项将即时存入您的“我的资产”账户中；<br>
+          • 报名后若中途放弃，可能影响信誉分与后续接单优先级。
+        </div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-task-apply')">再考虑下</button>
+        <button class="hero-btn-primary" id="btn-confirm-task-apply" onclick="App.confirmTaskApply()">确认报名</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2b. 展厅 · 找 TA 定制弹窗 -->
+  <div class="modal-backdrop" id="modal-gallery-custom">
+    <div class="modal-dialog" style="width:680px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-gallery-custom')">✕</div>
+      <div class="modal-header-title" id="modal-gallery-title">找 TA 定制</div>
+      <div class="modal-header-sub" id="modal-gallery-sub">参考精选作品发起定向商单邀请 · 平台资金托管</div>
+
+      <div class="gallery-custom-creator" id="modal-gallery-creator">
+        <!-- 动态填充创作者信息 -->
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">商单标题</label>
+        <input type="text" id="gallery-custom-title" class="form-input" placeholder="例如：30 秒校园品牌概念短视频（参考该作品风格）">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">需求简述</label>
+        <textarea id="gallery-custom-brief" class="form-textarea" rows="3" placeholder="例如：希望参考该作品风格，制作 30 秒校园品牌短视频，需提供分镜与配音…"></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+        <div>
+          <label class="form-label">定制报价 · 明确价格</label>
+          <div class="gallery-price-input-wrap">
+            <span class="gallery-price-prefix">¥</span>
+            <input type="number" id="gallery-custom-budget" class="form-input gallery-price-input" min="100" step="100" value="2800">
+            <span class="gallery-price-suffix">元</span>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">期望交付</label>
+          <select id="gallery-custom-deadline" class="form-select">
+            <option>3 天内</option>
+            <option selected>7 天内</option>
+            <option>14 天内</option>
+            <option>可协商</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">创作者服务套餐 · 明码标价（点击直接填入）</label>
+        <div class="gallery-price-pkgs" id="gallery-custom-pkgs"></div>
+        <div class="gallery-price-hint" id="gallery-custom-price-hint"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">合作说明</label>
+        <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+          • 提交后将自动生成一条「定向商单」发布任务，状态为<strong>「待接单」</strong>，赏金全额托管；<br>
+          • 创作者在【我的任务 · 承接任务】<strong>响应商单</strong>后，任务才正式进入履约；<br>
+          • 请勿私下交换联系方式或站外转账，平台外交易不受担保。
+        </div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-gallery-custom')">取消</button>
+        <button class="hero-btn-primary" onclick="App.confirmGalleryCustom()">发送定制邀请</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. AI 创作工作台弹窗 (Modal Studio) -->
+  <div class="modal-backdrop" id="modal-studio">
+    <div class="modal-dialog" style="width:760px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-studio')">✕</div>
+      <div class="modal-header-title" id="modal-studio-title">AI 智能创作工作台</div>
+      <div class="modal-header-sub">高并发 GPU 算力集群加速 · 一键全流程生成</div>
+
+      <div class="form-group">
+        <label class="form-label">创意提示词 (Prompt)</label>
+        <textarea id="studio-prompt-input" class="form-textarea" rows="3" placeholder="例如：未来赛博朋克风校园，大学生操纵全息投影进行代码实验，高质感电影光影，8k分辨率..."></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+        <div>
+          <label class="form-label">模型引擎</label>
+          <select class="form-select">
+            <option>SDXL Turbo v3.5 (极速渲染)</option>
+            <option>Midjourney v6.1 (超精画质)</option>
+            <option>Sora Video Gen v2 (长视频)</option>
+            <option>Claude 3.5 Sonnet (长文写作)</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">画幅比例</label>
+          <select class="form-select">
+            <option>16:9 (横屏视频)</option>
+            <option>9:16 (抖音短视频)</option>
+            <option>1:1 (方图)</option>
+            <option>3:4 (小红书种草)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 生成预览区 -->
+      <div id="studio-preview-box" style="background:#F1F5F9; border-radius:10px; height:160px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-muted); position:relative; overflow:hidden;">
+        <span id="studio-preview-status">输入提示词并点击“开始生成”，体验实时创作</span>
+        <div id="studio-progress-bar" style="position:absolute; bottom:0; left:0; height:4px; width:0; background:var(--primary); transition: width 1.8s ease;"></div>
+      </div>
+
+      <div class="modal-actions-row" style="flex-wrap:wrap; gap:8px;">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-studio')">关闭</button>
+        <button class="hero-btn-secondary" id="btn-studio-deliver" hidden onclick="App.submitStudioToTask()" style="background:#ECFDF5; color:#059669; border-color:#A7F3D0;">💼 提交为商单交付物</button>
+        <button class="hero-btn-secondary" id="btn-studio-showcase" hidden onclick="App.publishStudioToShowcase()" style="background:#EEF2FF; color:#4F46E5; border-color:#C7D2FE;">✨ 上架发现页展厅</button>
+        <button class="hero-btn-secondary" id="btn-studio-publish" hidden onclick="App.publishFromStudio()">💬 分享至社区</button>
+        <button class="hero-btn-primary" id="btn-studio-generate" onclick="App.simulateGenerate()">立即生成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3b. 发现页作品交互详情与定向商单/套用弹窗 (Modal Work Detail) -->
+  <div class="modal-backdrop" id="modal-work-detail">
+    <div class="modal-dialog" style="width:820px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-work-detail')">✕</div>
+      <div id="work-detail-modal-body">
+        <!-- 由 App.renderWorkDetailModal 动态渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 3c. 系统管理与治理控制中心弹窗 (Modal System Admin) -->
+  <div class="modal-backdrop" id="modal-system-admin">
+    <div class="modal-dialog" style="width:860px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-system-admin')">✕</div>
+      <div class="modal-header-title">⚙️ 系统管理与治理控制中心</div>
+      <div class="modal-header-sub">跨模块权限隔离 · 双轨会员等级 · 金融与内容风控 · 经济系统宏观调控</div>
+
+      <!-- 系统管理导航 Tabs -->
+      <div class="pill-tabs" id="sysadmin-tabs" style="margin:16px 0;">
+        <button type="button" class="pill-tab active" data-systab="roles" onclick="App.switchSystemAdminTab('roles')">👥 RBAC 角色权限与视角切换</button>
+        <button type="button" class="pill-tab" data-systab="membership" onclick="App.switchSystemAdminTab('membership')">👑 会员与等级双轨体系</button>
+        <button type="button" class="pill-tab" data-systab="risk" onclick="App.switchSystemAdminTab('risk')">🛡️ 全域风控与交易看门狗</button>
+        <button type="button" class="pill-tab" data-systab="economy" onclick="App.switchSystemAdminTab('economy')">💎 创作积分宏观经济调控</button>
+      </div>
+
+      <div id="sysadmin-tab-body">
+        <!-- 动态渲染不同 Tab -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 开通 Pro 会员特权弹窗 (Modal Pro) -->
+  <div class="modal-backdrop" id="modal-pro">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-pro')">✕</div>
+      <div class="modal-header-title">开通 Pro 会员 · 解锁创作者超级特权</div>
+      <div class="modal-header-sub">会员订阅独立结算 · 扫码支付成功后即时生效</div>
+
+      <div class="pro-plan-grid">
+        <div class="pro-plan-card active" id="pro-plan-year" onclick="App.selectProPlan('year')">
+          <div class="pro-plan-tag">年费会员 (超值推荐)</div>
+          <div class="pro-plan-price">¥ 699 <span>/ 年</span></div>
+          <div class="pro-plan-note is-green">立省 ¥ 477，送 50000 创作算力</div>
+        </div>
+        <div class="pro-plan-card" id="pro-plan-month" onclick="App.selectProPlan('month')">
+          <div class="pro-plan-tag is-muted">月度订阅</div>
+          <div class="pro-plan-price">¥ 98 <span>/ 月</span></div>
+          <div class="pro-plan-note">按月扣费，随时取消</div>
+        </div>
+      </div>
+
+      <div class="pro-subscribe-strip" id="pro-subscribe-strip">
+        <!-- 动态渲染：Pro 生效状态与有效期至 / 未开通说明 -->
+      </div>
+
+      <div style="font-size:13px; color:var(--text-primary); line-height:1.8;">
+        ✓ 无限次使用 62+ 款 AI 顶级创作工具<br>
+        ✓ 商业任务大厅接单提成比例提升至 <strong>90%</strong><br>
+        ✓ 4K/8K 超高清渲染无水印导出与矩阵自动分发<br>
+        ✓ 专属 1 对 1 商业导师答疑与接单派单辅导
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-pro')">暂不需要</button>
+        <button class="hero-btn-primary" onclick="App.handleUpgradePro()">立即开通 Pro 会员</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4a. Pro 会员订阅付款二维码弹窗 (Modal Pro Pay QR) -->
+  <div class="modal-backdrop" id="modal-pro-pay-qr">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.cancelProOrder()">✕</div>
+      <div class="modal-header-title">扫码支付 · 开通 Pro 会员</div>
+      <div class="modal-header-sub">会员订阅独立结算通道 · 不占用账户余额</div>
+
+      <div class="pro-qr-order-strip">
+        <div class="pro-qr-order-cell">
+          <span class="pro-qr-order-lbl">订阅方案</span>
+          <span class="pro-qr-order-val" id="pro-qr-plan-name">年费会员</span>
+        </div>
+        <div class="pro-qr-order-cell">
+          <span class="pro-qr-order-lbl">应付金额</span>
+          <span class="pro-qr-order-val is-amount" id="pro-qr-amount">¥ 699.00</span>
+        </div>
+        <div class="pro-qr-order-cell">
+          <span class="pro-qr-order-lbl">订阅单号</span>
+          <span class="pro-qr-order-val is-mono" id="pro-qr-order-no">PRO0000000000</span>
+        </div>
+      </div>
+
+      <div class="pro-qr-channel-row" id="pro-qr-channel-row">
+        <button type="button" class="pro-qr-channel-btn active" data-channel="微信支付" onclick="App.switchProPayChannel('微信支付')">
+          <span class="pro-qr-channel-icon">💚</span>微信支付
+        </button>
+        <button type="button" class="pro-qr-channel-btn" data-channel="支付宝" onclick="App.switchProPayChannel('支付宝')">
+          <span class="pro-qr-channel-icon">💙</span>支付宝
+        </button>
+      </div>
+
+      <div class="pro-qr-stage">
+        <div class="pro-qr-frame" id="pro-qr-frame">
+          <!-- 动态渲染：由订阅单号派生的付款二维码 -->
+        </div>
+        <div class="pro-qr-countdown">支付剩余时间 <strong id="pro-qr-countdown">15:00</strong></div>
+        <div class="pro-qr-hint">请使用<span id="pro-qr-channel-hint">微信</span>扫描上方二维码完成支付<br>支付成功后 Pro 特权即时生效，并自动写入会员有效期</div>
+        <div class="pro-qr-expire-hint" id="pro-qr-expire-hint">支付成功后有效期至 2027-09-22</div>
+      </div>
+
+      <div class="pro-qr-tip-row">本笔订单走<strong>会员订阅独立结算通道</strong>：不从账户余额扣除，不产生冻结金额，也不影响算力充值与资产流水</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.cancelProOrder()">取消订单</button>
+        <button class="hero-btn-primary" onclick="App.confirmProPayment()">我已完成支付</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4a2. 单个等级完整说明 (Modal Growth Level) -->
+  <div class="modal-backdrop" id="modal-growth-level">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeGrowthLevelModal()">✕</div>
+      <div class="modal-header-title">成长路径 · 等级说明</div>
+      <div class="modal-header-sub" id="growth-level-sub">Lv.1 ~ Lv.5 每一级的晋级门槛、需完成内容与解锁权益</div>
+      <div class="growth-level-head" id="growth-level-head"></div>
+      <div class="growth-level-body" id="growth-level-body"></div>
+      <div class="modal-actions-row" id="growth-level-actions"></div>
+    </div>
+  </div>
+
+  <!-- 4b. 创作者等级权益对照 (Modal Level Perks) -->
+  <div class="modal-backdrop" id="modal-level-perks">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-level-perks')">✕</div>
+      <div class="modal-header-title">创作者等级权益</div>
+      <div class="modal-header-sub" id="level-perks-subtitle">当前等级将在打开时同步</div>
+      <div class="level-perks-grid" id="level-perks-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-level-perks')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-level-perks'); App.navigateTo('tasks');">去任务广场</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 申请提现弹窗 (Modal Withdraw) -->
+  <div class="modal-backdrop" id="modal-withdraw">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-withdraw')">✕</div>
+      <div class="modal-header-title">申请提现</div>
+      <div class="modal-header-sub">资金来源仅限「创作收益」· 仅支持提现至本人同名银行借记卡 · T+0 实时到账 · 免手续费</div>
+
+      <div class="withdraw-source-strip" id="withdraw-source-strip">
+        <span class="withdraw-source-icon">💰</span>
+        <span class="withdraw-source-text" id="withdraw-source-text">资金来源：创作收益（唯一可提现）· 可用 ¥ 12,680.30</span>
+        <span class="withdraw-source-lock" id="withdraw-source-lock">账户余额只可充值，不可提现</span>
+      </div>
+
+      <div class="withdraw-verify-strip" id="withdraw-verify-strip">
+        <span class="withdraw-verify-icon">🛡️</span>
+        <span class="withdraw-verify-text" id="withdraw-verify-text">实名认证已通过</span>
+        <span class="withdraw-verify-state" id="withdraw-verify-state">已实名</span>
+      </div>
+
+      <div class="withdraw-rule-row" id="withdraw-rule-row"></div>
+
+      <div class="form-group">
+        <label class="form-label">收款账户（仅支持本人同名借记卡）</label>
+        <select class="form-select" id="withdraw-account-select" onchange="App.onWithdrawAccountChange()"></select>
+        <div class="withdraw-account-note" id="withdraw-account-note"></div>
+        <div class="withdraw-add-card-row" id="withdraw-add-card-row">
+          <span class="withdraw-add-card-hint">没有可用的本人借记卡？</span>
+          <span class="withdraw-add-card-link" onclick="App.openBankCardBindModal('bind')">+ 绑定银行卡 &gt;</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">提现金额 (元)</label>
+        <input type="number" id="withdraw-amount-input" class="form-input" placeholder="输入提现金额，当前可提现 ¥ 5,320.50" value="1000" min="0" max="10000" oninput="App.onWithdrawAmountInput()">
+        <div class="withdraw-amount-hint" id="withdraw-amount-hint"></div>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-withdraw')">取消</button>
+        <button class="hero-btn-primary" id="withdraw-submit-btn" onclick="App.submitWithdraw()">确认提现</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 人民币账户充值弹窗 (Modal Account Recharge) -->
+  <div class="modal-backdrop" id="modal-account-recharge">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-account-recharge')">✕</div>
+      <div class="modal-header-title">人民币账户充值</div>
+      <div class="modal-header-sub">微信支付 / 支付宝官方收款二维码 · 充值入金即时计入可提现余额</div>
+
+      <div class="recharge-balance-strip">
+        <span class="recharge-balance-label">当前账户总额</span>
+        <span class="recharge-balance-value" id="recharge-cur-balance">¥ 6,820.50</span>
+        <span class="recharge-balance-note" id="recharge-cur-withdrawable">可提现 ¥ 5,320.50</span>
+      </div>
+
+      <div class="recharge-rule-row" id="recharge-rule-row"></div>
+
+      <div class="form-group">
+        <label class="form-label">支付方式（官方收款二维码 · 二选一）</label>
+        <div class="recharge-channel-row" id="recharge-channel-row">
+          <button type="button" class="recharge-channel-btn active" data-channel="wechat" onclick="App.selectRechargeChannel('wechat')">
+            <span class="recharge-channel-icon">💚</span>微信支付
+          </button>
+          <button type="button" class="recharge-channel-btn" data-channel="alipay" onclick="App.selectRechargeChannel('alipay')">
+            <span class="recharge-channel-icon">💙</span>支付宝
+          </button>
+        </div>
+        <div class="recharge-channel-note" id="recharge-channel-note">打开微信「扫一扫」，扫描下一步生成的官方收款二维码完成支付</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">充值金额 (元)</label>
+        <div class="recharge-preset-grid" id="recharge-preset-grid">
+          <button type="button" class="recharge-preset-btn" onclick="App.selectRechargePreset(this, 500)">¥ 500</button>
+          <button type="button" class="recharge-preset-btn active" onclick="App.selectRechargePreset(this, 1000)">¥ 1,000</button>
+          <button type="button" class="recharge-preset-btn" onclick="App.selectRechargePreset(this, 5000)">¥ 5,000</button>
+          <button type="button" class="recharge-preset-btn" onclick="App.selectRechargePreset(this, 10000)">¥ 10,000</button>
+        </div>
+        <input type="number" id="recharge-amount-input" class="form-input" placeholder="或输入自定义金额（单笔上限 ¥ 50,000）" value="1000">
+      </div>
+
+      <div class="recharge-tip-row" id="recharge-tip-row">充值只支持微信支付 / 支付宝官方收款二维码扫码入金，银行卡代扣通道已下线；充值只入现金账户，不产生 AI 积分或创作积分</div>
+      <div class="recharge-invoice-hint">
+        <span>充值完成后可对充值记录申请开具增值税发票</span>
+        <span class="link-asset-action" onclick="App.closeModal('modal-account-recharge'); App.openInvoiceModal();">发票管理 &gt;</span>
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-account-recharge')">取消</button>
+        <button class="hero-btn-primary" id="recharge-submit-btn" onclick="App.submitAccountRecharge()">生成收款二维码 &gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6a-2. 人民币账户充值 · 官方收款二维码支付弹窗 (Modal Recharge QR) -->
+  <div class="modal-backdrop" id="modal-recharge-qr">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.cancelRechargeOrder()">✕</div>
+      <div class="modal-header-title">扫码充值 · 人民币账户</div>
+      <div class="modal-header-sub">微信支付 / 支付宝官方收款二维码 · 扫码成功即时入账</div>
+
+      <div class="rc-qr-order-strip">
+        <div class="rc-qr-order-cell">
+          <span class="rc-qr-order-lbl">充值金额</span>
+          <span class="rc-qr-order-val is-amount" id="rc-qr-amount">¥ 1,000.00</span>
+        </div>
+        <div class="rc-qr-order-cell">
+          <span class="rc-qr-order-lbl">充值单号</span>
+          <span class="rc-qr-order-val is-mono" id="rc-qr-order-no">RC0000000000</span>
+        </div>
+      </div>
+
+      <div class="rc-qr-channel-row" id="rc-qr-channel-row">
+        <button type="button" class="rc-qr-channel-btn active" data-channel="wechat" onclick="App.switchRechargeChannel('wechat')">
+          <span class="rc-qr-channel-icon">💚</span>微信支付
+        </button>
+        <button type="button" class="rc-qr-channel-btn" data-channel="alipay" onclick="App.switchRechargeChannel('alipay')">
+          <span class="rc-qr-channel-icon">💙</span>支付宝
+        </button>
+      </div>
+
+      <div class="rc-qr-stage">
+        <div class="rc-qr-frame" id="rc-qr-frame">
+          <!-- 动态渲染：由充值单号与支付渠道派生的官方收款二维码 -->
+        </div>
+        <div class="rc-qr-countdown">支付剩余时间 <strong id="rc-qr-countdown">15:00</strong></div>
+        <div class="rc-qr-hint">请使用<span id="rc-qr-channel-hint">微信</span>扫描上方二维码完成支付<br>支付成功后充值金额即时计入账户余额与可提现余额</div>
+        <div class="rc-qr-expire-hint" id="rc-qr-expire-hint">到账后可在【发票管理】对该笔充值申请开具增值税发票</div>
+      </div>
+
+      <div class="rc-qr-tip-row">本笔充值走<strong>官方收款二维码通道</strong>：不经银行卡代扣、不产生冻结金额；超时未支付订单自动失效，账户余额保持不变</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.cancelRechargeOrder()">取消订单</button>
+        <button class="hero-btn-primary" onclick="App.confirmRechargePayment()">我已完成支付</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6b. 余额不足统一引导弹窗 (Modal Balance Insufficient) -->
+  <div class="modal-backdrop" id="modal-balance-insufficient">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-balance-insufficient')">✕</div>
+      <div class="modal-header-title">账户余额不足</div>
+      <div class="modal-header-sub" id="insufficient-scene-sub">账户余额用于算力充值、付费课程等平台购买行为，充值后即可继续</div>
+
+      <div class="insufficient-amount-grid">
+        <div class="insufficient-amount-cell">
+          <div class="insufficient-cell-label">应付金额</div>
+          <div class="insufficient-cell-value" id="insufficient-need">¥ 0.00</div>
+        </div>
+        <div class="insufficient-amount-cell">
+          <div class="insufficient-cell-label">当前可用余额</div>
+          <div class="insufficient-cell-value" id="insufficient-have">¥ 0.00</div>
+        </div>
+        <div class="insufficient-amount-cell is-short">
+          <div class="insufficient-cell-label">尚缺金额</div>
+          <div class="insufficient-cell-value" id="insufficient-short">¥ 0.00</div>
+        </div>
+      </div>
+
+      <div class="recharge-tip-row">本次未发生任何扣款；充值到账后返回原页面重新发起购买即可</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-balance-insufficient')">稍后再说</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-balance-insufficient'); App.openAccountRechargeModal();">去充值 &gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6c. 专属普惠算力特权充值弹窗 (Modal Compute Recharge) -->
+  <div class="modal-backdrop" id="modal-compute-recharge">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-compute-recharge')">✕</div>
+      <div class="modal-header-title">专属普惠算力特权 · 充值</div>
+      <div class="modal-header-sub">账户余额 / 创作收益 / 两者组合扣款 · 不直连微信 / 支付宝 / 银联</div>
+
+      <div class="recharge-balance-strip">
+        <span class="recharge-balance-label">可用账户余额</span>
+        <span class="recharge-balance-value" id="compute-cur-balance">¥ 5,320.50</span>
+        <span class="recharge-balance-note" id="compute-cur-tokens">算力池 2,340.00 点</span>
+      </div>
+      <div class="recharge-balance-strip is-earnings">
+        <span class="recharge-balance-label">可提现创作收益</span>
+        <span class="recharge-balance-value" id="compute-cur-earnings">¥ 12,680.30</span>
+        <span class="recharge-balance-note">全站唯一可提现资金来源 · 与账户余额资金隔离</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">扣款资金来源（充值必选）</label>
+        <div class="compute-fund-grid" id="compute-fund-grid"></div>
+        <div class="compute-type-note is-warn" id="compute-fund-note">选择本次充值的扣款来源：账户余额（只可充值、不可提现）、创作收益（唯一可提现来源）或两者组合</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">算力类型（充值必选）</label>
+        <div class="compute-type-grid" id="compute-type-grid"></div>
+        <div class="compute-type-note is-warn" id="compute-type-note">请先在上方选择算力类型，选定后才能核算到账点数并提交充值</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">选择算力包（4 折普惠价）</label>
+        <div class="compute-pack-grid" id="compute-pack-grid"></div>
+      </div>
+
+      <div class="compute-order-summary">
+        <div class="compute-order-row">
+          <span>充值算力类型</span>
+          <strong id="compute-type-result">未选择</strong>
+        </div>
+        <div class="compute-order-row">
+          <span>应付金额</span>
+          <strong id="compute-pay-amount">¥ 40.00</strong>
+        </div>
+        <div class="compute-order-row">
+          <span>扣款构成</span>
+          <strong id="compute-pay-split">账户余额 ¥ 40.00</strong>
+        </div>
+        <div class="compute-order-row">
+          <span>到账算力点</span>
+          <strong id="compute-gain-tokens">—</strong>
+        </div>
+        <div class="compute-order-row" id="compute-pro-row">
+          <span>Pro 会员加赠</span>
+          <strong id="compute-pro-bonus">+ 10%</strong>
+        </div>
+      </div>
+
+      <div class="recharge-tip-row">算力点计入所选算力类型的独立账本，两类算力不可互相划转；AI 积分仅用于工具算力消耗，与创作积分成长池严格解耦</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-compute-recharge')">取消</button>
+        <button class="hero-btn-primary" id="compute-submit-btn" onclick="App.submitComputeRecharge()">确认充值</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6e. AI 积分明细弹窗 (Modal AI Points Detail) -->
+  <div class="modal-backdrop" id="modal-ai-points-detail">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-ai-points-detail')">✕</div>
+      <div class="modal-header-title">AI 积分明细</div>
+      <div class="modal-header-sub">按算力类型分账计量 · 自有算力（自建集群）与集成算力（第三方聚合）互不划转</div>
+
+      <div class="ai-points-summary" id="ai-points-summary"></div>
+
+      <div class="form-group">
+        <label class="form-label">算力类型筛选</label>
+        <div class="ai-points-tabs" id="ai-points-type-tabs"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">积分流水台账</label>
+        <div class="ai-points-ledger" id="ai-points-ledger-list"></div>
+      </div>
+
+      <div class="recharge-tip-row">AI 积分仅用于 AI 工具算力消耗，与创作积分成长池严格解耦；两类算力独立计量、不可互相划转</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-ai-points-detail')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-ai-points-detail'); App.openComputeRechargeModal();">去充值算力 &gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6b. 勋章 / 荣耀详情弹窗 (Modal Honor Detail) -->
+  <div class="modal-backdrop" id="modal-honor-detail">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-honor-detail')">✕</div>
+      <div class="modal-header-title">勋章与荣耀详情</div>
+      <div class="modal-header-sub">展示该勋章/荣耀为你解锁的权益详细说明</div>
+
+      <div class="honor-detail-hero" id="honor-detail-hero">
+        <div class="honor-detail-icon-wrap" id="honor-detail-icon-wrap">
+          <img src="" alt="" class="honor-detail-icon" id="honor-detail-icon">
+        </div>
+        <div class="honor-detail-head">
+          <div class="honor-detail-name-row">
+            <span class="honor-detail-name" id="honor-detail-name">—</span>
+            <span class="honor-tier-tag" id="honor-detail-tier">—</span>
+            <span class="honor-status-tag" id="honor-detail-status">—</span>
+          </div>
+          <div class="honor-detail-meta" id="honor-detail-meta">—</div>
+          <div class="honor-detail-desc" id="honor-detail-desc">—</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">解锁条件</label>
+        <div class="honor-unlock-row" id="honor-detail-unlock">—</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">权益详细说明（<span id="honor-detail-perk-count">0</span> 项）</label>
+        <div class="honor-perk-list" id="honor-detail-perks"></div>
+      </div>
+
+      <div class="recharge-tip-row">勋章权益随等级与成就自动生效；未解锁的勋章在达成条件后自动点亮，无需手动领取</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-honor-detail')">关闭</button>
+        <button class="hero-btn-primary" id="honor-detail-action" onclick="App.useHonorPerk()">去使用权益 &gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6c. 优惠券弹窗 (Modal Coupon) -->
+  <div class="modal-backdrop" id="modal-coupon">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-coupon')">✕</div>
+      <div class="modal-header-title">优惠券</div>
+      <div class="modal-header-sub">按适用场景分类 · 使用时自动校验门槛与有效期</div>
+
+      <div class="coupon-summary-strip">
+        <div class="coupon-summary-cell">
+          <div class="coupon-cell-label">可用券 (张)</div>
+          <div class="coupon-cell-value" id="coupon-usable-count">0</div>
+        </div>
+        <div class="coupon-summary-cell">
+          <div class="coupon-cell-label">可用面额合计</div>
+          <div class="coupon-cell-value" id="coupon-usable-amount">¥ 0</div>
+        </div>
+        <div class="coupon-summary-cell">
+          <div class="coupon-cell-label">即将过期</div>
+          <div class="coupon-cell-value" id="coupon-expiring-count">0</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">券状态</label>
+        <div class="coupon-tabs" id="coupon-status-tabs"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">券列表</label>
+        <div class="coupon-list" id="coupon-list"></div>
+      </div>
+
+      <div class="recharge-tip-row">优惠券仅在对应场景结算时抵扣，不可与账户余额叠加提现</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-coupon')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-coupon'); App.openAiPointsDetail('all');">积分明细 &gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6d. 发票管理弹窗 (Modal Invoice) -->
+  <div class="modal-backdrop" id="modal-invoice">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-invoice')">✕</div>
+      <div class="modal-header-title">发票管理</div>
+      <div class="modal-header-sub">对人民币账户充值记录申请开票 · 电子发票 3 个工作日内推送至预留邮箱</div>
+
+      <div class="invoice-summary-strip">
+        <div class="invoice-summary-cell">
+          <div class="invoice-cell-label">可开票金额</div>
+          <div class="invoice-cell-value" id="invoice-total-pending">¥ 0.00</div>
+        </div>
+        <div class="invoice-summary-cell">
+          <div class="invoice-cell-label">已开票金额</div>
+          <div class="invoice-cell-value" id="invoice-total-issued">¥ 0.00</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">可开票充值记录（点击选择）</label>
+        <div class="invoice-record-list" id="invoice-record-list"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">发票类型</label>
+        <div class="invoice-type-grid" id="invoice-type-grid">
+          <button type="button" class="invoice-type-btn active" onclick="App.selectInvoiceType('normal')">增值税普通发票</button>
+          <button type="button" class="invoice-type-btn" onclick="App.selectInvoiceType('special')">增值税专用发票</button>
+        </div>
+        <div class="recharge-tip-row" id="invoice-type-hint">普票支持个人或企业抬头；专票仅支持企业抬头且必须填写纳税人识别号</div>
+      </div>
+
+      <div class="invoice-field-grid">
+        <div class="form-group">
+          <label class="form-label">抬头类型</label>
+          <select class="form-select" id="invoice-title-type">
+            <option value="personal">个人</option>
+            <option value="company">企业</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">发票抬头</label>
+          <input type="text" class="form-input" id="invoice-title-name" placeholder="请输入发票抬头">
+        </div>
+        <div class="form-group">
+          <label class="form-label">纳税人识别号</label>
+          <input type="text" class="form-input" id="invoice-tax-no" placeholder="企业抬头必填">
+        </div>
+        <div class="form-group">
+          <label class="form-label">接收邮箱</label>
+          <input type="email" class="form-input" id="invoice-email" placeholder="用于接收电子发票">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">备注（选填）</label>
+        <input type="text" class="form-input" id="invoice-remark" placeholder="如：请备注项目名称">
+      </div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-invoice')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.submitInvoiceApply()">提交开票申请</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6e. 商单资金托管库 · 托管进度弹窗 (Modal Escrow Progress) -->
+  <div class="modal-backdrop" id="modal-escrow-progress">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-escrow-progress')">✕</div>
+      <div class="modal-header-title">商单资金托管库 · 托管进度</div>
+      <div class="modal-header-sub">当前商户名下全部托管项目 · 按冻结时间倒序排列</div>
+
+      <div class="escrow-summary-strip">
+        <div class="escrow-summary-cell">
+          <div class="escrow-cell-label">托管中金额</div>
+          <div class="escrow-cell-value" id="escrow-total-frozen">¥ 0.00</div>
+        </div>
+        <div class="escrow-summary-cell">
+          <div class="escrow-cell-label">进行中项目</div>
+          <div class="escrow-cell-value" id="escrow-active-count">0 个</div>
+        </div>
+        <div class="escrow-summary-cell">
+          <div class="escrow-cell-label">累计已结算</div>
+          <div class="escrow-cell-value" id="escrow-settled-total">¥ 0.00</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" id="escrow-list-label">托管项目列表（按冻结时间倒序）</label>
+        <div class="pill-tabs" id="escrow-filter-tabs">
+          <div class="pill-tab active" data-filter="all" onclick="App.filterEscrowProjects('all')">全部</div>
+          <div class="pill-tab" data-filter="active" onclick="App.filterEscrowProjects('active')">进行中</div>
+          <div class="pill-tab" data-filter="settled" onclick="App.filterEscrowProjects('settled')">已结算 / 已退还</div>
+        </div>
+        <div class="escrow-project-list" id="escrow-project-list"></div>
+      </div>
+
+      <div class="recharge-tip-row">托管中款项冻存于平台监管专户，验收通过后划转创作者；列表冻结合计与资产卡「冻结金额」始终一致</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-escrow-progress')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-escrow-progress'); App.navigateTo('view-tasks');">前往任务广场</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 银行卡绑定与换绑弹窗 (Modal Bank Card Bind) -->
+  <div class="modal-backdrop" id="modal-bank-card-bind">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-bank-card-bind')">✕</div>
+      <div class="modal-header-title" id="bank-bind-title">绑定银行卡</div>
+      <div class="modal-header-sub" id="bank-bind-sub">仅支持绑定本人同名境内银联借记卡（储蓄卡）</div>
+
+      <div class="withdraw-verify-strip" id="bank-bind-verify-strip">
+        <span class="withdraw-verify-icon">🛡️</span>
+        <span class="withdraw-verify-text" id="bank-bind-verify-text">实名认证已通过</span>
+        <span class="withdraw-verify-state" id="bank-bind-verify-state">已实名</span>
+      </div>
+
+      <div class="withdraw-rule-row" id="bank-bind-rule-row"></div>
+
+      <div class="bank-bind-rebind-strip" id="bank-bind-rebind-strip">
+        <!-- 换绑模式：回显被替换的旧卡 -->
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">持卡人姓名（须与实名认证一致）</label>
+        <input type="text" class="form-input" id="bank-bind-holder" placeholder="请输入持卡人姓名" oninput="App.refreshBankBindPanel()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">银行卡号（仅支持借记卡）</label>
+        <input type="text" class="form-input" id="bank-bind-cardno" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="请输入 16-19 位银行借记卡卡号" oninput="App.onBankCardNoInput()">
+        <div class="bank-bind-detect" id="bank-bind-detect"></div>
+        <div class="bank-bind-demo" id="bank-bind-demo">
+          <!-- 动态渲染演示卡号 -->
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">开户支行</label>
+        <input type="text" class="form-input" id="bank-bind-branch" placeholder="例如：南京鼓楼支行">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">短信验证码</label>
+        <div class="bank-bind-code-row">
+          <input type="text" class="form-input" id="bank-bind-code" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="6 位验证码" oninput="App.refreshBankBindPanel()">
+          <button type="button" class="hero-btn-secondary bank-bind-code-btn" id="bank-bind-code-btn" onclick="App.sendBankBindCode()">获取验证码</button>
+        </div>
+      </div>
+
+      <div class="bank-bind-hint" id="bank-bind-hint"></div>
+
+      <div class="recharge-tip-row">绑定与换绑遵循同一条口径：仅支持本人同名境内银联借记卡；信用卡、异名卡与国际卡组织卡片一律不支持</div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-bank-card-bind')">取消</button>
+        <button class="hero-btn-primary" id="bank-bind-submit-btn" onclick="App.submitBankCardBind()">确认绑定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7.1 银行卡管理弹窗 (Modal Bank Card Manage · 入口＝常用功能「银行卡管理」) -->
+  <div class="modal-backdrop" id="modal-bank-card-manage">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-bank-card-manage')">✕</div>
+      <div class="modal-header-title">银行卡管理</div>
+      <div class="modal-header-sub">仅支持本人同名境内银联借记卡（储蓄卡）· 信用卡不可绑定</div>
+
+      <div class="recharge-rule-row" id="bank-manage-rule-row">
+        <!-- 动态渲染绑卡口径 chips -->
+      </div>
+
+      <div class="security-settings-card">
+        <div class="bank-card-list bank-card-list-full" id="bank-manage-list">
+          <!-- 动态渲染已绑定银行卡台账 -->
+        </div>
+      </div>
+      <div class="bank-card-block-tip" id="bank-manage-tip"></div>
+
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-bank-card-manage')">关闭</button>
+        <button class="hero-btn-primary" id="bank-manage-add" onclick="App.openBankCardBindModal('bind')">+ 绑定新银行卡</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 创作者主页抽屉 -->
+  <div class="modal-backdrop" id="modal-creator-profile">
+    <div class="modal-dialog creator-profile-dialog" style="width:680px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-creator-profile')">✕</div>
+      <div id="creator-profile-body">
+        <!-- 动态渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 我的作品 -->
+  <div class="modal-backdrop" id="modal-my-works">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-my-works')">✕</div>
+      <div class="modal-header-title">我的作品</div>
+      <div class="modal-header-sub">发现页与展厅上架作品合集</div>
+      <div class="edge-works-grid" id="my-works-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-my-works')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-my-works'); App.navigateTo('discover');">去发现页</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 我的证书 -->
+  <div class="modal-backdrop" id="modal-my-certs">
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-my-certs')">✕</div>
+      <div class="modal-header-title">我的证书与成就</div>
+      <div class="modal-header-sub">学院认证 · 数字藏品 · 平台荣誉</div>
+      <div class="edge-certs-grid" id="my-certs-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-secondary" onclick="App.closeModal('modal-my-certs')">关闭</button>
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-my-certs'); App.navigateTo('academy');">去成长学院</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成长学院 · 通用信息弹窗（资源速览 / 案例复盘 / 社群 / 成就详情共用；SPEC-003 T-003-19~22） -->
+  <div class="modal-backdrop" id="modal-academy-sheet">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-academy-sheet')">✕</div>
+      <div class="modal-header-title" id="academy-sheet-title">详情</div>
+      <div class="modal-header-sub" id="academy-sheet-sub"></div>
+      <div class="edge-announcement-body" id="academy-sheet-body"></div>
+      <div class="modal-actions-row" id="academy-sheet-actions"></div>
+    </div>
+  </div>
+
+  <!-- 公告详情 -->
+  <div class="modal-backdrop" id="modal-announcement">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-announcement')">✕</div>
+      <div class="modal-header-title" id="announcement-title">公告</div>
+      <div class="modal-header-sub" id="announcement-date"></div>
+      <div class="edge-announcement-body" id="announcement-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-announcement')">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 作品预览灯箱 -->
+  <div class="modal-backdrop" id="modal-preview-lightbox">
+    <div class="modal-dialog modal-dialog-lightbox">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-preview-lightbox')">✕</div>
+      <div class="lightbox-frame">
+        <img id="lightbox-image" src="" alt="预览">
+      </div>
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <!-- 帮助中心 FAQ -->
+  <div class="modal-backdrop" id="modal-help-faq">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-help-faq')">✕</div>
+      <div class="modal-header-title">帮助中心</div>
+      <div class="modal-header-sub">常见问题速查</div>
+      <div class="edge-faq-list" id="help-faq-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-help-faq')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 安全设置 / 个人信息 -->
+  <div class="modal-backdrop" id="modal-security-settings">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-security-settings')">✕</div>
+      <div class="modal-header-title">安全设置</div>
+      <div class="modal-header-sub">账号信息与资产安全保障</div>
+      <div id="security-settings-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-security-settings')">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用列表弹层（话题/榜单等） -->
+  <div class="modal-backdrop" id="modal-edge-list">
+    <div class="modal-dialog">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-edge-list')">✕</div>
+      <div class="modal-header-title" id="edge-list-title">列表</div>
+      <div class="modal-header-sub" id="edge-list-sub"></div>
+      <div class="edge-list-body" id="edge-list-body"></div>
+      <div class="modal-actions-row">
+        <button class="hero-btn-primary" onclick="App.closeModal('modal-edge-list')">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用确认弹窗（替代浏览器 confirm），由 App.openConfirmModal() 驱动 -->
+  <div class="modal-backdrop modal-confirm-backdrop" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
+    <div class="modal-dialog modal-dialog-confirm">
+      <div class="modal-close-btn" id="modal-confirm-close" aria-label="关闭" onclick="App.closeConfirmModal()">✕</div>
+      <div class="modal-header-title" id="modal-confirm-title">确认</div>
+      <p class="modal-confirm-message" id="modal-confirm-message"></p>
+      <div class="modal-actions-row modal-confirm-actions">
+        <button type="button" class="hero-btn-secondary" id="modal-confirm-cancel" onclick="App.closeConfirmModal()">取消</button>
+        <button type="button" class="hero-btn-primary" id="modal-confirm-ok" onclick="App.confirmModalAction()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. 驳回修改 / 申请返修弹窗 (Modal Reject / Request Revision) -->
+  <div class="modal-backdrop" id="modal-task-reject">
+    <div class="modal-dialog" style="width:580px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-task-reject')">✕</div>
+      <div class="modal-header-title">驳回修改 · 申请返修</div>
+      <div class="modal-header-sub">明确具体修改要求，保障创作者高效交付 · 默认最多允许 3 次返修</div>
+
+      <input type="hidden" id="reject-order-id">
+      
+      <div class="reject-meta-box">
+        <div><label>当前返修轮次</label><span id="reject-round-label" style="font-weight:700; color:var(--warning-text, #D97706);">第 1 / 3 次返修</span></div>
+        <div><label>返修建议期限</label><span>24 - 48 小时</span></div>
+      </div>
+
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label" style="font-weight:600;">修改说明与建议 <span style="color:#EF4444;">*</span></label>
+        <textarea id="reject-note-input" class="form-input" rows="4" placeholder="请清晰描述需要调整的具体细节（如：时间点、人物台词、色调偏向、尺寸或背景音乐等）..." style="resize:vertical;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">返修期望交付截止时间</label>
+        <input type="date" id="reject-deadline-input" class="form-input">
+      </div>
+
+      <div class="notice-box-warning" style="margin-top:12px; font-size:12px; color:var(--text-secondary); line-height:1.6; background:rgba(245,158,11,0.08); padding:10px 14px; border-radius:8px; border:1px solid rgba(245,158,11,0.2);">
+        <strong>平台履约保障提示</strong>：返修期间任务计时重新激活，赏金继续由平台安全托管；创作者提交新版本后将重置验收倒计时。
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:18px;">
+        <button type="button" class="hero-btn-secondary" onclick="App.closeModal('modal-task-reject')">取消</button>
+        <button type="button" class="hero-btn-primary" style="background:#D97706; border-color:#D97706;" onclick="App.submitTaskRejection()">确认发出返修要求</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 双向互评弹窗 (Modal Task Evaluate) -->
+  <div class="modal-backdrop" id="modal-task-evaluate">
+    <div class="modal-dialog" style="width:580px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-task-evaluate')">✕</div>
+      <div class="modal-header-title" id="evaluate-modal-title">任务评价 · 信用沉淀</div>
+      <div class="modal-header-sub" id="evaluate-modal-sub">真实客观的评价将沉淀到双方信誉档案与创作者等级分</div>
+
+      <input type="hidden" id="evaluate-order-id">
+      <input type="hidden" id="evaluate-role">
+
+      <div class="evaluate-target-bar" id="evaluate-target-bar">
+        <!-- 动态渲染被评价人信息 -->
+      </div>
+
+      <div class="evaluate-stars-group" id="evaluate-stars-group">
+        <!-- 动态渲染多维度打分器 -->
+      </div>
+
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label" style="font-weight:600;">详细评语</label>
+        <textarea id="evaluate-comment-input" class="form-input" rows="3" placeholder="写下本次合作的真实感受（如：沟通效率、出片质量、是否值得再次合作等）..." style="resize:vertical;"></textarea>
+      </div>
+
+      <div class="evaluate-quick-tags" id="evaluate-quick-tags">
+        <!-- 快捷好评标签 -->
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:20px;">
+        <button type="button" class="hero-btn-secondary" onclick="App.closeModal('modal-task-evaluate')">稍后再评</button>
+        <button type="button" class="hero-btn-primary" onclick="App.submitTaskEvaluation()">提交评价并沉淀信誉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 申请平台仲裁弹窗 (Modal Dispute) -->
+  <div class="modal-backdrop" id="modal-task-dispute">
+    <div class="modal-dialog" style="width:580px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-task-dispute')">✕</div>
+      <div class="modal-header-title" style="color:#8B5CF6;">申请平台官方仲裁介入</div>
+      <div class="modal-header-sub">当合作双方产生重大分歧无法协商时，平台纠纷委员会将在 24 小时内调处</div>
+
+      <input type="hidden" id="dispute-order-id">
+
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label" style="font-weight:600;">争议主要类型 <span style="color:#EF4444;">*</span></label>
+        <select id="dispute-type-select" class="form-select">
+          <option value="超期失联">对方严重逾期 / 长时间失联</option>
+          <option value="要求超出合同范围">超出原定需求范围要求推翻重做</option>
+          <option value="拖延验收">已按质按量交付，对方恶意拖延验收</option>
+          <option value="质量严重不符">交付成果与原始需求及约定样片严重不符</option>
+          <option value="其他纠纷">其他合同履约争议</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="font-weight:600;">详细争议说明与证据事实 <span style="color:#EF4444;">*</span></label>
+        <textarea id="dispute-reason-input" class="form-input" rows="4" placeholder="请详细陈述争议事实、沟通经过及期望的解决方案（如：按比例结算、全额退款、解除合作等）..." style="resize:vertical;"></textarea>
+      </div>
+
+      <div class="notice-box-warning" style="font-size:12px; color:var(--text-secondary); background:rgba(139,92,246,0.08); padding:10px 14px; border-radius:8px; border:1px solid rgba(139,92,246,0.2);">
+        <strong>仲裁须知</strong>：发起仲裁后，该任务赏金将进入平台仲裁冻结状态，双方每日打卡惩罚暂停；专员将审查双方聊天记录、交付物版本并给出具有约束力的裁决。
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:18px;">
+        <button type="button" class="hero-btn-secondary" onclick="App.closeModal('modal-task-dispute')">取消</button>
+        <button type="button" class="hero-btn-primary" style="background:#8B5CF6; border-color:#8B5CF6;" onclick="App.submitTaskDispute()">确认申请仲裁</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 我的展位与档期管理抽屉 (Modal My Gallery Manage) -->
+  <div class="modal-backdrop" id="modal-my-gallery-manage">
+    <div class="modal-dialog modal-dialog-wide" style="max-width:800px;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-my-gallery-manage')">✕</div>
+      <div class="modal-header-title">我的展位与商单档期管理</div>
+      <div class="modal-header-sub">面向消费方展示的展厅作品与接单意向设置 · 来自任务挑战的优质成果将在此展示</div>
+
+      <div class="my-gallery-settings-card">
+        <div class="settings-row-between">
+          <div>
+            <div style="font-weight:700; font-size:15px; color:var(--text-primary);">当前商单接单档期</div>
+            <div style="font-size:12.5px; color:var(--text-secondary); margin-top:2px;">开启后买家可在展厅作品下方直接点击「找 TA 定制」</div>
+          </div>
+          <div class="schedule-switch-group">
+            <button type="button" class="schedule-btn active" data-sch="available" onclick="App.setCreatorSchedule('available')">
+              <span class="status-dot dot-available"></span> 可接单
+            </button>
+            <button type="button" class="schedule-btn" data-sch="busy" onclick="App.setCreatorSchedule('busy')">
+              <span class="status-dot dot-busy"></span> 档期紧张
+            </button>
+            <button type="button" class="schedule-btn" data-sch="closed" onclick="App.setCreatorSchedule('closed')">
+              <span class="status-dot dot-closed"></span> 暂停接单
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:10px; color:var(--text-primary); display:flex; justify-content:space-between; align-items:center;">
+          <span>我的展厅作品列表</span>
+          <span style="font-size:12px; color:var(--text-secondary); font-weight:400;">任务完成验收后可一键申请入驻展厅</span>
+        </div>
+        <div class="my-booth-works-list" id="my-booth-works-list">
+          <!-- 动态渲染我的展品卡片与状态（在售/审核中/已下架） -->
+        </div>
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:20px;">
+        <button type="button" class="hero-btn-primary" onclick="App.closeModal('modal-my-gallery-manage')">完成设置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 展厅定向定制接单/婉拒确认弹窗 (Modal Custom Order Confirm) -->
+  <div class="modal-backdrop" id="modal-custom-confirm">
+    <div class="modal-dialog" style="width:580px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-custom-confirm')">✕</div>
+      <div class="modal-header-title" id="custom-confirm-title">定制商单邀请确认</div>
+      <div class="modal-header-sub" id="custom-confirm-sub">来自买家在作品展厅发起的定向商单 · 赏金已由平台托管</div>
+
+      <input type="hidden" id="custom-confirm-order-id">
+      
+      <div class="custom-invite-card" id="custom-invite-card">
+        <!-- 动态填入定制需求、赏金、期限 -->
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:20px;">
+        <button type="button" class="hero-btn-secondary" id="custom-confirm-decline" style="color:#EF4444;" onclick="App.declineCustomOrder()">档期冲突 · 婉拒并退款</button>
+        <button type="button" class="hero-btn-primary" id="custom-confirm-accept" onclick="App.confirmCustomOrder()">接受定制 · 开启履约</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5B. 选定创作者二次确认弹窗 (Modal Select Creator Confirm) -->
+  <div class="modal-backdrop" id="modal-select-creator">
+    <div class="modal-dialog" style="width:560px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeSelectCreatorModal()">✕</div>
+      <div class="modal-header-title">确认选定合作创作者</div>
+      <div class="modal-header-sub">选定后任务转为「待接单」· 待对方响应接单后进入履约</div>
+
+      <input type="hidden" id="select-creator-task-id">
+      <input type="hidden" id="select-creator-applicant-id">
+
+      <div class="select-creator-card" id="select-creator-card">
+        <!-- 动态填入候选人名片 -->
+      </div>
+
+      <div class="select-creator-impact" id="select-creator-impact">
+        <!-- 动态填入选定后的状态影响与资金口径提示 -->
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:20px;">
+        <button type="button" class="hero-btn-secondary" onclick="App.closeSelectCreatorModal()">再想想</button>
+        <button type="button" class="hero-btn-primary" onclick="App.confirmSelectCreator()">确认选定 · 发出合作邀请</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 解答合作方提问弹窗 (Modal QA Answer) -->
+  <div class="modal-backdrop" id="modal-qa-answer">
+    <div class="modal-dialog" style="width:560px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeTaskAnswerModal()">✕</div>
+      <div class="modal-header-title" id="qa-answer-title">解答合作方提问</div>
+      <div class="modal-header-sub" id="qa-answer-sub">商单协同问答 · 解答内容将同步推送站内消息给提问方</div>
+
+      <div class="qa-answer-question">
+        <div class="qa-answer-question-label">对方提问</div>
+        <p id="qa-answer-question">—</p>
+      </div>
+
+      <div class="qa-answer-field">
+        <label for="qa-answer-input">你的解答（必填）</label>
+        <textarea id="qa-answer-input" rows="4" placeholder="例如：可以调整。已改为冷蓝体积光叠加并保留原主色，明日日报附对比截图供确认。"></textarea>
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:20px;">
+        <button type="button" class="hero-btn-secondary" onclick="App.closeTaskAnswerModal()">稍后再说</button>
+        <button type="button" class="hero-btn-primary" onclick="App.submitTaskAnswer()">提交解答</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 站内消息中心 (Modal Messages Center) -->
+  <div class="modal-backdrop" id="modal-messages">
+    <div class="modal-dialog" style="width:620px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeMessagesModal()">✕</div>
+      <div class="modal-header-title">站内消息中心</div>
+      <div class="modal-header-sub">选定创作者、催办响应等协同动作均在此留痕 · 收件箱与已发送双向可查</div>
+
+      <div class="pill-tabs messages-center-tabs">
+        <button type="button" class="pill-tab active" id="messages-tab-inbox" onclick="App.switchMessagesTab('inbox')">收件箱</button>
+        <button type="button" class="pill-tab" id="messages-tab-sent" onclick="App.switchMessagesTab('sent')">已发送</button>
+        <button type="button" class="messages-mark-all" id="messages-mark-all-btn" onclick="App.markAllMessagesRead()" hidden>全部已读</button>
+      </div>
+
+      <div class="messages-center-body" id="messages-center-body">
+        <!-- 动态渲染收件箱 / 已发送消息列表 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 提交交付成果弹窗 (Modal Submit Delivery) -->
+  <div class="modal-backdrop" id="modal-submit-delivery">
+    <div class="modal-dialog" style="width:600px; max-width:96vw;">
+      <div class="modal-close-btn" onclick="App.closeModal('modal-submit-delivery')">✕</div>
+      <div class="modal-header-title">提交正式成果交付</div>
+      <div class="modal-header-sub">提交完整交付文件以供发布方验收 · 验收通过后赏金结算至我的资产</div>
+
+      <input type="hidden" id="delivery-order-id">
+
+      <div class="form-group" style="margin-top:14px;">
+        <label class="form-label" style="font-weight:600;">交付网盘 / 在线预览链接 <span style="color:#EF4444;">*</span></label>
+        <input type="url" id="delivery-url-input" class="form-input" placeholder="例如：https://pan.baidu.com/s/xxxx 或 飞书云文档链接" value="https://pan.quark.cn/s/ai-master-delivery-pack">
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">提取密码 / 访问权限</label>
+          <input type="text" id="delivery-pwd-input" class="form-input" placeholder="如无留空" value="AI2026">
+        </div>
+        <div class="form-group">
+          <label class="form-label">主要交付文件名称</label>
+          <input type="text" id="delivery-filename-input" class="form-input" placeholder="例如：最终精修成片4K.mp4" value="最终交付成片合集与工程文件.zip">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">交付说明与版本备注</label>
+        <textarea id="delivery-note-input" class="form-input" rows="3" placeholder="说明本次交付包含的文件、色彩标准或使用提示等..." style="resize:vertical;">已按需求规范完成全部创作与4K渲染，包含成片、分镜脚本与分层PSD工程源文件，请查验！</textarea>
+      </div>
+
+      <div class="notice-box-warning" style="font-size:12px; color:var(--text-secondary); background:rgba(16,185,129,0.08); padding:10px 14px; border-radius:8px; border:1px solid rgba(16,185,129,0.2);">
+        <strong>资金安全保护</strong>：提交交付后，发布方将开启 72 小时验收倒计时。若发布方超期未提出修改或未验收，系统将自动确认并全额打款至你的账户。
+      </div>
+
+      <div class="modal-actions-row" style="margin-top:18px;">
+        <button type="button" class="hero-btn-secondary" onclick="App.closeModal('modal-submit-delivery')">取消</button>
+        <button type="button" class="hero-btn-primary" onclick="App.doSubmitDelivery()">确认提交交付物</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全局 Toast 提示 -->
+  <div id="global-toast">
+    <span id="toast-message">操作成功</span>
+  </div>
+
+  <!-- 引入核心脚本 -->
+  <script src="js/icons.js"></script>
+  <script src="js/mock_data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
